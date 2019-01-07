@@ -1,3 +1,9 @@
+import os
+from copy import copy
+
+from grammer.models import Literal
+
+
 def dfs(first, literal, mark):
     mark[literal] = 1
     for rule in literal.rules:
@@ -44,3 +50,34 @@ def print_to_file(literals, filename):
     with open(filename, "w") as f:
         for i, literal in enumerate(literals):
             f.write("{}. {} → ".format(i+1, literal.text) + " | ".join([rule_to_str(rule) for rule in literal.rules]) + "\n")
+
+
+def requires_factorization(grammar):
+    for non_terminal in grammar:
+        for first_literal in non_terminal.rules:
+            for second_literal in non_terminal.rules:
+                if first_literal is second_literal:
+                    continue
+                if len(os.path.commonprefix([first_literal, second_literal])) > 0:
+                    return True
+    return False
+
+
+def factorize(grammar):
+    # only works for factorizations shared among all rules of the non terminal
+    counter = 0
+    new_grammar = copy(grammar)
+    for non_terminal in grammar:
+        counter += 1
+        if len(non_terminal.rules) <= 1:
+            continue
+        prefix = os.path.commonprefix(non_terminal.rules)
+        if len(prefix) > 0:
+            new_non_terminal = Literal(
+                'rest-of-' + non_terminal.text,
+                [rule[len(prefix):] for rule in non_terminal.rules]
+            )
+            non_terminal.rules = [prefix + [new_non_terminal]]
+            new_grammar.insert(counter, new_non_terminal)
+            counter += 1
+    return new_grammar

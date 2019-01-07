@@ -1,7 +1,7 @@
 import os
 
-from src.grammer.utils import check_left_recursion, resolve_left_recursion_simple, print_to_file
 RESOURCES_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+
 
 class Literal:
     def __init__(self, text, rules=None):
@@ -10,6 +10,12 @@ class Literal:
 
     def __str__(self):
         return self.text
+
+    def __lt__(self, other):
+        return self.text.__lt__(other.text)
+
+    def __cmp__(self, other):
+        return self.text.__cmp__(other.text)
 
     @property
     def is_terminal(self):
@@ -45,6 +51,8 @@ class Literal:
 
 
 if __name__ == "__main__":
+    from grammer.utils import check_left_recursion, resolve_left_recursion_simple, print_to_file, factorize
+
     l = Literal.parse(open(os.path.join(RESOURCES_DIR, 'resources/src/raw_grammer.txt')))
     while True:
         bl = check_left_recursion(l)
@@ -54,3 +62,6 @@ if __name__ == "__main__":
         print_to_file(new_grammar, (os.path.join(RESOURCES_DIR, 'resources/src/raw_grammer2.txt')))
         l = new_grammar
     print("Left recursion resolved.")
+
+    l = factorize(l)
+    print_to_file(l, (os.path.join(RESOURCES_DIR, 'resources/src/raw_grammer3.txt')))
