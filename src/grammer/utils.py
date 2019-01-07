@@ -1,6 +1,6 @@
-def dfs(first, terminal, mark):
-    mark[terminal] = 1
-    for rule in terminal.rules:
+def dfs(first, literal, mark):
+    mark[literal] = 1
+    for rule in literal.rules:
         if len(rule) and not rule[0].is_terminal:
             if not rule[0] in mark:
                 if not dfs(first, rule[0], mark):
@@ -10,28 +10,28 @@ def dfs(first, terminal, mark):
     return True
 
 
-def check_left_recursion(terminals):
+def check_left_recursion(literals):
     out = []
-    for i, terminal in enumerate(terminals):
+    for i, literal in enumerate(literals):
         mark = {}
-        if not dfs(terminal, terminal, mark):
-            print("Left recursion found in", terminal)
-            out += [terminal]
+        if not dfs(literal, literal, mark):
+            print("Left recursion found in", literal)
+            out += [literal]
     return out
 
 
-def resolve_left_recursion_simple(terminals, bad_terminals):
+def resolve_left_recursion_simple(literals, bad_literals):
     from src.grammer.models import Literal
 
-    for bt in bad_terminals:
-        index = terminals.index(bt)
+    for bt in bad_literals:
+        index = literals.index(bt)
         rules_1 = [rule[1:] for rule in bt.rules if rule[0] == bt]
         rules_2 = [rule for rule in bt.rules if rule[0] != bt]
-        new_terminal = Literal(bt.text + '-prime')
-        bt.rules = [rule2 + [new_terminal] for rule2 in rules_2]
-        new_terminal.rules = [rule1 + [new_terminal] for rule1 in rules_1] + [[]]
-        terminals.insert(index + 1, new_terminal)
-    return terminals
+        new_literal = Literal(bt.text + '-prime')
+        bt.rules = [rule2 + [new_literal] for rule2 in rules_2]
+        new_literal.rules = [rule1 + [new_literal] for rule1 in rules_1] + [[]]
+        literals.insert(index + 1, new_literal)
+    return literals
 
 
 def rule_to_str(rule):
