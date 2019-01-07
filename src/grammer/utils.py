@@ -31,8 +31,8 @@ def resolve_left_recursion_simple(literals, bad_literals):
 
     for bt in bad_literals:
         index = literals.index(bt)
-        rules_1 = [rule[1:] for rule in bt.rules if rule[0] == bt]
-        rules_2 = [rule for rule in bt.rules if rule[0] != bt]
+        rules_1 = [rule[1:] for rule in bt.rules if len(rule) and rule[0] == bt]
+        rules_2 = [rule for rule in bt.rules if not len(rule) or rule[0] != bt]
         new_literal = Literal(bt.text + '-prime')
         bt.rules = [rule2 + [new_literal] for rule2 in rules_2]
         new_literal.rules = [rule1 + [new_literal] for rule1 in rules_1] + [[]]
@@ -50,6 +50,34 @@ def print_to_file(literals, filename):
     with open(filename, "w") as f:
         for i, literal in enumerate(literals):
             f.write("{}. {} → ".format(i+1, literal.text) + " | ".join([rule_to_str(rule) for rule in literal.rules]) + "\n")
+
+
+def compute_first(non_terminals):
+    first = {x: set() for x in non_terminals}
+    def inner_add(s1, s2, changed):
+        u = s1.union(s2)
+        if s1 != u:
+            return u, True
+        return u, changed
+
+    while True:
+        changed = False
+        for literal in non_terminals:
+            for rule in literal.rules:
+                if not rule:
+                    first[literal], changed = inner_add(first[literal], {()}, changed)
+                    first[literal].add(())
+                for sym in rule:
+                    if sym.is_terminal:
+                        first[literal], changed = inner_add(first[literal], {sym}, changed)
+                        break
+                    else:
+                        first[literal], changed = inner_add(first[literal], first[sym], changed)
+                        if not () in first[sym]:
+                            break
+        if not changed:
+            break
+    return first
 
 
 def requires_factorization(grammar):

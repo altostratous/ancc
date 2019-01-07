@@ -12,7 +12,7 @@
 12. param → type-specifier ID rest-of-param
 13. rest-of-param → ε | [ ]
 14. compound-stms → { declaration-list statement-list }
-15. statement-list → ε statement-list-prime
+15. statement-list → statement-list-prime
 16. statement-list-prime → statement statement-list-prime | ε
 17. statement → expression-stmt | compound-stmt | selection-stmt | iteration-stmt | return-stmt | switch-stmt
 18. expression-stmt → expression ; | continue ; | break ; | ;
@@ -21,7 +21,7 @@
 21. return-stmt → return rest-of-return-stmt
 22. rest-of-return-stmt → ; | expression ;
 23. switch-stmt → switch ( expression ) { case-stmts default-stmt }
-24. case-stmts → ε case-stmts-prime
+24. case-stmts → case-stmts-prime
 25. case-stmts-prime → case-stmt case-stmts-prime | ε
 26. case-stmt → case NUM : statement-list
 27. default-stmt → default : statement-list | ε
