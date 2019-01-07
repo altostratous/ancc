@@ -26,12 +26,13 @@
 26. var → ID | ID [ expression ]
 27. simple-expression → additive-expression relop additive-expression | additive-expression
 28. relop → < | ==
-29. additive-expression → additive-expressio addop term | term
-30. addop → + | -
-31. term → factor term-prime
-32. term-prime → * factor term-prime | ε
-33. factor → ( expression ) | var | call | NUM
-34. call → ID ( args )
-35. args → arg-list | ε
-36. arg-list → expression arg-list-prime
-37. arg-list-prime → , expression arg-list-prime | ε
+29. additive-expression → term additive-expression-prime
+30. additive-expression-prime → addop term additive-expression-prime | ε
+31. addop → + | -
+32. term → factor term-prime
+33. term-prime → * factor term-prime | ε
+34. factor → ( expression ) | var | call | NUM
+35. call → ID ( args )
+36. args → arg-list | ε
+37. arg-list → expression arg-list-prime
+38. arg-list-prime → , expression arg-list-prime | ε
