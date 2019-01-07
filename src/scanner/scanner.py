@@ -29,9 +29,9 @@ class Scanner:
                 return "EXP"
             return int(st)
 
-        if self.len == self.index:
-            return "EXP"
         while True:
+            if self.len == self.index:
+                return self.return_token('EOF',  None)
             next_char = self.input[self.index]
             self.index += 1
             if next_char == '/':
@@ -74,6 +74,5 @@ class Scanner:
                 return self.return_token('NUM', m * digit())
             else:
                 return self.return_token(next_char, None)
-
 
 
