@@ -2,10 +2,9 @@ import string
 
 from src.grammer.tokens import Token
 
-RESERVED_WORDS = ['int', 'void', 'continue', 'break', 'if', 'else', 'while', 'return', 'switch', 'case', 'default']
+reserved_words = ['int', 'void', 'continue', 'break', 'if', 'else', 'while', 'return', 'switch', 'case', 'default']
 
 single_characters = [';', ',', '[', ']', '{', '}', '(', ')', ':', '*']
-
 
 class Scanner:
     def __init__(self, input):
@@ -13,6 +12,7 @@ class Scanner:
         self.index = 0
         self.len = len(input)
         self.prev_token = None
+        self.symbol_table = {}
 
     def return_token(self, text, attr):
         t = Token(text, attr)
@@ -29,10 +29,23 @@ class Scanner:
                 return "EXP"
             return int(st)
 
-        if self.len == self.index:
-            return "EXP"
-        next_char = self.input[self.index]
-        self.index += 1
+        while True:
+            if self.len == self.index:
+                return self.return_token('EOF',  None)
+            next_char = self.input[self.index]
+            self.index += 1
+            if next_char == '/':
+                if self.index < self.len and self.input[self.index] == '*':
+                    self.index += 1
+                    while self.index + 1 < self.len and not (self.input[self.index == '*'] and self.input[self.index + 1] == '/'):
+                        self.index += 1
+                    self.index += 2
+                    if self.index >= self.len:
+                        return "EXP"
+                else:
+                    break
+            else:
+                break
         if next_char in single_characters:
             return self.return_token(next_char, None)
         if next_char == '<':
@@ -47,9 +60,11 @@ class Scanner:
             while self.index < self.len and self.input[self.index] in (string.ascii_letters + string.digits):
                 st += self.input[self.index]
                 self.index += 1
-            if st in RESERVED_WORDS:
+            if st in reserved_words:
                 return self.return_token(st, None)
-            return self.return_token('ID', st)
+            if st not in self.symbol_table:
+                self.symbol_table[st] = len(self.symbol_table)
+            return self.return_token('ID', self.symbol_table[st])
         if next_char in string.digits:
             self.index -= 1
             return self.return_token('NUM', digit())
@@ -59,3 +74,5 @@ class Scanner:
                 return self.return_token('NUM', m * digit())
             else:
                 return self.return_token(next_char, None)
+
+
