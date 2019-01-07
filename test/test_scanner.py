@@ -4,7 +4,7 @@ from unittest import TestCase
 from os import path
 
 from grammer.tokens import Token
-from parser import Scanner
+from scanner.scanner import Scanner
 
 from scanner.scanner import RESERVED_WORDS
 
@@ -12,7 +12,13 @@ from scanner.scanner import RESERVED_WORDS
 class TestScanner(TestCase):
 
     def test_comment(self):
-        comment_file = open(path.join('resources', 'test', 'code', 'comment.nc'))
+        import sys
+        print(sys.path)
+        comment_file = open(
+            path.join(
+                path.dirname(path.abspath(__file__)), '..', 'resources', 'test', 'code', 'comment.nc'
+            )
+        )
         scanner = Scanner(comment_file.read())
         self.assertEqual(scanner.get_next_token().text, 'EOF')
 
@@ -30,8 +36,8 @@ class TestScanner(TestCase):
             '+98': Token('NUM', 98),
             '-025': Token('NUM', -25),
             # ID
-            'SomeID': Token('ID', 0),  # the index in symbol table
-            'Zed56': Token('ID', 0)
+            'SomeID': Token('ID', 'SomeID'),  # the index in symbol table
+            'Zed56': Token('ID', 'Zed56')
         })
 
         for lexeme in test_vector.keys():
@@ -43,12 +49,12 @@ class TestScanner(TestCase):
 
     def test_additive_expression_sense(self):
         scanner = Scanner('five = -145+theID+5+variable')
-        self.assertEqual(scanner.get_next_token(), Token('ID', 0))
+        self.assertEqual(scanner.get_next_token(), Token('ID', 'five'))
         self.assertEqual(scanner.get_next_token(), Token('=', None))
         self.assertEqual(scanner.get_next_token(), Token('NUM', -145))
         self.assertEqual(scanner.get_next_token(), Token('+', None))
-        self.assertEqual(scanner.get_next_token(), Token('ID', 1))
+        self.assertEqual(scanner.get_next_token(), Token('ID', 'theID'))
         self.assertEqual(scanner.get_next_token(), Token('+', None))
         self.assertEqual(scanner.get_next_token(), Token('NUM', 5))
         self.assertEqual(scanner.get_next_token(), Token('+', None))
-        self.assertEqual(scanner.get_next_token(), Token('ID', 3))
+        self.assertEqual(scanner.get_next_token(), Token('ID', 'variable'))

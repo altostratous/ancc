@@ -2,9 +2,10 @@ import string
 
 from src.grammer.tokens import Token
 
-reserved_words = ['int', 'void', 'continue', 'break', 'if', 'else', 'while', 'return', 'switch', 'case', 'default']
+RESERVED_WORDS = ['int', 'void', 'continue', 'break', 'if', 'else', 'while', 'return', 'switch', 'case', 'default']
 
 single_characters = [';', ',', '[', ']', '{', '}', '(', ')', ':', '*']
+
 
 class Scanner:
     def __init__(self, input):
@@ -46,7 +47,7 @@ class Scanner:
             while self.index < self.len and self.input[self.index] in (string.ascii_letters + string.digits):
                 st += self.input[self.index]
                 self.index += 1
-            if st in reserved_words:
+            if st in RESERVED_WORDS:
                 return self.return_token(st, None)
             return self.return_token('ID', st)
         if next_char in string.digits:
@@ -58,6 +59,3 @@ class Scanner:
                 return self.return_token('NUM', m * digit())
             else:
                 return self.return_token(next_char, None)
-
-
-
