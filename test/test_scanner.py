@@ -36,8 +36,8 @@ class TestScanner(TestCase):
             '+98': Token('NUM', 98),
             '-025': Token('NUM', -25),
             # ID
-            'SomeID': Token('ID', 'SomeID'),  # the index in symbol table
-            'Zed56': Token('ID', 'Zed56')
+            'SomeID': Token('ID', 0),  # the index in symbol table
+            'Zed56': Token('ID', 0)
         })
 
         for lexeme in test_vector.keys():
@@ -49,12 +49,12 @@ class TestScanner(TestCase):
 
     def test_additive_expression_sense(self):
         scanner = Scanner('five = -145+theID+5+variable')
-        self.assertEqual(scanner.get_next_token(), Token('ID', 'five'))
+        self.assertEqual(scanner.get_next_token(), Token('ID', 0))
         self.assertEqual(scanner.get_next_token(), Token('=', None))
         self.assertEqual(scanner.get_next_token(), Token('NUM', -145))
         self.assertEqual(scanner.get_next_token(), Token('+', None))
-        self.assertEqual(scanner.get_next_token(), Token('ID', 'theID'))
+        self.assertEqual(scanner.get_next_token(), Token('ID', 1))
         self.assertEqual(scanner.get_next_token(), Token('+', None))
         self.assertEqual(scanner.get_next_token(), Token('NUM', 5))
         self.assertEqual(scanner.get_next_token(), Token('+', None))
-        self.assertEqual(scanner.get_next_token(), Token('ID', 'variable'))
+        self.assertEqual(scanner.get_next_token(), Token('ID', 2))

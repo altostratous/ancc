@@ -5,8 +5,10 @@ class Token(object):
         self.text = text
         self.attribute = attribute
 
-    def __eq__(self, o: object) -> bool:
-        return isinstance(o, Token) and o.text == self.text and o.attribute == self.attribute
+    def __eq__(self, o) -> bool:
+        if o is None:
+            return False
+        return o.text == self.text and o.attribute == self.attribute
 
     def __str__(self) -> str:
         return 'Token(`{}`, {})'.format(self.text, self.attribute)
