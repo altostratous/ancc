@@ -2,9 +2,10 @@ import string
 
 from src.grammer.tokens import Token
 
-reserved_words = ['int', 'void', 'continue', 'break', 'if', 'else', 'while', 'return', 'switch', 'case', 'default']
+RESERVED_WORDS = ['int', 'void', 'continue', 'break', 'if', 'else', 'while', 'return', 'switch', 'case', 'default']
 
 single_characters = [';', ',', '[', ']', '{', '}', '(', ')', ':', '*']
+
 
 class Scanner:
     def __init__(self, input):
@@ -31,16 +32,16 @@ class Scanner:
 
         while True:
             if self.len == self.index:
-                return self.return_token('EOF',  None)
+                return self.return_token('EOF', None)
             while self.index < self.len and self.input[self.index] in string.whitespace:
                 self.index += 1
-
             next_char = self.input[self.index]
             self.index += 1
             if next_char == '/':
                 if self.index < self.len and self.input[self.index] == '*':
                     self.index += 1
-                    while self.index + 1 < self.len and not (self.input[self.index == '*'] and self.input[self.index + 1] == '/'):
+                    while self.index + 1 < self.len and not (
+                            self.input[self.index == '*'] and self.input[self.index + 1] == '/'):
                         self.index += 1
                     self.index += 2
                     if self.index >= self.len:
@@ -64,7 +65,7 @@ class Scanner:
             while self.index < self.len and self.input[self.index] in (string.ascii_letters + string.digits):
                 st += self.input[self.index]
                 self.index += 1
-            if st in reserved_words:
+            if st in RESERVED_WORDS:
                 return self.return_token(st, None)
             if st not in self.symbol_table:
                 self.symbol_table[st] = len(self.symbol_table)
@@ -73,10 +74,8 @@ class Scanner:
             self.index -= 1
             return self.return_token('NUM', digit())
         if next_char in ['+', '-']:
-            if self.prev_token.text in [']', ')', 'NUM', 'ID']:
+            if not self.prev_token is None and self.prev_token.text in [']', ')', 'NUM', 'ID']:
                 m = -1 if next_char == '-' else +1
                 return self.return_token('NUM', m * digit())
             else:
                 return self.return_token(next_char, None)
-
-
