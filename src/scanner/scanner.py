@@ -8,10 +8,10 @@ single_characters = [';', ',', '[', ']', '{', '}', '(', ')', ':', '*']
 
 
 class Scanner:
-    def __init__(self, input):
-        self.input = input
+    def __init__(self, input_string):
+        self.input = input_string
         self.index = 0
-        self.len = len(input)
+        self.len = len(input_string)
         self.prev_token = None
         self.symbol_table = {}
 
@@ -22,19 +22,19 @@ class Scanner:
 
     def get_next_token(self):
         def digit():
-            st = ""
+            digit_string = ""
             while self.index < self.len and self.input[self.index] in string.digits:
-                st += self.input[self.index]
+                digit_string += self.input[self.index]
                 self.index += 1
-            if st == "":
+            if digit_string == "":
                 return "EXP"
-            return int(st)
+            return int(digit_string)
 
         while True:
-            if self.len == self.index:
-                return self.return_token('EOF', None)
             while self.index < self.len and self.input[self.index] in string.whitespace:
                 self.index += 1
+            if self.len == self.index:
+                return self.return_token('EOF', None)
             next_char = self.input[self.index]
             self.index += 1
             if next_char == '/':
@@ -74,7 +74,7 @@ class Scanner:
             self.index -= 1
             return self.return_token('NUM', digit())
         if next_char in ['+', '-']:
-            if not self.prev_token is None and self.prev_token.text in [']', ')', 'NUM', 'ID']:
+            if self.prev_token is None or self.prev_token.text not in [']', ')', 'NUM', 'ID']:
                 m = -1 if next_char == '-' else +1
                 return self.return_token('NUM', m * digit())
             else:

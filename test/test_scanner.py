@@ -12,14 +12,12 @@ from scanner.scanner import RESERVED_WORDS
 class TestScanner(TestCase):
 
     def test_comment(self):
-        import sys
-        print(sys.path)
-        comment_file = open(
+        with open(
             path.join(
                 path.dirname(path.abspath(__file__)), '..', 'resources', 'test', 'code', 'comment.nc'
             )
-        )
-        scanner = Scanner(comment_file.read())
+        ) as comment_file:
+            scanner = Scanner(comment_file.read())
         self.assertEqual(scanner.get_next_token().text, 'EOF')
 
     def test_key_words(self):
@@ -58,3 +56,37 @@ class TestScanner(TestCase):
         self.assertEqual(scanner.get_next_token(), Token('NUM', 5))
         self.assertEqual(scanner.get_next_token(), Token('+', None))
         self.assertEqual(scanner.get_next_token(), Token('ID', 2))
+        self.assertEqual(scanner.get_next_token(), Token('EOF', None))
+
+    def test_complex_expression(self):
+        scanner = Scanner("""
+            if (x == -125) {
+                y = 125;
+                x = +58; 
+            } else 
+                output(25);
+        """)
+
+        self.assertEqual(scanner.get_next_token(), Token('if', None))
+        self.assertEqual(scanner.get_next_token(), Token('(', None))
+        self.assertEqual(scanner.get_next_token(), Token('ID', 0))
+        self.assertEqual(scanner.get_next_token(), Token('RELOP', 'E'))
+        self.assertEqual(scanner.get_next_token(), Token('NUM', -125))
+        self.assertEqual(scanner.get_next_token(), Token(')', None))
+        self.assertEqual(scanner.get_next_token(), Token('{', None))
+        self.assertEqual(scanner.get_next_token(), Token('ID', 1))
+        self.assertEqual(scanner.get_next_token(), Token('=', None))
+        self.assertEqual(scanner.get_next_token(), Token('NUM', 125))
+        self.assertEqual(scanner.get_next_token(), Token(';', None))
+        self.assertEqual(scanner.get_next_token(), Token('ID', 0))
+        self.assertEqual(scanner.get_next_token(), Token('=', None))
+        self.assertEqual(scanner.get_next_token(), Token('NUM', 58))
+        self.assertEqual(scanner.get_next_token(), Token(';', None))
+        self.assertEqual(scanner.get_next_token(), Token('}', None))
+        self.assertEqual(scanner.get_next_token(), Token('else', None))
+        self.assertEqual(scanner.get_next_token(), Token('ID', 2))
+        self.assertEqual(scanner.get_next_token(), Token('(', None))
+        self.assertEqual(scanner.get_next_token(), Token('NUM', 25))
+        self.assertEqual(scanner.get_next_token(), Token(')', None))
+        self.assertEqual(scanner.get_next_token(), Token(';', None))
+        self.assertEqual(scanner.get_next_token(), Token('EOF', None))
