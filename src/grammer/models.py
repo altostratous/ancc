@@ -1,6 +1,8 @@
 import os
 
-from src.grammer.utils import check_left_recursion, resolve_left_recursion_simple, print_to_file
+from src.grammer.utils import check_left_recursion, resolve_left_recursion_simple, print_to_file, \
+    compute_first
+
 RESOURCES_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 class Literal:
@@ -11,13 +13,16 @@ class Literal:
     def __str__(self):
         return self.text
 
+    def __repr__(self):
+        return str(self)
+
     @property
     def is_terminal(self):
         return self.rules is None
 
     @staticmethod
     def parse(raw_grammar_file):
-        literals_map = {}
+        literals_map = {'ε': Literal('ε')}
         list_of_non_terminals = []
         for line in raw_grammar_file:
             line = line.replace('\n', '')
@@ -38,7 +43,7 @@ class Literal:
             literals_map[left_hand_side_text].rules = [
                 [
                     literals_map[rule_literal] for rule_literal in right_hand_side_rule_texts
-                ] for right_hand_side_rule_texts in list_of_list_of_right_hand_side_texts
+                ] if right_hand_side_rule_texts != ['ε'] else [] for right_hand_side_rule_texts in list_of_list_of_right_hand_side_texts
             ]
 
         return list_of_non_terminals
@@ -54,3 +59,5 @@ if __name__ == "__main__":
         print_to_file(new_grammar, (os.path.join(RESOURCES_DIR, 'resources/src/raw_grammer2.txt')))
         l = new_grammar
     print("Left recursion resolved.")
+    x=compute_first(l)
+    print(x)
