@@ -32,6 +32,9 @@ class Scanner:
         while True:
             if self.len == self.index:
                 return self.return_token('EOF',  None)
+            while self.index < self.len and self.input[self.index] in string.whitespace:
+                self.index += 1
+
             next_char = self.input[self.index]
             self.index += 1
             if next_char == '/':
@@ -46,6 +49,7 @@ class Scanner:
                     break
             else:
                 break
+
         if next_char in single_characters:
             return self.return_token(next_char, None)
         if next_char == '<':
