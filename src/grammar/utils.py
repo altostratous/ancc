@@ -141,6 +141,18 @@ def compute_first(non_terminals):
     return first
 
 
+def compute_first2(expressions, first):
+    if not expressions:
+        return set(())
+    ans = set()
+    for exp in expressions:
+        if exp.is_terminal:
+            return ans.union({exp})
+        ans = ans.union(first[exp])
+        if not () in first[exp]:
+            return ans
+
+
 def requires_factorization(grammar):
     for non_terminal in grammar:
         for first_literal in non_terminal.rules:
@@ -170,3 +182,21 @@ def factorize(grammar):
             new_grammar.insert(counter, new_non_terminal)
             counter += 1
     return new_grammar
+
+
+def check_predictability(grammar, first):
+    error = False
+    for non_terminal in grammar:
+        for i in range(len(non_terminal.rules)):
+            if not non_terminal.rules[i]:
+                continue
+            for j in range(i+1, len(non_terminal.rules)):
+                if not non_terminal.rules[j]:
+                    continue
+                f1 = compute_first2(non_terminal.rules[i], first)
+                f2 = compute_first2(non_terminal.rules[j], first)
+                if f1.intersection(f2):
+                    error = True
+                    print("Problem found; intersecting firsts between rules: {} → {} and {} → {}".format(non_terminal, rule_to_str(non_terminal.rules[i]), non_terminal, rule_to_str(non_terminal.rules[j])))
+    if not error:
+        print("All ok and predictable")
