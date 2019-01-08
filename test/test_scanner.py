@@ -2,14 +2,23 @@ from collections import OrderedDict
 from unittest import TestCase
 
 from os import path
+import os
 
+from grammar.models import Literal
 from grammar.tokens import Token
+from parser.utils import get_all_literals_from_non_terminals
 from scanner.scanner import Scanner
 
 from scanner.scanner import RESERVED_WORDS
+from ui.manage import BASE_DIR
 
 
 class TestScanner(TestCase):
+
+    def setUp(self):
+        with open(os.path.join(BASE_DIR, 'resources/src/predictable_grammar.txt')) as grammar_file:
+            non_terminals = Literal.parse(grammar_file)
+            self.all_literals = get_all_literals_from_non_terminals(non_terminals)
 
     def test_comment(self):
         with open(
@@ -17,46 +26,46 @@ class TestScanner(TestCase):
                 path.dirname(path.abspath(__file__)), '..', 'resources', 'test', 'code', 'comment.nc'
             )
         ) as comment_file:
-            scanner = Scanner(comment_file.read())
+            scanner = Scanner(comment_file.read(), self.all_literals)
         self.assertEqual(scanner.get_next_token().text, 'EOF')
 
     def test_key_words(self):
         for reserved_word in RESERVED_WORDS:
-            scanner = Scanner(reserved_word)
+            scanner = Scanner(reserved_word, self.all_literals)
             self.assertEqual(scanner.get_next_token().text, reserved_word)
 
     def test_num_and_id(self):
 
         test_vector = OrderedDict({
             # NUM
-            '95': Token('NUM', 95),
-            '328': Token('NUM', 328),
-            '+98': Token('NUM', 98),
-            '-025': Token('NUM', -25),
+            '95': self.get_token('NUM', 95),
+            '328': self.get_token('NUM', 328),
+            '+98': self.get_token('NUM', 98),
+            '-025': self.get_token('NUM', -25),
             # ID
-            'SomeID': Token('ID', 0),  # the index in symbol table
-            'Zed56': Token('ID', 0)
+            'SomeID': self.get_token('ID', 0),  # the index in symbol table
+            'Zed56': self.get_token('ID', 0)
         })
 
         for lexeme in test_vector.keys():
             self.assertEqual(
-                Scanner(lexeme).get_next_token(),
+                Scanner(lexeme, self.all_literals).get_next_token(),
                 test_vector[lexeme],
                 'Scanner failed to parse `{}` as {}'.format(lexeme, test_vector[lexeme])
             )
 
     def test_additive_expression_sense(self):
-        scanner = Scanner('five = -145+theID+5+variable')
-        self.assertEqual(scanner.get_next_token(), Token('ID', 0))
-        self.assertEqual(scanner.get_next_token(), Token('=', None))
-        self.assertEqual(scanner.get_next_token(), Token('NUM', -145))
-        self.assertEqual(scanner.get_next_token(), Token('+', None))
-        self.assertEqual(scanner.get_next_token(), Token('ID', 1))
-        self.assertEqual(scanner.get_next_token(), Token('+', None))
-        self.assertEqual(scanner.get_next_token(), Token('NUM', 5))
-        self.assertEqual(scanner.get_next_token(), Token('+', None))
-        self.assertEqual(scanner.get_next_token(), Token('ID', 2))
-        self.assertEqual(scanner.get_next_token(), Token('EOF', None))
+        scanner = Scanner('five = -145+theID+5+variable', self.all_literals)
+        self.assertEqual(scanner.get_next_token(), self.get_token('ID', 0))
+        self.assertEqual(scanner.get_next_token(), self.get_token('=', None))
+        self.assertEqual(scanner.get_next_token(), self.get_token('NUM', -145))
+        self.assertEqual(scanner.get_next_token(), self.get_token('+', None))
+        self.assertEqual(scanner.get_next_token(), self.get_token('ID', 1))
+        self.assertEqual(scanner.get_next_token(), self.get_token('+', None))
+        self.assertEqual(scanner.get_next_token(), self.get_token('NUM', 5))
+        self.assertEqual(scanner.get_next_token(), self.get_token('+', None))
+        self.assertEqual(scanner.get_next_token(), self.get_token('ID', 2))
+        self.assertEqual(scanner.get_next_token(), self.get_token('EOF', None))
 
     def test_complex_expression(self):
         scanner = Scanner("""
@@ -65,28 +74,33 @@ class TestScanner(TestCase):
                 x = +58; 
             } else 
                 output(25);
-        """)
+        """, self.all_literals)
 
-        self.assertEqual(scanner.get_next_token(), Token('if', None))
-        self.assertEqual(scanner.get_next_token(), Token('(', None))
-        self.assertEqual(scanner.get_next_token(), Token('ID', 0))
-        self.assertEqual(scanner.get_next_token(), Token('RELOP', 'E'))
-        self.assertEqual(scanner.get_next_token(), Token('NUM', -125))
-        self.assertEqual(scanner.get_next_token(), Token(')', None))
-        self.assertEqual(scanner.get_next_token(), Token('{', None))
-        self.assertEqual(scanner.get_next_token(), Token('ID', 1))
-        self.assertEqual(scanner.get_next_token(), Token('=', None))
-        self.assertEqual(scanner.get_next_token(), Token('NUM', 125))
-        self.assertEqual(scanner.get_next_token(), Token(';', None))
-        self.assertEqual(scanner.get_next_token(), Token('ID', 0))
-        self.assertEqual(scanner.get_next_token(), Token('=', None))
-        self.assertEqual(scanner.get_next_token(), Token('NUM', 58))
-        self.assertEqual(scanner.get_next_token(), Token(';', None))
-        self.assertEqual(scanner.get_next_token(), Token('}', None))
-        self.assertEqual(scanner.get_next_token(), Token('else', None))
-        self.assertEqual(scanner.get_next_token(), Token('ID', 2))
-        self.assertEqual(scanner.get_next_token(), Token('(', None))
-        self.assertEqual(scanner.get_next_token(), Token('NUM', 25))
-        self.assertEqual(scanner.get_next_token(), Token(')', None))
-        self.assertEqual(scanner.get_next_token(), Token(';', None))
-        self.assertEqual(scanner.get_next_token(), Token('EOF', None))
+        self.assertEqual(scanner.get_next_token(), self.get_token('if', None))
+        self.assertEqual(scanner.get_next_token(), self.get_token('(', None))
+        self.assertEqual(scanner.get_next_token(), self.get_token('ID', 0))
+        self.assertEqual(scanner.get_next_token(), self.get_token('RELOP', 'E'))
+        self.assertEqual(scanner.get_next_token(), self.get_token('NUM', -125))
+        self.assertEqual(scanner.get_next_token(), self.get_token(')', None))
+        self.assertEqual(scanner.get_next_token(), self.get_token('{', None))
+        self.assertEqual(scanner.get_next_token(), self.get_token('ID', 1))
+        self.assertEqual(scanner.get_next_token(), self.get_token('=', None))
+        self.assertEqual(scanner.get_next_token(), self.get_token('NUM', 125))
+        self.assertEqual(scanner.get_next_token(), self.get_token(';', None))
+        self.assertEqual(scanner.get_next_token(), self.get_token('ID', 0))
+        self.assertEqual(scanner.get_next_token(), self.get_token('=', None))
+        self.assertEqual(scanner.get_next_token(), self.get_token('NUM', 58))
+        self.assertEqual(scanner.get_next_token(), self.get_token(';', None))
+        self.assertEqual(scanner.get_next_token(), self.get_token('}', None))
+        self.assertEqual(scanner.get_next_token(), self.get_token('else', None))
+        self.assertEqual(scanner.get_next_token(), self.get_token('ID', 2))
+        self.assertEqual(scanner.get_next_token(), self.get_token('(', None))
+        self.assertEqual(scanner.get_next_token(), self.get_token('NUM', 25))
+        self.assertEqual(scanner.get_next_token(), self.get_token(')', None))
+        self.assertEqual(scanner.get_next_token(), self.get_token(';', None))
+        self.assertEqual(scanner.get_next_token(), self.get_token('EOF', None))
+
+    def get_token(self, text, attribute):
+        for literal in self.all_literals:
+            if literal.text == text:
+                return Token(text, attribute, literal)

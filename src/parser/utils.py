@@ -41,3 +41,12 @@ def create_transition_diagram(literals):
         state_machines[non_terminal] = start_state_1
 
     return start_state, state_machines
+
+
+def get_all_literals_from_non_terminals(non_terminals):
+    all_literals = set()
+    for non_terminal in non_terminals:
+        all_literals.add(non_terminal)
+        for rule in non_terminal.rules:
+            all_literals = all_literals.union(rule)
+    return all_literals

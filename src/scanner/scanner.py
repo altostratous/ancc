@@ -8,7 +8,8 @@ SINGLE_CHARACTERS = [';', ',', '[', ']', '{', '}', '(', ')', ':', '*']
 
 
 class Scanner:
-    def __init__(self, input_string):
+    def __init__(self, input_string, literals):
+        self.literals = dict([(literal.text, literal) for literal in literals])
         self.input = input_string
         self.index = 0
         self.len = len(input_string)
@@ -16,7 +17,7 @@ class Scanner:
         self.symbol_table = {}
 
     def return_token(self, text, attr):
-        t = Token(text, attr)
+        t = Token(text, attr, self.literals[text])
         self.prev_token = t
         return t
 

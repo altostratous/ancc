@@ -14,7 +14,7 @@ class State:
         self.is_success = is_success
 
     def __str__(self):
-        return str(self.id) + (' (success)' if self.is_success else '')
+        return str(self.id) + ' ({})'.format(self.non_terminal.text) + (' (success)' if self.is_success else '')
 
     def __repr__(self):
         return str(self)
@@ -37,7 +37,7 @@ class Parser:
     @property
     def lookahead(self):
         if self._lookahead is None:
-            self._lookahead = self.scanner.get_next_token()
+            self._lookahead = self.scanner.get_next_token().literal
         return self._lookahead
 
     def match(self, s):
@@ -64,8 +64,11 @@ class Parser:
         while self.stack:
             next_state, new_flow = self.find_next_state(self.stack[-1])
             if next_state is None:
-                self.stack.pop()
+                self.parsed(self.stack.pop())
             else:
                 self.stack[-1] = next_state
                 if new_flow:
                     self.stack.append(self.state_machines[new_flow])
+
+    def parsed(self, param):
+        pass
