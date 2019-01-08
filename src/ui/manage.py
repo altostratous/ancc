@@ -62,7 +62,19 @@ def generate():
 
                     doc_file.writelines([
                         '```\n',
+                        '## First and Follow\n'
+                        '|Non-terminal|First|Follow|\n'
+                        '|:----------:|:---:|:----:|\n'
                     ])
+
+                    for non_terminal in first.keys():
+                        doc_file.writelines([
+                            '|{}|{}|{}|\n'.format(
+                                non_terminal.text,
+                                ' '.join(['ε' if literal == () else literal.text for literal in first[non_terminal]]),
+                                ' '.join(['ε' if literal == () else literal.text for literal in follow[non_terminal]])
+                            ),
+                        ])
 
 
 def test():
