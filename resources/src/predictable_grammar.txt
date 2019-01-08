@@ -11,7 +11,7 @@
 11. param-list-prime → , param param-list-prime | ε
 12. param → type-specifier ID rest-of-param
 13. rest-of-param → ε | [ ]
-14. compound-stms → { declaration-list statement-list }
+14. compound-stmt → { declaration-list statement-list }
 15. statement-list → statement-list-prime
 16. statement-list-prime → statement statement-list-prime | ε
 17. statement → expression-stmt | compound-stmt | selection-stmt | iteration-stmt | return-stmt | switch-stmt

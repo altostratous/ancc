@@ -1,8 +1,3 @@
-import os
-
-RESOURCES_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-
-
 class Literal:
     def __init__(self, text, rules=None):
         self.text = text
@@ -52,26 +47,3 @@ class Literal:
             ]
 
         return list_of_non_terminals
-
-
-if __name__ == "__main__":
-    from grammer.utils import check_left_recursion, resolve_left_recursion_simple, print_to_file, factorize, \
-        compute_first, requires_factorization
-
-    l = Literal.parse(open(os.path.join(RESOURCES_DIR, 'resources/src/raw_grammer.txt')))
-    while True:
-        bl = check_left_recursion(l)
-        if not bl:
-            break
-        new_grammar = resolve_left_recursion_simple(l, bl)
-        print_to_file(new_grammar, (os.path.join(RESOURCES_DIR, 'resources/src/raw_grammer2.txt')))
-        l = new_grammar
-    print("Left recursion resolved.")
-
-    while requires_factorization(l):
-        l = factorize(l)
-        print("Factorized one time.")
-        print_to_file(l, (os.path.join(RESOURCES_DIR, 'resources/src/raw_grammer3.txt')))
-
-    x = compute_first(l)
-    print(x)

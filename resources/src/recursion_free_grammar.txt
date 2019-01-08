@@ -9,7 +9,7 @@
 9. param-list → param param-list-prime
 10. param-list-prime → , param param-list-prime | ε
 11. param → type-specifier ID | type-specifier ID [ ]
-12. compound-stms → { declaration-list statement-list }
+12. compound-stmt → { declaration-list statement-list }
 13. statement-list → statement-list-prime
 14. statement-list-prime → statement statement-list-prime | ε
 15. statement → expression-stmt | compound-stmt | selection-stmt | iteration-stmt | return-stmt | switch-stmt

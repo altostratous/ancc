@@ -1,7 +1,7 @@
 import os
 from copy import copy
 
-from grammer.models import Literal
+from grammar.models import Literal
 
 
 def dfs(first, literal, mark):
@@ -27,7 +27,7 @@ def check_left_recursion(literals):
 
 
 def resolve_left_recursion_simple(literals, bad_literals):
-    from src.grammer.models import Literal
+    from grammar.models import Literal
 
     for bt in bad_literals:
         index = literals.index(bt)
@@ -49,16 +49,75 @@ def rule_to_str(rule):
 def print_to_file(literals, filename):
     with open(filename, "w") as f:
         for i, literal in enumerate(literals):
-            f.write("{}. {} → ".format(i+1, literal.text) + " | ".join([rule_to_str(rule) for rule in literal.rules]) + "\n")
+            f.write("{}. {} → ".format(i + 1, literal.text) + " | ".join(
+                [rule_to_str(rule) for rule in literal.rules]) + "\n")
+
+
+def inner_add(s1, s2, changed):
+    u = s1.union(s2)
+    if s1 != u:
+        return u, True
+    return u, changed
+
+
+def compute_follow(non_terminals, first):
+    epsilon = ()
+    follow = {x: set() for x in non_terminals}
+    continue_computation = True
+    while continue_computation:
+        continue_computation = False
+        for non_terminal in non_terminals:
+            for rule in non_terminal.rules:
+                for i in range(len(rule) - 1):
+                    j = i + 1
+                    first_literal, second_literal = rule[i], rule[j]
+                    if first_literal.is_terminal:
+                        continue
+                    if second_literal.is_terminal:
+                        follow[first_literal], continue_computation = inner_add(
+                            follow[first_literal],
+                            {second_literal},
+                            continue_computation
+                        )
+                        continue
+                    while True:
+                        follow[first_literal], continue_computation = inner_add(
+                            follow[first_literal],
+                            first[second_literal] if not second_literal.is_terminal else {second_literal},
+                            continue_computation
+                        )
+
+                        if second_literal.is_terminal or epsilon not in first[second_literal]:
+                            break
+
+                        assert epsilon in first[second_literal]
+
+                        if j + 1 >= len(rule):
+                            follow[first_literal], continue_computation = inner_add(
+                                follow[first_literal],
+                                follow[non_terminal],
+                                continue_computation
+                            )
+                            break
+
+                        j += 1
+                        second_literal = rule[j]
+                if len(rule) > 0 and not rule[len(rule) - 1].is_terminal:
+                    follow[rule[len(rule) - 1]], continue_computation = inner_add(
+                        follow[rule[len(rule) - 1]],
+                        follow[non_terminal],
+                        continue_computation
+                    )
+
+    for literal in follow.keys():
+        if epsilon in follow[literal]:
+            follow[literal].remove(epsilon)
+
+    return follow
 
 
 def compute_first(non_terminals):
     first = {x: set() for x in non_terminals}
-    def inner_add(s1, s2, changed):
-        u = s1.union(s2)
-        if s1 != u:
-            return u, True
-        return u, changed
 
     while True:
         changed = False

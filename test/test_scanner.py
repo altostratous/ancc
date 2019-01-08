@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from os import path
 
-from grammer.tokens import Token
+from grammar.tokens import Token
 from scanner.scanner import Scanner
 
 from scanner.scanner import RESERVED_WORDS
