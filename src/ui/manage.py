@@ -73,7 +73,7 @@ def generate():
                         '|:----------:|:---:|:----:|\n'
                     ])
 
-                    for non_terminal in first.keys():
+                    for non_terminal in sorted(first.keys()):
                         doc_file.writelines([
                             '|{}|{}|{}|\n'.format(
                                 non_terminal.text,
