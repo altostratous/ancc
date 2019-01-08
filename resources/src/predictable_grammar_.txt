@@ -1,0 +1,43 @@
+program -> declaration-list EOF
+declaration-list -> type-specifier ID declaration declaration-list-prime
+declaration-list-prime -> declaration declaration-list-prime | EPSILON
+declaration -> var-declaration | fun-declaration
+var-declaration -> rest-of-var-declaration
+rest-of-var-declaration -> ; | [ NUM ] ;
+type-specifier -> int | void
+fun-declaration -> ( params ) compound-stmt
+params -> param-list | void
+param-list -> param param-list-prime
+param-list-prime -> , param param-list-prime | EPSILON
+param -> type-specifier ID rest-of-param
+rest-of-param -> EPSILON | [ ]
+compound-stmt -> { declaration-list statement-list }
+statement-list -> statement-list-prime
+statement-list-prime -> statement statement-list-prime | EPSILON
+statement -> expression-stmt | compound-stmt | selection-stmt | iteration-stmt | return-stmt | switch-stmt
+expression-stmt -> expression ; | continue ; | break ; | ;
+selection-stmt -> if ( expression ) statement else statement
+iteration-stmt -> while ( expression ) statement
+return-stmt -> return rest-of-return-stmt
+rest-of-return-stmt -> ; | expression ;
+switch-stmt -> switch ( expression ) { case-stmts default-stmt }
+case-stmts -> case-stmts-prime
+case-stmts-prime -> case-stmt case-stmts-prime | EPSILON
+case-stmt -> case NUM : statement-list
+default-stmt -> default : statement-list | EPSILON
+expression -> var = expression | simple-expression
+var -> rest-of-var
+rest-of-var -> EPSILON | [ expression ]
+simple-expression -> additive-expression rest-of-simple-expression
+rest-of-simple-expression -> RELOP additive-expression | EPSILON
+additive-expression -> term additive-expression-prime
+additive-expression-prime -> addop term additive-expression-prime | EPSILON
+addop -> + | -
+term -> factor term-prime
+term-prime -> * factor term-prime | EPSILON
+factor -> ( expression ) | NUM | ID reference
+reference -> var | call
+call -> ( args )
+args -> arg-list | EPSILON
+arg-list -> expression arg-list-prime
+arg-list-prime -> , expression arg-list-prime | EPSILON

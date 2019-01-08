@@ -128,14 +128,16 @@ def compute_first(non_terminals):
                 if not rule:
                     first[literal], changed = inner_add(first[literal], {()}, changed)
                     first[literal].add(())
-                for sym in rule:
+                for i, sym in enumerate(rule):
                     if sym.is_terminal:
                         first[literal], changed = inner_add(first[literal], {sym}, changed)
                         break
                     else:
-                        first[literal], changed = inner_add(first[literal], first[sym], changed)
+                        first[literal], changed = inner_add(first[literal], first[sym]-{()}, changed)
                         if not () in first[sym]:
                             break
+                if i == len(rule):
+                    first[literal], changed = inner_add(first[literal], {()}, changed)
         if not changed:
             break
     return first
@@ -151,6 +153,7 @@ def compute_first2(expressions, first):
         ans = ans.union(first[exp])
         if not () in first[exp]:
             return ans
+    return ans
 
 
 def requires_factorization(grammar):
@@ -196,6 +199,8 @@ def check_predictability(grammar, first):
                 f1 = compute_first2(non_terminal.rules[i], first)
                 f2 = compute_first2(non_terminal.rules[j], first)
                 if f1.intersection(f2):
+                    f1 = compute_first2(non_terminal.rules[i], first)
+                    f2 = compute_first2(non_terminal.rules[j], first)
                     error = True
                     print("Problem found; intersecting firsts between rules: {} → {} and {} → {}".format(non_terminal, rule_to_str(non_terminal.rules[i]), non_terminal, rule_to_str(non_terminal.rules[j])))
     if not error:
