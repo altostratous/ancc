@@ -77,8 +77,12 @@ def generate():
                         doc_file.writelines([
                             '|{}|{}|{}|\n'.format(
                                 non_terminal.text,
-                                ' '.join(['ε' if literal == () else literal.text for literal in first[non_terminal]]),
-                                ' '.join(['ε' if literal == () else literal.text for literal in follow[non_terminal]])
+                                ' '.join(sorted([
+                                    'ε' if literal == () else literal.text for literal in first[non_terminal]
+                                ])),
+                                ' '.join(sorted([
+                                    'ε' if literal == () else literal.text for literal in follow[non_terminal]
+                                ]))
                             ),
                         ])
 
