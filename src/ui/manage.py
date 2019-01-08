@@ -6,7 +6,7 @@ from os import path
 from grammar.models import Literal
 
 BASE_DIR = path.dirname(os.path.dirname(os.path.dirname(__file__)))
-print(BASE_DIR)
+
 
 def generate():
     from grammar.utils import check_left_recursion, resolve_left_recursion_simple, print_to_file, factorize, \
@@ -38,7 +38,7 @@ def generate():
             with open(path.join(BASE_DIR, 'resources/src/recursion_free_grammar.txt')) as recursion_free_grammar_file:
                 with open(path.join(BASE_DIR, 'resources/src/predictable_grammar.txt')) as predictable_grammar_file:
                     doc_file.writelines([
-                        '# ANCC Automatically Generated Documentatio\n',
+                        '# ANCC Automatically Generated Documentation\n',
                         '## Raw Grammar\n',
                         '```\n',
                     ])

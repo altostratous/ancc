@@ -1,4 +1,4 @@
-# ANCC Automatically Generated Documentatio
+# ANCC Automatically Generated Documentation
 ## Raw Grammar
 ```
 1. program → declaration-list EOF
@@ -120,45 +120,45 @@
 ## First and Follow
 |Non-terminal|First|Follow|
 |:----------:|:---:|:----:|
-|declaration|int void|if int while ID ; void } return switch NUM { EOF continue ( break|
-|var-declaration|int void|if int while ID ; void } return switch NUM { EOF continue ( break|
-|declaration-list-prime|int ε void|switch NUM if { break while ID EOF continue ( ; return }|
-|compound-stmt|{|if else int while ID ; void } return switch NUM case { EOF continue ( default break|
-|fun-declaration|int void|if int while ID ; void } return switch NUM { EOF continue ( break|
-|param-list-prime|ε ,|)|
-|statement-list|if while ID ; return switch NUM ε { continue ( break|} default case|
-|arg-list-prime|ε ,|)|
-|program|int void||
-|term-prime|* ε|) + RELOP ] , - ;|
-|statement-list-prime|switch NUM if { while ε ID continue ( ; return break|} default case|
-|statement|switch NUM if ID while { continue ( ; return break|if else while ID ; return } switch NUM case { continue ( default break|
-|factor|ID NUM (|* ) + RELOP ] , - ;|
-|param|int void|) ,|
-|type-specifier|int void|ID|
-|additive-expression|NUM ID (|) RELOP ] , ;|
-|rest-of-var|ε [|* ) + RELOP ] = , - ;|
-|simple-expression|NUM ID (|) ] , ;|
-|rest-of-simple-expression|ε RELOP|) ] , ;|
-|rest-of-return-stmt|NUM ID ( ;|if else while ID ; return } switch NUM case { continue ( default break|
-|expression-stmt|NUM ID continue ( ; break|if else while ID ; return } switch NUM case { continue ( default break|
-|additive-expression-prime|- ε +|) RELOP ] ; ,|
-|case-stmts|ε case|default }|
-|selection-stmt|if|if else while ID ; return } switch NUM case { continue ( default break|
-|args|ID ( NUM ε|)|
-|addop|- +|NUM ID (|
+|selection-stmt|if|{ continue ( case break default if else while ID ; return } switch NUM|
+|case-stmt|case|case } default|
+|case-stmts|ε case|} default|
+|iteration-stmt|while|{ continue ( case break default if else while ID ; return } switch NUM|
+|param-list|void int|)|
+|term|ID ( NUM|+ RELOP ] , - ; )|
+|return-stmt|return|{ continue ( case break default if else while ID ; return } switch NUM|
+|rest-of-var-declaration|; [|return { EOF continue ( break if int while ID ; void } switch NUM|
+|param-list-prime|, ε|)|
+|switch-stmt|switch|{ continue ( case break default if else while ID ; return } switch NUM|
+|declaration-list|void int|if } while { EOF continue ( ID return break ; switch NUM|
+|expression|ID ( NUM|] ; , )|
+|rest-of-param|ε [|, )|
+|declaration-list-prime|void ε int|if } while { EOF continue ( ID return break ; switch NUM|
+|arg-list|ID ( NUM|)|
+|rest-of-simple-expression|RELOP ε|] , ; )|
+|call|ID|+ RELOP ] , - ; * )|
+|addop|+ -|ID ( NUM|
+|params|void int|)|
+|declaration|void int|return { EOF continue ( break if int while ID ; void } switch NUM|
+|var-declaration|void int|return { EOF continue ( break if int while ID ; void } switch NUM|
+|compound-stmt|{|return { EOF continue ( case break default if else int while ID ; void } switch NUM|
+|fun-declaration|void int|return { EOF continue ( break if int while ID ; void } switch NUM|
+|var|ID|+ RELOP ] = , - ; * )|
+|statement-list|{ continue ( break if while ε ID ; return switch NUM|} default case|
+|arg-list-prime|, ε|)|
+|program|void int||
+|term-prime|ε *|+ RELOP ] , - ; )|
+|simple-expression|ID ( NUM|] , ; )|
+|statement|if while { ID continue ( ; return break switch NUM|{ continue ( case break default if else while ID ; return } switch NUM|
 |default-stmt|ε default|}|
-|iteration-stmt|while|if else while ID ; return } switch NUM case { continue ( default break|
-|param-list|int void|)|
-|case-stmt|case|case default }|
-|return-stmt|return|if else while ID ; return } switch NUM case { continue ( default break|
-|arg-list|NUM ID (|)|
-|rest-of-var-declaration|; [|if int while ID ; void } return switch NUM { EOF continue ( break|
-|switch-stmt|switch|if else while ID ; return } switch NUM case { continue ( default break|
-|var|ID|* ) + RELOP ] = , - ;|
-|declaration-list|int void|switch NUM if { break while ID EOF continue ( ; return }|
-|expression|NUM ID (|) ] ; ,|
-|rest-of-param|ε [|) ,|
-|term|NUM ID (|) + RELOP ] , - ;|
-|case-stmts-prime|ε case|default }|
-|call|ID|* ) RELOP + ] , - ;|
-|params|int void|)|
+|param|void int|, )|
+|type-specifier|void int|ID|
+|additive-expression|ID ( NUM|RELOP ] , ; )|
+|rest-of-var|ε [|+ RELOP ] = , - ; * )|
+|factor|NUM ID (|+ RELOP ] , - ; * )|
+|additive-expression-prime|+ ε -|RELOP ] ; , )|
+|statement-list-prime|if while ε { ID continue ( ; return break switch NUM|} default case|
+|rest-of-return-stmt|ID ( ; NUM|{ continue ( case break default if else while ID ; return } switch NUM|
+|case-stmts-prime|ε case|} default|
+|expression-stmt|ID continue ( ; break NUM|{ continue ( case break default if else while ID ; return } switch NUM|
+|args|NUM ε ID (|)|
