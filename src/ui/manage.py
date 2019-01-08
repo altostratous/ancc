@@ -12,7 +12,9 @@ def generate():
     from grammar.utils import check_left_recursion, resolve_left_recursion_simple, print_to_file, factorize, \
         compute_first, requires_factorization, compute_follow
 
-    new_grammar = current_grammar = Literal.parse(open(os.path.join(BASE_DIR, 'resources/src/raw_grammar.txt')))
+    with open(os.path.join(BASE_DIR, 'resources/src/predictable_grammar.txt')) as file:
+        new_grammar = current_grammar = Literal.parse(file)
+
     while True:
         bad_literals = check_left_recursion(current_grammar)
         if not bad_literals:
