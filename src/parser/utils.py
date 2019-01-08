@@ -1,3 +1,6 @@
+from parser.models import State
+
+
 def print_dfa(q):
     i = 0
     while i < len(q):
@@ -14,3 +17,27 @@ def print_diagram(state_machines):
         print()
         print(literal)
         print_dfa([state])
+
+
+def create_transition_diagram(literals):
+    state_machines = {}
+    start_state = None
+
+    for non_terminal in literals:
+        start_state_1 = State(non_terminal)
+        for rule in non_terminal.rules:
+            current_state = start_state_1
+            if not rule:
+                current_state.nexts += [((), new_state)]
+                new_state.is_success = True
+                continue
+            for lit in rule:
+                new_state = State(non_terminal)
+                current_state.nexts += [(lit, new_state)]
+                current_state = new_state
+            current_state.is_success = True
+        if not state_machines:
+            start_state = start_state_1
+        state_machines[non_terminal] = start_state_1
+
+    return start_state, state_machines
