@@ -4,6 +4,7 @@ import subprocess
 from os import path
 
 from grammar.models import Literal
+from grammar.utils import check_predictability
 
 BASE_DIR = path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
@@ -34,6 +35,8 @@ def generate():
     first = compute_first(current_grammar)
     follow = compute_follow(current_grammar, first)
     print("Computed first and follow sets.")
+
+    check_predictability(current_grammar, first)
 
     with open(path.join(BASE_DIR, 'doc/README.md'), 'w') as doc_file:
         with open(path.join(BASE_DIR, 'resources/src/raw_grammar.txt')) as raw_grammar_file:
