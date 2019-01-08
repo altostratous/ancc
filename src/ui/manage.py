@@ -1,6 +1,7 @@
 import os
 import sys
 import subprocess
+from collections import OrderedDict
 from os import path
 
 from grammar.models import Literal
@@ -32,8 +33,8 @@ def generate():
     print_to_file(current_grammar, os.path.join(BASE_DIR, 'resources/src/predictable_grammar.txt'))
     print("Now grammar is predictable.")
 
-    first = compute_first(current_grammar)
-    follow = compute_follow(current_grammar, first)
+    first = OrderedDict(compute_first(current_grammar))
+    follow = OrderedDict(compute_follow(current_grammar, first))
     print("Computed first and follow sets.")
 
     check_predictability(current_grammar, first)
