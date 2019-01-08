@@ -69,50 +69,23 @@ def compute_follow(non_terminals, first):
         continue_computation = False
         for non_terminal in non_terminals:
             for rule in non_terminal.rules:
-                for i in range(len(rule) - 1):
-                    j = i + 1
-                    first_literal, second_literal = rule[i], rule[j]
+                for i in range(len(rule)):
+                    first_literal = rule[i]
                     if first_literal.is_terminal:
                         continue
-                    if second_literal.is_terminal:
-                        follow[first_literal], continue_computation = inner_add(
-                            follow[first_literal],
-                            {second_literal},
-                            continue_computation
-                        )
-                        continue
-                    while True:
-                        follow[first_literal], continue_computation = inner_add(
-                            follow[first_literal],
-                            first[second_literal] if not second_literal.is_terminal else {second_literal},
-                            continue_computation
-                        )
-
-                        if second_literal.is_terminal or epsilon not in first[second_literal]:
-                            break
-
-                        assert epsilon in first[second_literal]
-
-                        if j + 1 >= len(rule):
-                            follow[first_literal], continue_computation = inner_add(
-                                follow[first_literal],
-                                follow[non_terminal],
-                                continue_computation
-                            )
-                            break
-
-                        j += 1
-                        second_literal = rule[j]
-                if len(rule) > 0 and not rule[len(rule) - 1].is_terminal:
-                    follow[rule[len(rule) - 1]], continue_computation = inner_add(
-                        follow[rule[len(rule) - 1]],
-                        follow[non_terminal],
+                    first2 = compute_first2(rule[i+1:], first)
+                    follow[first_literal], continue_computation = inner_add(
+                        follow[first_literal], first2 - {()},
                         continue_computation
                     )
+                    if () in first2:
+                        follow[first_literal], continue_computation = inner_add(
+                            follow[first_literal], follow[non_terminal],
+                            continue_computation
+                        )
 
     for literal in follow.keys():
-        if epsilon in follow[literal]:
-            follow[literal].remove(epsilon)
+        assert epsilon not in follow[literal]
 
     return follow
 
@@ -187,11 +160,17 @@ def factorize(grammar):
     return new_grammar
 
 
-def check_predictability(grammar, first):
+def check_predictability(grammar, first, follow):
     error = False
     for non_terminal in grammar:
         for i in range(len(non_terminal.rules)):
-            if not non_terminal.rules[i]:
+            if not non_terminal.rules[i]:  # ε transition
+                for other_rule in non_terminal.rules:
+                    if not other_rule:
+                        continue
+                    if follow[non_terminal].intersection(compute_first2(other_rule, first)):
+                        error = True
+                        print("Problem found; intersecting first/follow between rules: {} → {} and {} → {}".format(non_terminal, rule_to_str(non_terminal.rules[i]), non_terminal, rule_to_str(other_rule)))
                 continue
             for j in range(i+1, len(non_terminal.rules)):
                 if not non_terminal.rules[j]:
@@ -199,8 +178,6 @@ def check_predictability(grammar, first):
                 f1 = compute_first2(non_terminal.rules[i], first)
                 f2 = compute_first2(non_terminal.rules[j], first)
                 if f1.intersection(f2):
-                    f1 = compute_first2(non_terminal.rules[i], first)
-                    f2 = compute_first2(non_terminal.rules[j], first)
                     error = True
                     print("Problem found; intersecting firsts between rules: {} → {} and {} → {}".format(non_terminal, rule_to_str(non_terminal.rules[i]), non_terminal, rule_to_str(non_terminal.rules[j])))
     if not error:

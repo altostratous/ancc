@@ -38,7 +38,7 @@ def generate():
     first = OrderedDict(compute_first(current_grammar))
     follow = OrderedDict(compute_follow(current_grammar, first))
     print("Computed first and follow sets.")
-    check_predictability(current_grammar, first)
+    check_predictability(current_grammar, first, follow)
 
     with open(path.join(BASE_DIR, 'doc/README.md'), 'w') as doc_file:
         with open(path.join(BASE_DIR, 'resources/src/raw_grammar.txt')) as raw_grammar_file:
