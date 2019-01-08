@@ -60,6 +60,7 @@ def inner_add(s1, s2, changed):
     return u, changed
 
 
+# we used http://hackingoff.com/compilers/predict-first-follow-set to verify our methods
 def compute_follow(non_terminals, first):
     epsilon = ()
     follow = {x: set() for x in non_terminals}
@@ -116,6 +117,7 @@ def compute_follow(non_terminals, first):
     return follow
 
 
+# we used http://hackingoff.com/compilers/predict-first-follow-set to verify our methods
 def compute_first(non_terminals):
     first = {x: set() for x in non_terminals}
 

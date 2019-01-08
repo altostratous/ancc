@@ -4,7 +4,7 @@ from grammar.tokens import Token
 
 RESERVED_WORDS = ['int', 'void', 'continue', 'break', 'if', 'else', 'while', 'return', 'switch', 'case', 'default']
 
-single_characters = [';', ',', '[', ']', '{', '}', '(', ')', ':', '*']
+SINGLE_CHARACTERS = [';', ',', '[', ']', '{', '}', '(', ')', ':', '*']
 
 
 class Scanner:
@@ -51,7 +51,7 @@ class Scanner:
             else:
                 break
 
-        if next_char in single_characters:
+        if next_char in SINGLE_CHARACTERS:
             return self.return_token(next_char, None)
         if next_char == '<':
             return self.return_token('RELOP', 'L')
