@@ -1,0 +1,6 @@
+1. s → s-prime EOF
+2. s-prime → a b c d
+3. b → ε
+4. d → ε
+5. c → f
+6. a → c

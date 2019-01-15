@@ -118,14 +118,14 @@ def compute_first(non_terminals):
 
 def compute_first2(expressions, first):
     if not expressions:
-        return set(())
+        return {()}
     ans = set()
     for exp in expressions:
         if exp.is_terminal:
             return ans.union({exp})
         ans = ans.union(first[exp])
         if not () in first[exp]:
-            return ans
+            return ans - {()}
     return ans
 
 
