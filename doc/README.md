@@ -172,9 +172,9 @@
 |arg-list-prime|, ε|)|
 |args|( ID NUM id-expression ε|)|
 |call|(|* + - RELOP|
-|case-stmt|case|( ; ID NUM break case continue default else id-expression if return switch while { }|
-|case-stmts|case|( ; ID NUM break case continue default else id-expression if return switch while { }|
-|case-stmts-prime|case ε|( ; ID NUM break case continue default else id-expression if return switch while { }|
+|case-stmt|case|case default }|
+|case-stmts|case|default }|
+|case-stmts-prime|case ε|default }|
 |compound-stmt|{|( ; EOF ID NUM break case continue default else id-expression if int return switch void while { }|
 |declaration|( ; [|( ; EOF ID NUM break continue id-expression if int return switch void while {|
 |declaration-list|int void|( ; EOF ID NUM break continue id-expression if return switch while {|
@@ -205,8 +205,8 @@
 |selection-stmt|if|( ; ID NUM break case continue default else id-expression if return switch while { }|
 |simple-expression|( NUM|) , ; ]|
 |statement|( ; ID NUM break continue id-expression if return switch while {|( ; ID NUM break case continue default else id-expression if return switch while { }|
-|statement-list|( ; ID NUM break continue id-expression if return switch while {|( ; ID NUM break case continue default else id-expression if return switch while { }|
-|statement-list-prime|( ; ID NUM break continue id-expression if return switch while { ε|( ; ID NUM break case continue default else id-expression if return switch while { }|
+|statement-list|( ; ID NUM break continue id-expression if return switch while {|case default }|
+|statement-list-prime|( ; ID NUM break continue id-expression if return switch while { ε|case default }|
 |switch-stmt|switch|( ; ID NUM break case continue default else id-expression if return switch while { }|
 |term|( NUM|) + , - ; RELOP ]|
 |term-prime|* ε|) + , - ; RELOP ]|

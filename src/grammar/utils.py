@@ -122,7 +122,7 @@ def compute_first_of_expression(expressions, first):
     ans = set()
     for exp in expressions:
         if exp.is_terminal:
-            return ans.union({exp})
+            return ans.union({exp}) - {()}
         ans = ans.union(first[exp])
         if not () in first[exp]:
             return ans - {()}
