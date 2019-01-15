@@ -1,13 +1,12 @@
 1. program → declaration-list EOF
-2. declaration-list → type-specifier ID declaration declaration-list-prime
+2. declaration-list → declaration-list-prime
 3. declaration-list-prime → declaration declaration-list-prime | ε
 4. declaration → var-declaration | fun-declaration
-5. var-declaration → rest-of-var-declaration
+5. var-declaration → type-specifier ID rest-of-var-declaration
 6. rest-of-var-declaration → ; | [ NUM ] ;
 7. type-specifier → int | void
-8. fun-declaration → ( params ) compound-stmt
-9. params → int ID param-list | void param2
-9. param2 → ID param-list | ε
+8. fun-declaration → type-specifier ID ( params ) compound-stmt
+9. params → param-list | void
 10. param-list → param param-list-prime
 11. param-list-prime → , param param-list-prime | ε
 12. param → type-specifier ID rest-of-param
@@ -27,7 +26,7 @@
 26. case-stmt → case NUM : statement-list
 27. default-stmt → default : statement-list | ε
 28. expression → var = expression | simple-expression
-29. var → rest-of-var
+29. var → ID rest-of-var
 30. rest-of-var → ε | [ expression ]
 31. simple-expression → additive-expression rest-of-simple-expression
 32. rest-of-simple-expression → RELOP additive-expression | ε
@@ -36,9 +35,8 @@
 35. addop → + | -
 36. term → factor term-prime
 37. term-prime → * factor term-prime | ε
-38. factor → ( expression ) | NUM | ID reference
-38. reference → var | call
-39. call → ( args )
+38. factor → ( expression ) | var | call | NUM
+39. call → ID ( args )
 40. args → arg-list | ε
 41. arg-list → expression arg-list-prime
 42. arg-list-prime → , expression arg-list-prime | ε

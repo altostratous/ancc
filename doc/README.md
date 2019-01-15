@@ -2,7 +2,7 @@
 ## Raw Grammar
 ```
 1. program → declaration-list EOF
-2. declaration-list → declaration-list declaration | declaration
+2. declaration-list → declaration-list declaration | ε
 3. declaration → var-declaration | fun-declaration
 4. var-declaration → type-specifier ID ; | type-specifier ID [ NUM ] ;
 5. type-specifier → int | void
@@ -35,7 +35,7 @@
 ## Recursion Free Grammar
 ```
 1. program → declaration-list EOF
-2. declaration-list → declaration declaration-list-prime
+2. declaration-list → declaration-list-prime
 3. declaration-list-prime → declaration declaration-list-prime | ε
 4. declaration → var-declaration | fun-declaration
 5. var-declaration → type-specifier ID ; | type-specifier ID [ NUM ] ;
@@ -75,7 +75,7 @@
 ## Partially Factored Grammar
 ```
 1. program → declaration-list EOF
-2. declaration-list → declaration declaration-list-prime
+2. declaration-list → declaration-list-prime
 3. declaration-list-prime → declaration declaration-list-prime | ε
 4. declaration → var-declaration | fun-declaration
 5. var-declaration → type-specifier ID rest-of-var-declaration
@@ -120,7 +120,7 @@
 ## Predictable Grammar
 ```
 1. program → declaration-list EOF
-2. declaration-list → declaration declaration-list-prime
+2. declaration-list → declaration-list-prime
 3. declaration-list-prime → declaration declaration-list-prime | ε
 4. declaration → var-declaration | fun-declaration
 5. var-declaration → type-specifier ID rest-of-var-declaration
@@ -168,44 +168,42 @@
 |additive-expression|( ID NUM|RELOP|
 |additive-expression-prime|+ - ε||
 |addop|+ -|( ID NUM|
-|arg-list|( ID NUM [||
+|arg-list|( ID NUM||
 |arg-list-prime|, ε||
-|args|( ID NUM [ ε|)|
-|call|(||
+|args|( ID NUM ε|)|
+|call|ID||
 |case-stmt|case|case|
 |case-stmts|case|default }|
 |case-stmts-prime|case ε||
 |compound-stmt|{||
-|declaration|( ; [|( ; EOF ID NUM [ break continue if return switch while {|
-|declaration-list|int void|( ; EOF ID NUM [ break continue if return switch while {|
-|declaration-list-prime|( ; [ ε||
+|declaration|int void|int void|
+|declaration-list|int void|( ; EOF ID NUM break continue if return switch while {|
+|declaration-list-prime|int void ε||
 |default-stmt|default ε|}|
-|expression|( ID NUM [|) , ; ]|
-|expression-stmt|( ; ID NUM [ break continue||
+|expression|( ID NUM|) , ; ]|
+|expression-stmt|( ; ID NUM break continue||
 |factor|( ID NUM|* + - RELOP|
-|fun-declaration|(||
+|fun-declaration|int void||
 |iteration-stmt|while||
 |param|int void|,|
 |param-list|int void||
 |param-list-prime|, ε||
-|param2|ID ε||
 |params|int void|)|
 |program|int void||
-|reference|( [||
 |rest-of-param|[ ε||
-|rest-of-return-stmt|( ; ID NUM [||
+|rest-of-return-stmt|( ; ID NUM||
 |rest-of-simple-expression|RELOP ε||
 |rest-of-var|[ ε||
 |rest-of-var-declaration|; [||
 |return-stmt|return||
 |selection-stmt|if||
 |simple-expression|( ID NUM||
-|statement|( ; ID NUM [ break continue if return switch while {|( ; ID NUM [ break continue else if return switch while {|
-|statement-list|( ; ID NUM [ break continue if return switch while {|}|
-|statement-list-prime|( ; ID NUM [ break continue if return switch while { ε||
+|statement|( ; ID NUM break continue if return switch while {|( ; ID NUM break continue else if return switch while {|
+|statement-list|( ; ID NUM break continue if return switch while {|}|
+|statement-list-prime|( ; ID NUM break continue if return switch while { ε||
 |switch-stmt|switch||
 |term|( ID NUM|+ - RELOP|
 |term-prime|* ε||
 |type-specifier|int void|ID|
-|var|[|=|
-|var-declaration|; [||
+|var|ID|=|
+|var-declaration|int void||
