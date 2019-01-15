@@ -12,7 +12,7 @@ BASE_DIR = path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 def generate():
     from grammar.utils import check_left_recursion, resolve_left_recursion_simple, print_to_file, factorize, \
-        compute_first, requires_factorization, compute_follow
+        compute_non_terminals_firsts, requires_factorization, compute_non_terminals_follows
 
     with open(os.path.join(BASE_DIR, 'resources/src/raw_grammar.txt')) as file:
         new_grammar = current_grammar = Literal.parse(file)
@@ -35,8 +35,8 @@ def generate():
     with open(os.path.join(BASE_DIR, 'resources/src/predictable_grammar.txt')) as file:
         current_grammar = Literal.parse(file)
 
-    first = OrderedDict(compute_first(current_grammar))
-    follow = OrderedDict(compute_follow(current_grammar, first))
+    first = OrderedDict(compute_non_terminals_firsts(current_grammar))
+    follow = OrderedDict(compute_non_terminals_follows(current_grammar, first))
     print("Computed first and follow sets.")
     check_predictability(current_grammar, first, follow)
 

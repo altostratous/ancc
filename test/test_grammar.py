@@ -2,13 +2,14 @@ import os
 from unittest import TestCase
 
 from grammar.models import Literal
-from grammar.utils import compute_first, compute_follow
+from grammar.utils import compute_non_terminals_firsts, compute_non_terminals_follows
 from ui.manage import BASE_DIR
 
 
 class TestUtilities(TestCase):
     def test_first_follow(self):
-        non_terminals = Literal.parse(open(os.path.join(BASE_DIR, 'resources', 'test', 'grammar', 'complex.txt')))
+        opened_file = open(os.path.join(BASE_DIR, 'resources', 'test', 'grammar', 'complex.txt'))
+        non_terminals = Literal.parse(opened_file)
         literals_map = {}
         for non_terminal in non_terminals:
             literals_map[non_terminal.text] = non_terminal
@@ -16,8 +17,8 @@ class TestUtilities(TestCase):
                 for literal in rule:
                     literals_map[literal.text] = literal
 
-        first = compute_first(non_terminals)
-        follow = compute_follow(non_terminals, first)
+        first = compute_non_terminals_firsts(non_terminals)
+        follow = compute_non_terminals_follows(non_terminals, first)
 
         self.assertDictEqual(dict(first), {
             literals_map['s']: {literals_map['f']},
@@ -36,3 +37,5 @@ class TestUtilities(TestCase):
             literals_map['c']: {literals_map['EOF'], literals_map['f']},
             literals_map['d']: {literals_map['EOF']},
         })
+
+        opened_file.close()

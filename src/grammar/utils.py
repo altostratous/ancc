@@ -61,7 +61,7 @@ def inner_add(s1, s2, changed):
 
 
 # we used http://hackingoff.com/compilers/predict-first-follow-set to verify our methods
-def compute_follow(non_terminals, first):
+def compute_non_terminals_follows(non_terminals, first):
     epsilon = ()
     follow = {x: set() for x in non_terminals}
     continue_computation = True
@@ -73,7 +73,7 @@ def compute_follow(non_terminals, first):
                     first_literal = rule[i]
                     if first_literal.is_terminal:
                         continue
-                    first2 = compute_first2(rule[i+1:], first)
+                    first2 = compute_first_of_expression(rule[i + 1:], first)
                     follow[first_literal], continue_computation = inner_add(
                         follow[first_literal], first2 - {()},
                         continue_computation
@@ -91,7 +91,7 @@ def compute_follow(non_terminals, first):
 
 
 # we used http://hackingoff.com/compilers/predict-first-follow-set to verify our methods
-def compute_first(non_terminals):
+def compute_non_terminals_firsts(non_terminals):
     first = {x: set() for x in non_terminals}
 
     while True:
@@ -116,7 +116,7 @@ def compute_first(non_terminals):
     return first
 
 
-def compute_first2(expressions, first):
+def compute_first_of_expression(expressions, first):
     if not expressions:
         return {()}
     ans = set()
@@ -168,17 +168,26 @@ def check_predictability(grammar, first, follow):
                 for other_rule in non_terminal.rules:
                     if not other_rule:
                         continue
-                    if follow[non_terminal].intersection(compute_first2(other_rule, first)):
+                    if follow[non_terminal].intersection(compute_first_of_expression(other_rule, first)):
                         error = True
                         print("Problem found; intersecting first/follow between rules: {} → {} and {} → {}".format(non_terminal, rule_to_str(non_terminal.rules[i]), non_terminal, rule_to_str(other_rule)))
                 continue
             for j in range(i+1, len(non_terminal.rules)):
                 if not non_terminal.rules[j]:
                     continue
-                f1 = compute_first2(non_terminal.rules[i], first)
-                f2 = compute_first2(non_terminal.rules[j], first)
+                f1 = compute_first_of_expression(non_terminal.rules[i], first)
+                f2 = compute_first_of_expression(non_terminal.rules[j], first)
                 if f1.intersection(f2):
                     error = True
                     print("Problem found; intersecting firsts between rules: {} → {} and {} → {}".format(non_terminal, rule_to_str(non_terminal.rules[i]), non_terminal, rule_to_str(non_terminal.rules[j])))
     if not error:
         print("All ok and predictable")
+    return not error
+
+
+def get_terminals(grammar):
+    for non_terminal in grammar:
+        for rule in non_terminal.rules:
+            for literal in rule:
+                if literal.is_terminal:
+                    yield literal

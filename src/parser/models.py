@@ -1,4 +1,4 @@
-from grammar.utils import compute_first, compute_follow
+from grammar.utils import compute_non_terminals_firsts, compute_non_terminals_follows
 
 
 class State:
@@ -31,8 +31,8 @@ class Parser:
         self._lookahead = None
         self.stack = [start_state]
         non_terminals = list(state_machines.keys())
-        self.first = compute_first(non_terminals)
-        self.follow = compute_follow(non_terminals, self.first)
+        self.first = compute_non_terminals_firsts(non_terminals)
+        self.follow = compute_non_terminals_follows(non_terminals, self.first)
 
     @property
     def lookahead(self):
