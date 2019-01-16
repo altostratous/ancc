@@ -28,22 +28,28 @@
 26. case-stmt → case NUM : statement-list
 27. default-stmt → default : statement-list | ε
 28. expression → simple-expression | ID id-expression
-28. id-expression → var = expression | id-simple-expression
+28. id-expression → var = expression | id-simple-expression | [ bracket-id-expression
+28. bracket-id-expression → expression ] = expression | bracket-id-simple-expression
 29. var → rest-of-var
-30. rest-of-var → ε | [ expression ]
+30. rest-of-var → ε
 31. simple-expression → additive-expression rest-of-simple-expression
 31. id-simple-expression → id-additive-expression rest-of-simple-expression
+31. bracket-id-simple-expression → bracket-id-additive-expression rest-of-simple-expression
 32. rest-of-simple-expression → RELOP additive-expression | ε
 33. additive-expression → term additive-expression-prime
 33. id-additive-expression → id-term additive-expression-prime
+33. bracket-id-additive-expression → bracket-id-term additive-expression-prime
 34. additive-expression-prime → addop term additive-expression-prime | ε
 35. addop → + | -
 36. term → factor term-prime
 36. id-term → id-factor term-prime
+36. bracket-id-term → bracket-id-factor term-prime
 37. term-prime → * factor term-prime | ε
 38. factor → ( expression ) | NUM
 38. id-factor → reference
+38. bracket-id-factor → bracket-reference
 38. reference → var | call
+38. bracket-reference → bracket-var
 39. call → ( args )
 40. args → arg-list | ε
 41. arg-list → expression arg-list-prime

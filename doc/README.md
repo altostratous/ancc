@@ -171,6 +171,12 @@
 |arg-list|( ID NUM|)|
 |arg-list-prime|, ε|)|
 |args|( ID NUM ε|)|
+|bracket-id-additive-expression|bracket-var|) , ; RELOP ]|
+|bracket-id-expression|( ID NUM bracket-var|) , ; ]|
+|bracket-id-factor|bracket-var|) * + , - ; RELOP ]|
+|bracket-id-simple-expression|bracket-var|) , ; ]|
+|bracket-id-term|bracket-var|) + , - ; RELOP ]|
+|bracket-reference|bracket-var|) * + , - ; RELOP ]|
 |call|(|) * + , - ; RELOP ]|
 |case-stmt|case|case default }|
 |case-stmts|case ε|default }|
@@ -184,22 +190,22 @@
 |expression-stmt|( ; ID NUM break continue|( ; ID NUM break case continue default else if return switch while { }|
 |factor|( NUM|) * + , - ; RELOP ]|
 |fun-declaration|(|( ; EOF ID NUM break continue if int return switch void while { }|
-|id-additive-expression|( * + - [ ε|) , ; RELOP ]|
+|id-additive-expression|( * + - ε|) , ; RELOP ]|
 |id-expression|( * + - = RELOP [ ε|) , ; ]|
-|id-factor|( [ ε|) * + , - ; RELOP ]|
-|id-simple-expression|( * + - RELOP [ ε|) , ; ]|
-|id-term|( * [ ε|) + , - ; RELOP ]|
+|id-factor|( ε|) * + , - ; RELOP ]|
+|id-simple-expression|( * + - RELOP ε|) , ; ]|
+|id-term|( * ε|) + , - ; RELOP ]|
 |int-starting-param-list|int|)|
 |iteration-stmt|while|( ; ID NUM break case continue default else if return switch while { }|
 |param|int void|) ,|
 |param-list-prime|, ε|)|
 |params|int void|)|
 |program|EOF int void||
-|reference|( [ ε|) * + , - ; RELOP ]|
+|reference|( ε|) * + , - ; RELOP ]|
 |rest-of-param|[ ε|) ,|
 |rest-of-return-stmt|( ; ID NUM|( ; ID NUM break case continue default else if return switch while { }|
 |rest-of-simple-expression|RELOP ε|) , ; ]|
-|rest-of-var|[ ε|) * + , - ; = RELOP ]|
+|rest-of-var|ε|) * + , - ; = RELOP ]|
 |rest-of-var-declaration|; [|( ; EOF ID NUM break continue if int return switch void while { }|
 |rest-of-void-starting-param-list|ID ε|)|
 |return-stmt|return|( ; ID NUM break case continue default else if return switch while { }|
@@ -212,6 +218,6 @@
 |term|( NUM|) + , - ; RELOP ]|
 |term-prime|* ε|) + , - ; RELOP ]|
 |type-specifier|int void|ID|
-|var|[ ε|) * + , - ; = RELOP ]|
+|var|ε|) * + , - ; = RELOP ]|
 |var-declaration|; [|( ; EOF ID NUM break continue if int return switch void while { }|
 |void-starting-param-list|void|)|
