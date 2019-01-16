@@ -98,20 +98,21 @@ def compute_non_terminals_firsts(non_terminals):
         changed = False
         for literal in non_terminals:
             for rule in literal.rules:
-                if literal.text == 'declaration-list':
-                    print("Darling")
                 if not rule:
                     first[literal], changed = inner_add(first[literal], {()}, changed)
                     first[literal].add(())
-                for i, sym in enumerate(rule):
+                must_include_epsilon = True
+                for sym in rule:
                     if sym.is_terminal:
                         first[literal], changed = inner_add(first[literal], {sym}, changed)
+                        must_include_epsilon = False
                         break
                     else:
                         first[literal], changed = inner_add(first[literal], first[sym]-{()}, changed)
                         if not () in first[sym]:
+                            must_include_epsilon = False
                             break
-                if i == len(rule) - 1:
+                if must_include_epsilon:
                     first[literal], changed = inner_add(first[literal], {()}, changed)
         if not changed:
             break
@@ -172,7 +173,9 @@ def check_predictability(grammar, first, follow):
                         continue
                     if follow[non_terminal].intersection(compute_first_of_expression(other_rule, first)):
                         error = True
-                        print("Problem found; intersecting first/follow between rules: {} → {} and {} → {}".format(non_terminal, rule_to_str(non_terminal.rules[i]), non_terminal, rule_to_str(other_rule)))
+                        print("Problem found; intersecting {} first/follow between rules: {} → {} and {} → {}".format(
+                            follow[non_terminal].intersection(compute_first_of_expression(other_rule, first)),
+                            non_terminal, rule_to_str(non_terminal.rules[i]), non_terminal, rule_to_str(other_rule)))
                 continue
             for j in range(i+1, len(non_terminal.rules)):
                 if not non_terminal.rules[j]:
@@ -181,7 +184,9 @@ def check_predictability(grammar, first, follow):
                 f2 = compute_first_of_expression(non_terminal.rules[j], first)
                 if f1.intersection(f2):
                     error = True
-                    print("Problem found; intersecting firsts between rules: {} → {} and {} → {}".format(non_terminal, rule_to_str(non_terminal.rules[i]), non_terminal, rule_to_str(non_terminal.rules[j])))
+                    print("Problem found; intersecting {} firsts between rules: {} → {} and {} → {}".format(
+                        f1.intersection(f2),
+                        non_terminal, rule_to_str(non_terminal.rules[i]), non_terminal, rule_to_str(non_terminal.rules[j])))
     if not error:
         print("All ok and predictable")
     return not error

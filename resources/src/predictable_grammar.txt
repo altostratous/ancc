@@ -27,7 +27,8 @@
 25. case-stmts-prime → case-stmt case-stmts-prime | ε
 26. case-stmt → case NUM : statement-list
 27. default-stmt → default : statement-list | ε
-28. expression → ID var = expression | simple-expression | id-expression
+28. expression → simple-expression | ID id-expression
+28. id-expression → var = expression | id-simple-expression
 29. var → rest-of-var
 30. rest-of-var → ε | [ expression ]
 31. simple-expression → additive-expression rest-of-simple-expression
@@ -41,7 +42,7 @@
 36. id-term → id-factor term-prime
 37. term-prime → * factor term-prime | ε
 38. factor → ( expression ) | NUM
-38. id-factor → ID reference
+38. id-factor → reference
 38. reference → var | call
 39. call → ( args )
 40. args → arg-list | ε
