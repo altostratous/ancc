@@ -98,6 +98,8 @@ def compute_non_terminals_firsts(non_terminals):
         changed = False
         for literal in non_terminals:
             for rule in literal.rules:
+                if literal.text == 'declaration-list':
+                    print("Darling")
                 if not rule:
                     first[literal], changed = inner_add(first[literal], {()}, changed)
                     first[literal].add(())
@@ -109,7 +111,7 @@ def compute_non_terminals_firsts(non_terminals):
                         first[literal], changed = inner_add(first[literal], first[sym]-{()}, changed)
                         if not () in first[sym]:
                             break
-                if i == len(rule):
+                if i == len(rule) - 1:
                     first[literal], changed = inner_add(first[literal], {()}, changed)
         if not changed:
             break
