@@ -50,12 +50,15 @@ class Parser:
         if current_state.is_success:
             return None, None
         for literal, next_state in current_state.nexts:
-            if not literal:  # ε transition
-                if self.lookahead in self.follow[current_state.non_terminal]:
-                    assert next_state.is_success
-                    return next_state, None
+            # ε transition
+            if not literal and self.lookahead in self.follow[current_state.non_terminal]:
+                assert next_state.is_success
+                return next_state, None
+            # an ε potent rule
+            elif not literal.is_terminal and () in self.first[literal] and self.lookahead in self.follow[literal]:
+                return next_state, literal
             elif literal.is_terminal:
-                if self.match(literal.text):
+                if self.match(literal):
                     return next_state, None
             elif self.lookahead in self.first[literal]:
                 return next_state, literal
@@ -64,11 +67,13 @@ class Parser:
         while self.stack:
             next_state, new_flow = self.find_next_state(self.stack[-1])
             if next_state is None:
+                self.stack[-2] = dict(self.stack[-2].nexts)[self.stack[-1].non_terminal]
                 self.parsed(self.stack.pop())
             else:
-                self.stack[-1] = next_state
                 if new_flow:
                     self.stack.append(self.state_machines[new_flow])
+                else:
+                    self.stack[-1] = next_state
 
     def parsed(self, param):
         pass
