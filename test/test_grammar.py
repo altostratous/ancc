@@ -2,7 +2,7 @@ import os
 from unittest import TestCase
 
 from grammar.models import Literal
-from grammar.utils import compute_non_terminals_firsts, compute_non_terminals_follows
+from grammar.utils import compute_non_terminals_firsts, compute_non_terminals_follows, check_predictability
 from ui.manage import BASE_DIR
 
 
@@ -39,3 +39,13 @@ class TestUtilities(TestCase):
         })
 
         opened_file.close()
+
+
+class TestGrammar(TestCase):
+    def test_predictability(self):
+        with open(os.path.join(BASE_DIR, 'resources', 'src', 'predictable_grammar.txt')) as grammar_file:
+            grammar = Literal.parse(grammar_file)
+            first = compute_non_terminals_firsts(grammar)
+            self.assertTrue(check_predictability(
+                grammar, first, compute_non_terminals_follows(grammar, first)
+            ))

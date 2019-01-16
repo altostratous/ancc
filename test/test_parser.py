@@ -3,6 +3,7 @@ from unittest import TestCase
 import os
 
 from grammar.models import Literal
+from grammar.utils import get_parse_tree_post_order
 from parser.models import Parser
 from parser.utils import create_transition_diagram, get_all_literals_from_non_terminals
 from scanner.scanner import Scanner
@@ -167,16 +168,7 @@ class TestParser(TestCase):
                     ]
                 }
 
-                expected_post_order = [node for node in self.get_parse_tree_post_order(expected_parse_tree)]
+                expected_post_order = [node for node in get_parse_tree_post_order(expected_parse_tree)]
 
                 self.assertListEqual(parsed_non_terminals, expected_post_order)
 
-    def get_parse_tree_post_order(self, expected_parse_tree):
-        if isinstance(expected_parse_tree, dict):
-            for key in expected_parse_tree.keys():
-                for part in expected_parse_tree[key]:
-                    for met_node in self.get_parse_tree_post_order(part):
-                        yield met_node
-                yield key
-        else:
-            yield expected_parse_tree

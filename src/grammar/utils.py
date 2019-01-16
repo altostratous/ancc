@@ -198,3 +198,14 @@ def get_terminals(grammar):
             for literal in rule:
                 if literal.is_terminal:
                     yield literal
+
+
+def get_parse_tree_post_order(expected_parse_tree):
+    if isinstance(expected_parse_tree, dict):
+        for key in expected_parse_tree.keys():
+            for part in expected_parse_tree[key]:
+                for met_node in get_parse_tree_post_order(part):
+                    yield met_node
+            yield key
+    else:
+        yield expected_parse_tree

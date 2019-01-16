@@ -6,6 +6,7 @@ from os import path
 
 from grammar.models import Literal
 from grammar.utils import check_predictability
+from parser.utils import create_transition_diagram, print_diagram
 
 BASE_DIR = path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
@@ -39,6 +40,8 @@ def generate():
     follow = OrderedDict(compute_non_terminals_follows(current_grammar, first))
     print("Computed first and follow sets.")
     check_predictability(current_grammar, first, follow)
+
+    start_state, state_machines = create_transition_diagram(current_grammar)
 
     with open(path.join(BASE_DIR, 'doc/README.md'), 'w') as doc_file:
         with open(path.join(BASE_DIR, 'resources/src/raw_grammar.txt')) as raw_grammar_file:
@@ -82,6 +85,13 @@ def generate():
 
                         doc_file.writelines([
                             '```\n',
+                            '## State Diagram\n',
+                            '```\n',
+                        ])
+                        print_diagram(state_machines, doc_file)
+
+                        doc_file.writelines([
+                            '```\n',
                             '## First and Follow\n'
                             '|Non-terminal|First|Follow|\n'
                             '|:----------:|:---:|:----:|\n'
@@ -102,6 +112,9 @@ def generate():
 
 
 def test():
+    subprocess.run(['python3.5', '-m', 'unittest', 'integration_test'])
+    subprocess.run(['python3.5', '-m', 'unittest', 'test_grammar'])
+    subprocess.run(['python3.5', '-m', 'unittest', 'test_parser'])
     subprocess.run(['python3.5', '-m', 'unittest', 'test_scanner'])
 
 

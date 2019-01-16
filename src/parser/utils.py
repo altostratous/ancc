@@ -1,10 +1,11 @@
 from parser.models import State
+import sys
 
 
-def print_dfa(q):
+def print_dfa(q, out=sys.stdout):
     i = 0
     while i < len(q):
-        print(q[i].full_repr())
+        print(q[i].full_repr(), file=out)
         # print(q[i].nexts)
         for _, next_state in q[i].nexts:
             if next_state not in q:
@@ -12,11 +13,11 @@ def print_dfa(q):
         i += 1
 
 
-def print_diagram(state_machines):
+def print_diagram(state_machines, out=sys.stdout):
     for literal, state in state_machines.items():
-        print()
-        print(literal)
-        print_dfa([state])
+        print(file=out)
+        print(literal, file=out)
+        print_dfa([state], out=out)
 
 
 def create_transition_diagram(literals):

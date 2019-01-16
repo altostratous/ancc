@@ -1,6 +1,6 @@
 import string
 
-from grammar.tokens import Token
+from grammar.models import Token
 
 RESERVED_WORDS = ['int', 'void', 'continue', 'break', 'if', 'else', 'while', 'return', 'switch', 'case', 'default']
 

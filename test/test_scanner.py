@@ -4,8 +4,7 @@ from unittest import TestCase
 from os import path
 import os
 
-from grammar.models import Literal
-from grammar.tokens import Token
+from grammar.models import Literal, Token
 from parser.utils import get_all_literals_from_non_terminals
 from scanner.scanner import Scanner
 
