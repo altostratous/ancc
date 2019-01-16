@@ -51,7 +51,7 @@ def generate():
                         'resources/src/partially_factored_grammar.txt')) as partially_factored_grammar_file:
                     with open(path.join(
                             BASE_DIR,
-                            'resources/src/partially_factored_grammar.txt')) as predictable_grammar_file:
+                            'resources/src/predictable_grammar.txt')) as predictable_grammar_file:
                         doc_file.writelines([
                             '# ANCC Automatically Generated Documentation\n',
                             '## Raw Grammar\n',
