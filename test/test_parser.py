@@ -21,26 +21,162 @@ class TestParser(TestCase):
             def parsed(self, parsed_state):
                 self.non_terminals_in_order.append(parsed_state.non_terminal.text)
 
-        with open(os.path.join(BASE_DIR, 'resources/src/predictable_grammar.txt')) as grammar_file:
-            non_terminals = Literal.parse(grammar_file)
-            all_literals = get_all_literals_from_non_terminals(non_terminals)
-            start, states = create_transition_diagram(non_terminals)
-            parser = OrderLoggerParser(
-                states, start,
-                Scanner(
-                    open(os.path.join(BASE_DIR, 'resources/test/code/hello_world.nc')).read(),
-                    all_literals
+        with open(os.path.join(BASE_DIR, 'resources/test/grammar/predictable_grammar_v1.txt')) as grammar_file:
+            with open(os.path.join(BASE_DIR, 'resources/test/code/hello_world.nc')) as hello_world_file:
+                non_terminals = Literal.parse(grammar_file)
+                all_literals = get_all_literals_from_non_terminals(non_terminals)
+                start, states = create_transition_diagram(non_terminals)
+                parser = OrderLoggerParser(
+                    states, start,
+                    Scanner(
+                        hello_world_file.read(),
+                        all_literals
+                    )
                 )
-            )
-            parser.parse()
-            parsed_non_terminals = parser.non_terminals_in_order
+                parser.parse()
+                parsed_non_terminals = parser.non_terminals_in_order
 
-            self.assertListEqual(parsed_non_terminals, [
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-            ])
+                simple_expression = {
+                    'simple-expression': [
+                        {
+                            'additive-expression': [
+                                {
+                                    'term': [
+                                        'factor',
+                                        'term-prime'
+                                    ]
+                                },
+                                'additive-expression-prime'
+                            ]
+                        },
+                        'rest-of-simple-expression'
+                    ]
+
+                }
+
+                id_expression = {
+                    'id-expression': [
+                        {
+                            'id-simple-expression': [
+                                {
+                                    'id-additive-expression': [
+                                        {
+                                            'id-term': [
+                                                {
+                                                    'id-factor': [
+                                                        {
+                                                            'reference': [
+                                                                {
+                                                                    'call': [
+                                                                        {
+                                                                            'args': [
+                                                                                {
+                                                                                    'arg-list': [
+                                                                                        {
+                                                                                            'expression': [
+                                                                                                simple_expression
+                                                                                            ]
+                                                                                        },
+                                                                                        'arg-list-prime'
+
+                                                                                    ]
+
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+
+                                                },
+                                                'term-prime'
+                                            ]
+                                        },
+                                        'additive-expression-prime'
+                                    ]
+                                },
+                                'rest-of-simple-expression'
+                            ]
+                        }
+                    ]
+                }
+
+                expected_parse_tree = {
+                    'program': [
+                        {
+                            'declaration-list': [
+                                {
+                                    'declaration-list-prime': [
+                                        'type-specifier',
+                                        {
+                                            'declaration': [
+                                                {
+                                                    'fun-declaration': [
+                                                        {
+                                                            'params': [
+                                                                {
+                                                                    'void-starting-param-list': [
+                                                                        'rest-of-void-starting-param-list'
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            'compound-stmt': [
+                                                                {
+                                                                    'declaration-list': [
+                                                                        'declaration-list-prime'
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    'statement-list': [
+                                                                        {
+                                                                            'statement-list-prime': [
+                                                                                {
+                                                                                    'statement': [
+                                                                                        {
+                                                                                            'expression-stmt': [
+                                                                                                {
+                                                                                                    'expression': [
+                                                                                                        id_expression
+                                                                                                    ]
+                                                                                                }
+                                                                                            ]
+
+                                                                                        }
+                                                                                    ]
+                                                                                },
+                                                                                'statement-list-prime'
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                            ]
+                                        },
+                                        'declaration-list-prime'
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+
+                expected_post_order = [node for node in self.get_parse_tree_post_order(expected_parse_tree)]
+
+                self.assertListEqual(parsed_non_terminals, expected_post_order)
+
+    def get_parse_tree_post_order(self, expected_parse_tree):
+        if isinstance(expected_parse_tree, dict):
+            for key in expected_parse_tree.keys():
+                for part in expected_parse_tree[key]:
+                    for met_node in self.get_parse_tree_post_order(part):
+                        yield met_node
+                yield key
+        else:
+            yield expected_parse_tree

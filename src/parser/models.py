@@ -67,7 +67,8 @@ class Parser:
         while self.stack:
             next_state, new_flow = self.find_next_state(self.stack[-1])
             if next_state is None:
-                self.stack[-2] = dict(self.stack[-2].nexts)[self.stack[-1].non_terminal]
+                if len(self.stack) > 1:
+                    self.stack[-2] = dict(self.stack[-2].nexts)[self.stack[-1].non_terminal]
                 self.parsed(self.stack.pop())
             else:
                 if new_flow:
