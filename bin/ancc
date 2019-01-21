@@ -3,9 +3,9 @@
 # make sure we are in the exploits director
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 INITIAL_DIR=`pwd`
-cd ${DIR}
+cd "${DIR}"
 
 cd ..
-export PYTHONPATH="src:test" && python3.5 src/ui/manage.py "$@"
+export PYTHONPATH="src:test" && python3 src/ui/manage.py "$@"
 
-cd ${INITIAL_DIR}
+cd "${INITIAL_DIR}"

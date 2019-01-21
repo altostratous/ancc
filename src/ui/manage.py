@@ -112,10 +112,10 @@ def generate():
 
 
 def test():
-    subprocess.run(['python3.5', '-m', 'unittest', 'integration_test'])
-    subprocess.run(['python3.5', '-m', 'unittest', 'test_grammar'])
-    subprocess.run(['python3.5', '-m', 'unittest', 'test_parser'])
-    subprocess.run(['python3.5', '-m', 'unittest', 'test_scanner'])
+    subprocess.run(['python3', '-m', 'unittest', 'integration_test'])
+    subprocess.run(['python3', '-m', 'unittest', 'test_grammar'])
+    subprocess.run(['python3', '-m', 'unittest', 'test_parser'])
+    subprocess.run(['python3', '-m', 'unittest', 'test_scanner'])
 
 
 if __name__ == "__main__":
