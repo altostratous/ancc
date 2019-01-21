@@ -1,4 +1,5 @@
 from unittest import TestCase
+import pprint
 
 import os
 
@@ -19,8 +20,9 @@ class TestParser(TestCase):
                 super().__init__(state_machines, start_state, scanner)
                 self.non_terminals_in_order = []
 
-            def parsed(self, parsed_state):
-                self.non_terminals_in_order.append(parsed_state.non_terminal.text)
+            def parsed(self, state):
+                super().parsed(state)
+                self.non_terminals_in_order.append(state.non_terminal.text)
 
         with open(os.path.join(BASE_DIR, 'resources/test/grammar/predictable_grammar_v1.txt')) as grammar_file:
             with open(os.path.join(BASE_DIR, 'resources/test/code/hello_world.nc')) as hello_world_file:
@@ -170,5 +172,5 @@ class TestParser(TestCase):
 
                 expected_post_order = [node for node in get_parse_tree_post_order(expected_parse_tree)]
 
+                pprint.pprint(parser.tree)
                 self.assertListEqual(parsed_non_terminals, expected_post_order)
-
