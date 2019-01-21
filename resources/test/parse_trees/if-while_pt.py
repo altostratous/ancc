@@ -1,4 +1,4 @@
-hello_world_expected_parse_tree = ('program', [
+if_while_expected_parse_tree = ('program', [
     ('declaration-list', [
         ('declaration-list-prime', [
             ('type-specifier', ['void']),

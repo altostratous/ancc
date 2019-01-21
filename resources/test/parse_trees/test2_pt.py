@@ -17,7 +17,7 @@ test2_expected_parse_tree = ('program', [
                     ])
                 ]),
                 ('declaration-list-prime', [
-                    ('type-specifier', ['int']),
+                    ('type-specifier', ['void']),
                     'ID',
                     ('declaration', [
                         ('fun-declaration', [
@@ -27,22 +27,24 @@ test2_expected_parse_tree = ('program', [
                                     'void',
                                     ('rest-of-void-starting-param-list', []),
                                     ])
-                                ])
-                            ]),
-                            ')',
-                            ('compound_stmt', [
-                                '{',
-                                ('declaration-list', [
-                                    ('declaration-list-prime', [])
                                 ]),
-                                ('statement-list', [
-                                    ('statement-list-prime', [])
+                                ')',
+                                ('compound-stmt', [
+                                    '{',
+                                    ('declaration-list', [
+                                        ('declaration-list-prime', [])
+                                    ]),
+                                    ('statement-list', [
+                                        ('statement-list-prime', [])
+                                    ]),
+                                    '}',
                                 ]),
-                                '}',
                             ]),
                         ]),
+                    ('declaration-list-prime', []),
                     ]),
                 ]),
             ]),
         ]),
+        'EOF',
     ])

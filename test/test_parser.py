@@ -4,7 +4,6 @@ import pprint
 import os
 
 from grammar.models import Literal
-from grammar.utils import get_parse_tree_post_order
 from parser.models import Parser
 from parser.utils import create_transition_diagram, get_all_literals_from_non_terminals
 from resources.test.parse_trees.hello_world_pt import hello_world_expected_parse_tree
@@ -33,7 +32,8 @@ class TestParser(TestCase):
                         )
                     )
                     parser.parse()
-                    parsed_non_terminals = parser.tree
-                    expected_post_order = [node for node in get_parse_tree_post_order(expected_parse_tree)]
+                    parse_tree = parser.tree
                     # pprint.pprint(parser.tree)
-                    self.assertListEqual(parsed_non_terminals, expected_post_order)
+                    self.assertEqual(parse_tree[0], expected_parse_tree[0], "Error in " + filename)
+                    self.assertListEqual(parse_tree[1], expected_parse_tree[1], "Error in " + filename)
+
