@@ -4,7 +4,7 @@ void main(void){
     i = 5;
     if (function(i))
        return;
-    while(i){
+    else while(i){
         array1[i = i - 1] = i;
         -37;
         output(array1[i]);

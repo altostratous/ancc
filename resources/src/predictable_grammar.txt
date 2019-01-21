@@ -37,11 +37,10 @@
 42. additive-expression-prime → addop term additive-expression-prime | ε
 43. addop → + | -
 44. term → factor term-prime
-45. id-term → id-factor term-prime
+45. id-term → reference term-prime
 46. bracket-id-term → bracket-id-factor term-prime
 37. term-prime → * factor term-prime | ε
 47. factor → ( expression ) | NUM
-48. id-factor → reference
 49. bracket-id-factor → bracket-reference
 50. reference → call | ε
 51. bracket-reference → bracket-var

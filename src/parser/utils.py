@@ -29,6 +29,7 @@ def create_transition_diagram(literals):
         for rule in non_terminal.rules:
             current_state = start_state_1
             if not rule:
+                new_state = State(non_terminal)
                 current_state.nexts += [((), new_state)]
                 new_state.is_success = True
                 continue
