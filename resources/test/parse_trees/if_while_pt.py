@@ -1,14 +1,31 @@
+id_expression = ('expression', [
+                   'ID',
+                    ('id-expression', [
+                        ('id-simple-expression', [
+                            ('id-additive-expression', [
+                                ('id-term', [
+                                    ('reference', []),
+                                    ('term-prime', []),
+                                ]),
+                                ('additive-expression-prime', []),
+                            ]),
+                            ('rest-of-simple-expression', []),
+                        ])
+                    ]),
+                ])
+
+
 if_while_expected_parse_tree = ('program', [
     ('declaration-list', [
         ('type-specifier', ['int']),
         'ID',
         ('declaration', [
             ('var-declaration', [
-                ('rest-of-var-declaration', ['[', 'NUM', ']'])
+                '[', 'NUM', ']', ';'
             ])
         ]),
         ('declaration-list', [
-            ('type-specifier', ['int']),
+            ('type-specifier', ['void']),
             'ID',
             ('declaration', [
                 ('fun-declaration', [
@@ -26,11 +43,9 @@ if_while_expected_parse_tree = ('program', [
                             ('type-specifier', ['int']),
                             'ID',
                             ('declaration', [
-                                ('var-declaration', [
-                                    ('rest-of-var-declaration', [';']),
-                                ]),
+                                ('var-declaration', [';']),
                             ]),
-                            ('declaration-list-', []),
+                            ('declaration-list', []),
                         ]),
                         ('statement-list', [
                             ('statement', [
@@ -72,21 +87,7 @@ if_while_expected_parse_tree = ('program', [
                                                                     '(',
                                                                     ('args', [
                                                                         ('arg-list', [
-                                                                            ('expression', [
-                                                                                'ID',
-                                                                                ('id-expression', [
-                                                                                    ('id-simple-expression', [
-                                                                                        ('id-additive-expression', [
-                                                                                            ('id-term', [
-                                                                                                ('reference', []),
-                                                                                                ('term-prime', []),
-                                                                                            ]),
-                                                                                            ('additive-expression-prime', []),
-                                                                                        ]),
-                                                                                        ('rest-of-simple-expression', []),
-                                                                                    ])
-                                                                                ]),
-                                                                            ]),
+                                                                            id_expression,
                                                                             ('arg-list-prime', []),
                                                                         ])
                                                                     ]),
@@ -102,67 +103,95 @@ if_while_expected_parse_tree = ('program', [
                                             ])
                                         ]),
                                         ')',
-                                        ('expression', [
+                                        ('statement', [
                                             ('return-stmt', [
                                                 'return',
                                                 ('rest-of-return-stmt', [';'])
                                             ])
                                         ]),
                                         'else',
-                                        ('expression', [
-                                            'while',
-                                            '(',
-                                            ('expression', [
-                                                'ID',
-                                                ('id-expression', [
-                                                    ('id-simple-expression', [
-                                                        ('id-additive-expression', [
-                                                            ('id-term', [
-                                                                ('reference', []),
-                                                                ('term-prime', []),
-                                                            ]),
-                                                            ('additive-expression-prime', []),
-                                                        ]),
-                                                        ('rest-of-simple-expression', []),
-                                                    ])
-                                                ]),
-                                            ]),
-                                            ')',
-                                            ('statement', [
-                                                ('compound-stmt', [
-                                                    '{',
-                                                    ('declaration-list', []),
-                                                    ('statement-list', [
-                                                        ('statement', [
-
-                                                        ]),
+                                        ('statement', [
+                                            ('iteration-stmt', [
+                                                'while',
+                                                '(',
+                                                id_expression,
+                                                ')',
+                                                ('statement', [
+                                                    ('compound-stmt', [
+                                                        '{',
+                                                        ('declaration-list', []),
                                                         ('statement-list', [
                                                             ('statement', [
                                                                 ('expression-stmt', [
                                                                     ('expression', [
-                                                                        ('simple-expression', [
-                                                                            ('additive-expression', [
-                                                                                ('term', [
-                                                                                    ('factor', ['NUM']),
-                                                                                    ('term-prime', []),
-                                                                                ]),
-                                                                                ('additive-expression-prime', []),
+                                                                        'ID',
+                                                                        ('id-expression', [
+                                                                            '[',
+                                                                            ('expression', [
+                                                                                'ID',
+                                                                                ('id-expression', [
+                                                                                    '=',
+                                                                                    ('expression', [
+                                                                                        'ID',
+                                                                                        ('id-expression', [
+                                                                                            ('id-simple-expression', [
+                                                                                                ('id-additive-expression', [
+                                                                                                    ('id-term', [
+                                                                                                        ('reference', []),
+                                                                                                        ('term-prime', [])
+                                                                                                    ]),
+                                                                                                    ('additive-expression-prime', [
+                                                                                                        ('addop', ['-']),
+                                                                                                        ('term', [
+                                                                                                            ('factor', ['NUM']),
+                                                                                                            ('term-prime', []),
+                                                                                                        ]),
+                                                                                                        ('additive-expression-prime', []),
+                                                                                                    ])
+                                                                                                ]),
+                                                                                                ('rest-of-simple-expression', []),
+                                                                                            ])
+                                                                                        ])
+                                                                                    ])
+                                                                                ])
                                                                             ]),
-                                                                            ('rest-of-simple-expression', []),
-                                                                        ])
-                                                                    ]),                                                                    ';',
-                                                                ]),
+                                                                            ']',
+                                                                            ('bracket-id-expression', [
+                                                                                '=',
+                                                                                id_expression
+                                                                            ]),
+                                                                        ]),
+                                                                    ]),
+                                                                    ';',
+                                                                ])
                                                             ]),
                                                             ('statement-list', [
                                                                 ('statement', [
                                                                     ('expression-stmt', [
                                                                         ('expression', [
-                                                                            'ID',
-                                                                            ('id-expression', [
-                                                                                ('id-simple-expression', [
-                                                                                    ('id-additive-expression', [
-                                                                                        ('id-term', [
-                                                                                            ('id-factor', [
+                                                                            ('simple-expression', [
+                                                                                ('additive-expression', [
+                                                                                    ('term', [
+                                                                                        ('factor', ['NUM']),
+                                                                                        ('term-prime', []),
+                                                                                    ]),
+                                                                                    ('additive-expression-prime', []),
+                                                                                ]),
+                                                                                ('rest-of-simple-expression', []),
+                                                                            ])
+                                                                        ]),
+                                                                        ';',
+                                                                    ]),
+                                                                ]),
+                                                                ('statement-list', [
+                                                                    ('statement', [
+                                                                        ('expression-stmt', [
+                                                                            ('expression', [
+                                                                                'ID',
+                                                                                ('id-expression', [
+                                                                                    ('id-simple-expression', [
+                                                                                        ('id-additive-expression', [
+                                                                                            ('id-term', [
                                                                                                 ('reference', [
                                                                                                     ('call', [
                                                                                                         '(',
@@ -172,21 +201,7 @@ if_while_expected_parse_tree = ('program', [
                                                                                                                     'ID',
                                                                                                                     ('id-expression', [
                                                                                                                         '[',
-                                                                                                                        ('expression', [
-                                                                                                                           'ID',
-                                                                                                                            ('id-expression', [
-                                                                                                                                ('id-simple-expression', [
-                                                                                                                                    ('id-additive-expression', [
-                                                                                                                                        ('id-term', [
-                                                                                                                                            ('reference', []),
-                                                                                                                                            ('term-prime', []),
-                                                                                                                                        ]),
-                                                                                                                                        ('additive-expression-prime', []),
-                                                                                                                                    ]),
-                                                                                                                                    ('rest-of-simple-expression', []),
-                                                                                                                                ])
-                                                                                                                            ]),
-                                                                                                                        ]),
+                                                                                                                        id_expression,
                                                                                                                         ']',
                                                                                                                         ('bracket-id-expression', []),
                                                                                                                     ]),
@@ -198,23 +213,23 @@ if_while_expected_parse_tree = ('program', [
                                                                                                         ')',
                                                                                                     ])
                                                                                                 ]),
+                                                                                                ('term-prime', []),
                                                                                             ]),
-                                                                                            ('term-prime', []),
+                                                                                            ('additive-expression-prime', []),
                                                                                         ]),
-                                                                                        ('additive-expression-prime', []),
+                                                                                        ('rest-of-simple-expression', []),
                                                                                     ]),
-                                                                                    ('rest-of-simple-expression', []),
-                                                                                ]),
-                                                                            ])
-                                                                        ]),
-                                                                        ';'
-                                                                    ])
+                                                                                ])
+                                                                            ]),
+                                                                            ';'
+                                                                        ])
+                                                                    ]),
+                                                                    ('statement-list', []),
                                                                 ]),
-                                                                ('statement-list', []),
                                                             ]),
                                                         ]),
+                                                        '}',
                                                     ]),
-                                                    '}',
                                                 ]),
                                             ]),
                                         ]),

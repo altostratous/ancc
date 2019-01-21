@@ -1,8 +1,7 @@
 1. program → declaration-list EOF
 2. declaration-list → type-specifier ID declaration declaration-list | ε
 3. declaration → var-declaration | fun-declaration
-4. var-declaration → rest-of-var-declaration
-5. rest-of-var-declaration → ; | [ NUM ] ;
+4. var-declaration → ; | [ NUM ] ;
 6. type-specifier → int | void
 7. fun-declaration → ( params ) compound-stmt
 8. params → int-starting-param-list | void-starting-param-list
