@@ -33,6 +33,8 @@ class Parser:
         non_terminals = list(state_machines.keys())
         self.first = compute_non_terminals_firsts(non_terminals)
         self.follow = compute_non_terminals_follows(non_terminals, self.first)
+        self.tree = (start_state.non_terminal, [])
+        self.tree_stack = [self.tree]
 
     @property
     def lookahead(self):
@@ -43,6 +45,7 @@ class Parser:
     def match(self, s):
         if self.lookahead != s:
             return False
+        self.tree_stack[-1][1].append(self.lookahead)
         self._lookahead = None
         return True
 
@@ -72,9 +75,17 @@ class Parser:
                 self.parsed(self.stack.pop())
             else:
                 if new_flow:
-                    self.stack.append(self.state_machines[new_flow])
+                    state_to_push = self.state_machines[new_flow]
+                    self.stack.append(state_to_push)
+                    self.entered(state_to_push)
                 else:
                     self.stack[-1] = next_state
 
-    def parsed(self, param):
-        pass
+    def parsed(self, state):
+        if len(self.stack) > 0:
+            self.tree_stack.pop()
+
+    def entered(self, state):
+        opening = (state.non_terminal, [])
+        self.tree_stack[-1][1].append(opening)
+        self.tree_stack.append(opening)

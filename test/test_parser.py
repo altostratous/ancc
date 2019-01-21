@@ -1,4 +1,5 @@
 from unittest import TestCase
+import pprint
 
 import os
 
@@ -34,6 +35,5 @@ class TestParser(TestCase):
                     parser.parse()
                     parsed_non_terminals = parser.tree
                     expected_post_order = [node for node in get_parse_tree_post_order(expected_parse_tree)]
-
+                    # pprint.pprint(parser.tree)
                     self.assertListEqual(parsed_non_terminals, expected_post_order)
-
