@@ -146,25 +146,20 @@
 28. case-stmt → case NUM : statement-list
 29. default-stmt → default : statement-list | ε
 30. expression → simple-expression | ID id-expression
-31. id-expression → = expression | id-simple-expression | [ bracket-id-expression
-32. bracket-id-expression → expression ] = expression | bracket-id-simple-expression
+31. id-expression → = expression | id-simple-expression | [ expression ] bracket-id-expression
+32. bracket-id-expression → = expression | ε
 35. simple-expression → additive-expression rest-of-simple-expression
 36. id-simple-expression → id-additive-expression rest-of-simple-expression
-37. bracket-id-simple-expression → bracket-id-additive-expression rest-of-simple-expression
 38. rest-of-simple-expression → RELOP additive-expression | ε
 39. additive-expression → term additive-expression-prime
 40. id-additive-expression → id-term additive-expression-prime
-41. bracket-id-additive-expression → bracket-id-term additive-expression-prime
 42. additive-expression-prime → addop term additive-expression-prime | ε
 43. addop → + | -
 44. term → factor term-prime
 45. id-term → reference term-prime
-46. bracket-id-term → bracket-id-factor term-prime
 37. term-prime → * factor term-prime | ε
 47. factor → ( expression ) | NUM
-49. bracket-id-factor → bracket-reference
 50. reference → call | ε
-51. bracket-reference → bracket-var
 52. call → ( args )
 53. args → arg-list | ε
 54. arg-list → expression arg-list-prime
@@ -360,16 +355,16 @@ id-expression
 130 (id-expression) to -> [(=, 131 (id-expression)), (id-simple-expression, 133 (id-expression) (success)), ([, 134 (id-expression))]
 131 (id-expression) to -> [(expression, 132 (id-expression) (success))]
 133 (id-expression) (success)
-134 (id-expression) to -> [(bracket-id-expression, 135 (id-expression) (success))]
+134 (id-expression) to -> [(expression, 135 (id-expression))]
 132 (id-expression) (success)
-135 (id-expression) (success)
+135 (id-expression) to -> [(], 136 (id-expression))]
+136 (id-expression) to -> [(bracket-id-expression, 137 (id-expression) (success))]
+137 (id-expression) (success)
 
 bracket-id-expression
-136 (bracket-id-expression) to -> [(expression, 137 (bracket-id-expression)), (bracket-id-simple-expression, 141 (bracket-id-expression) (success))]
-137 (bracket-id-expression) to -> [(], 138 (bracket-id-expression))]
-141 (bracket-id-expression) (success)
-138 (bracket-id-expression) to -> [(=, 139 (bracket-id-expression))]
+138 (bracket-id-expression) to -> [(=, 139 (bracket-id-expression)), ((), 141 (bracket-id-expression) (success))]
 139 (bracket-id-expression) to -> [(expression, 140 (bracket-id-expression) (success))]
+141 (bracket-id-expression) (success)
 140 (bracket-id-expression) (success)
 
 simple-expression
@@ -382,108 +377,85 @@ id-simple-expression
 146 (id-simple-expression) to -> [(rest-of-simple-expression, 147 (id-simple-expression) (success))]
 147 (id-simple-expression) (success)
 
-bracket-id-simple-expression
-148 (bracket-id-simple-expression) to -> [(bracket-id-additive-expression, 149 (bracket-id-simple-expression))]
-149 (bracket-id-simple-expression) to -> [(rest-of-simple-expression, 150 (bracket-id-simple-expression) (success))]
-150 (bracket-id-simple-expression) (success)
-
 rest-of-simple-expression
-151 (rest-of-simple-expression) to -> [(RELOP, 152 (rest-of-simple-expression)), ((), 154 (rest-of-simple-expression) (success))]
-152 (rest-of-simple-expression) to -> [(additive-expression, 153 (rest-of-simple-expression) (success))]
-154 (rest-of-simple-expression) (success)
-153 (rest-of-simple-expression) (success)
+148 (rest-of-simple-expression) to -> [(RELOP, 149 (rest-of-simple-expression)), ((), 151 (rest-of-simple-expression) (success))]
+149 (rest-of-simple-expression) to -> [(additive-expression, 150 (rest-of-simple-expression) (success))]
+151 (rest-of-simple-expression) (success)
+150 (rest-of-simple-expression) (success)
 
 additive-expression
-155 (additive-expression) to -> [(term, 156 (additive-expression))]
-156 (additive-expression) to -> [(additive-expression-prime, 157 (additive-expression) (success))]
-157 (additive-expression) (success)
+152 (additive-expression) to -> [(term, 153 (additive-expression))]
+153 (additive-expression) to -> [(additive-expression-prime, 154 (additive-expression) (success))]
+154 (additive-expression) (success)
 
 id-additive-expression
-158 (id-additive-expression) to -> [(id-term, 159 (id-additive-expression))]
-159 (id-additive-expression) to -> [(additive-expression-prime, 160 (id-additive-expression) (success))]
-160 (id-additive-expression) (success)
-
-bracket-id-additive-expression
-161 (bracket-id-additive-expression) to -> [(bracket-id-term, 162 (bracket-id-additive-expression))]
-162 (bracket-id-additive-expression) to -> [(additive-expression-prime, 163 (bracket-id-additive-expression) (success))]
-163 (bracket-id-additive-expression) (success)
+155 (id-additive-expression) to -> [(id-term, 156 (id-additive-expression))]
+156 (id-additive-expression) to -> [(additive-expression-prime, 157 (id-additive-expression) (success))]
+157 (id-additive-expression) (success)
 
 additive-expression-prime
-164 (additive-expression-prime) to -> [(addop, 165 (additive-expression-prime)), ((), 168 (additive-expression-prime) (success))]
-165 (additive-expression-prime) to -> [(term, 166 (additive-expression-prime))]
-168 (additive-expression-prime) (success)
-166 (additive-expression-prime) to -> [(additive-expression-prime, 167 (additive-expression-prime) (success))]
-167 (additive-expression-prime) (success)
+158 (additive-expression-prime) to -> [(addop, 159 (additive-expression-prime)), ((), 162 (additive-expression-prime) (success))]
+159 (additive-expression-prime) to -> [(term, 160 (additive-expression-prime))]
+162 (additive-expression-prime) (success)
+160 (additive-expression-prime) to -> [(additive-expression-prime, 161 (additive-expression-prime) (success))]
+161 (additive-expression-prime) (success)
 
 addop
-169 (addop) to -> [(+, 170 (addop) (success)), (-, 171 (addop) (success))]
-170 (addop) (success)
-171 (addop) (success)
+163 (addop) to -> [(+, 164 (addop) (success)), (-, 165 (addop) (success))]
+164 (addop) (success)
+165 (addop) (success)
 
 term
-172 (term) to -> [(factor, 173 (term))]
-173 (term) to -> [(term-prime, 174 (term) (success))]
-174 (term) (success)
+166 (term) to -> [(factor, 167 (term))]
+167 (term) to -> [(term-prime, 168 (term) (success))]
+168 (term) (success)
 
 id-term
-175 (id-term) to -> [(reference, 176 (id-term))]
-176 (id-term) to -> [(term-prime, 177 (id-term) (success))]
-177 (id-term) (success)
-
-bracket-id-term
-178 (bracket-id-term) to -> [(bracket-id-factor, 179 (bracket-id-term))]
-179 (bracket-id-term) to -> [(term-prime, 180 (bracket-id-term) (success))]
-180 (bracket-id-term) (success)
+169 (id-term) to -> [(reference, 170 (id-term))]
+170 (id-term) to -> [(term-prime, 171 (id-term) (success))]
+171 (id-term) (success)
 
 term-prime
-181 (term-prime) to -> [(*, 182 (term-prime)), ((), 185 (term-prime) (success))]
-182 (term-prime) to -> [(factor, 183 (term-prime))]
-185 (term-prime) (success)
-183 (term-prime) to -> [(term-prime, 184 (term-prime) (success))]
-184 (term-prime) (success)
+172 (term-prime) to -> [(*, 173 (term-prime)), ((), 176 (term-prime) (success))]
+173 (term-prime) to -> [(factor, 174 (term-prime))]
+176 (term-prime) (success)
+174 (term-prime) to -> [(term-prime, 175 (term-prime) (success))]
+175 (term-prime) (success)
 
 factor
-186 (factor) to -> [((, 187 (factor)), (NUM, 190 (factor) (success))]
-187 (factor) to -> [(expression, 188 (factor))]
-190 (factor) (success)
-188 (factor) to -> [(), 189 (factor) (success))]
-189 (factor) (success)
-
-bracket-id-factor
-191 (bracket-id-factor) to -> [(bracket-reference, 192 (bracket-id-factor) (success))]
-192 (bracket-id-factor) (success)
+177 (factor) to -> [((, 178 (factor)), (NUM, 181 (factor) (success))]
+178 (factor) to -> [(expression, 179 (factor))]
+181 (factor) (success)
+179 (factor) to -> [(), 180 (factor) (success))]
+180 (factor) (success)
 
 reference
-193 (reference) to -> [(call, 194 (reference) (success)), ((), 195 (reference) (success))]
-194 (reference) (success)
-195 (reference) (success)
-
-bracket-reference
-196 (bracket-reference) to -> [(bracket-var, 197 (bracket-reference) (success))]
-197 (bracket-reference) (success)
+182 (reference) to -> [(call, 183 (reference) (success)), ((), 184 (reference) (success))]
+183 (reference) (success)
+184 (reference) (success)
 
 call
-198 (call) to -> [((, 199 (call))]
-199 (call) to -> [(args, 200 (call))]
-200 (call) to -> [(), 201 (call) (success))]
-201 (call) (success)
+185 (call) to -> [((, 186 (call))]
+186 (call) to -> [(args, 187 (call))]
+187 (call) to -> [(), 188 (call) (success))]
+188 (call) (success)
 
 args
-202 (args) to -> [(arg-list, 203 (args) (success)), ((), 204 (args) (success))]
-203 (args) (success)
-204 (args) (success)
+189 (args) to -> [(arg-list, 190 (args) (success)), ((), 191 (args) (success))]
+190 (args) (success)
+191 (args) (success)
 
 arg-list
-205 (arg-list) to -> [(expression, 206 (arg-list))]
-206 (arg-list) to -> [(arg-list-prime, 207 (arg-list) (success))]
-207 (arg-list) (success)
+192 (arg-list) to -> [(expression, 193 (arg-list))]
+193 (arg-list) to -> [(arg-list-prime, 194 (arg-list) (success))]
+194 (arg-list) (success)
 
 arg-list-prime
-208 (arg-list-prime) to -> [(,, 209 (arg-list-prime)), ((), 212 (arg-list-prime) (success))]
-209 (arg-list-prime) to -> [(expression, 210 (arg-list-prime))]
-212 (arg-list-prime) (success)
-210 (arg-list-prime) to -> [(arg-list-prime, 211 (arg-list-prime) (success))]
-211 (arg-list-prime) (success)
+195 (arg-list-prime) to -> [(,, 196 (arg-list-prime)), ((), 199 (arg-list-prime) (success))]
+196 (arg-list-prime) to -> [(expression, 197 (arg-list-prime))]
+199 (arg-list-prime) (success)
+197 (arg-list-prime) to -> [(arg-list-prime, 198 (arg-list-prime) (success))]
+198 (arg-list-prime) (success)
 ```
 ## First and Follow
 |Non-terminal|First|Follow|
@@ -494,12 +466,7 @@ arg-list-prime
 |arg-list|( ID NUM|)|
 |arg-list-prime|, ε|)|
 |args|( ID NUM ε|)|
-|bracket-id-additive-expression|bracket-var|) , ; RELOP ]|
-|bracket-id-expression|( ID NUM bracket-var|) , ; ]|
-|bracket-id-factor|bracket-var|) * + , - ; RELOP ]|
-|bracket-id-simple-expression|bracket-var|) , ; ]|
-|bracket-id-term|bracket-var|) + , - ; RELOP ]|
-|bracket-reference|bracket-var|) * + , - ; RELOP ]|
+|bracket-id-expression|= ε|) , ; ]|
 |call|(|) * + , - ; RELOP ]|
 |case-stmt|case|case default }|
 |case-stmts|case ε|default }|
