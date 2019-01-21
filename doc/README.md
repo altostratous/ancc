@@ -120,13 +120,13 @@
 ## Predictable Grammar
 ```
 1. program → declaration-list EOF
-3. declaration-list → type-specifier ID declaration declaration-list | ε
-4. declaration → var-declaration | fun-declaration
-5. var-declaration → rest-of-var-declaration
-6. rest-of-var-declaration → ; | [ NUM ] ;
-7. type-specifier → int | void
-8. fun-declaration → ( params ) compound-stmt
-9. params → int-starting-param-list | void-starting-param-list
+2. declaration-list → type-specifier ID declaration declaration-list | ε
+3. declaration → var-declaration | fun-declaration
+4. var-declaration → rest-of-var-declaration
+5. rest-of-var-declaration → ; | [ NUM ] ;
+6. type-specifier → int | void
+7. fun-declaration → ( params ) compound-stmt
+8. params → int-starting-param-list | void-starting-param-list
 10. void-starting-param-list → void rest-of-void-starting-param-list
 11. rest-of-void-starting-param-list → ID rest-of-param param-list-prime | ε
 12. int-starting-param-list → int ID rest-of-param param-list-prime
@@ -134,8 +134,7 @@
 14. param → type-specifier ID rest-of-param
 15. rest-of-param → ε | [ ]
 16. compound-stmt → { declaration-list statement-list }
-17. statement-list → statement-list-prime
-18. statement-list-prime → statement statement-list-prime | ε
+18. statement-list → statement statement-list | ε
 19. statement → expression-stmt | compound-stmt | selection-stmt | iteration-stmt | return-stmt | switch-stmt
 20. expression-stmt → expression ; | continue ; | break ; | ;
 21. selection-stmt → if ( expression ) statement else statement
@@ -143,8 +142,7 @@
 23. return-stmt → return rest-of-return-stmt
 24. rest-of-return-stmt → ; | expression ;
 25. switch-stmt → switch ( expression ) { case-stmts default-stmt }
-26. case-stmts → case-stmts-prime
-27. case-stmts-prime → case-stmt case-stmts-prime | ε
+27. case-stmts → case-stmt case-stmts | ε
 28. case-stmt → case NUM : statement-list
 29. default-stmt → default : statement-list | ε
 30. expression → simple-expression | ID id-expression
@@ -160,11 +158,10 @@
 42. additive-expression-prime → addop term additive-expression-prime | ε
 43. addop → + | -
 44. term → factor term-prime
-45. id-term → id-factor term-prime
+45. id-term → reference term-prime
 46. bracket-id-term → bracket-id-factor term-prime
 37. term-prime → * factor term-prime | ε
 47. factor → ( expression ) | NUM
-48. id-factor → reference
 49. bracket-id-factor → bracket-reference
 50. reference → call | ε
 51. bracket-reference → bracket-var
@@ -182,311 +179,311 @@ program
 3 (program) (success)
 
 declaration-list
-4 (declaration-list) to -> [(type-specifier, 5 (declaration-list)), ((), 8 (declaration-list) (success))]
+4 (declaration-list) to -> [(type-specifier, 5 (declaration-list)), ((), 9 (declaration-list) (success))]
 5 (declaration-list) to -> [(ID, 6 (declaration-list))]
-8 (declaration-list) (success)
+9 (declaration-list) (success)
 6 (declaration-list) to -> [(declaration, 7 (declaration-list))]
 7 (declaration-list) to -> [(declaration-list, 8 (declaration-list) (success))]
+8 (declaration-list) (success)
 
 declaration
-9 (declaration) to -> [(var-declaration, 10 (declaration) (success)), (fun-declaration, 11 (declaration) (success))]
-10 (declaration) (success)
+10 (declaration) to -> [(var-declaration, 11 (declaration) (success)), (fun-declaration, 12 (declaration) (success))]
 11 (declaration) (success)
+12 (declaration) (success)
 
 var-declaration
-12 (var-declaration) to -> [(rest-of-var-declaration, 13 (var-declaration) (success))]
-13 (var-declaration) (success)
+13 (var-declaration) to -> [(rest-of-var-declaration, 14 (var-declaration) (success))]
+14 (var-declaration) (success)
 
 rest-of-var-declaration
-14 (rest-of-var-declaration) to -> [(;, 15 (rest-of-var-declaration) (success)), ([, 16 (rest-of-var-declaration))]
-15 (rest-of-var-declaration) (success)
-16 (rest-of-var-declaration) to -> [(NUM, 17 (rest-of-var-declaration))]
-17 (rest-of-var-declaration) to -> [(], 18 (rest-of-var-declaration))]
-18 (rest-of-var-declaration) to -> [(;, 19 (rest-of-var-declaration) (success))]
-19 (rest-of-var-declaration) (success)
+15 (rest-of-var-declaration) to -> [(;, 16 (rest-of-var-declaration) (success)), ([, 17 (rest-of-var-declaration))]
+16 (rest-of-var-declaration) (success)
+17 (rest-of-var-declaration) to -> [(NUM, 18 (rest-of-var-declaration))]
+18 (rest-of-var-declaration) to -> [(], 19 (rest-of-var-declaration))]
+19 (rest-of-var-declaration) to -> [(;, 20 (rest-of-var-declaration) (success))]
+20 (rest-of-var-declaration) (success)
 
 type-specifier
-20 (type-specifier) to -> [(int, 21 (type-specifier) (success)), (void, 22 (type-specifier) (success))]
-21 (type-specifier) (success)
+21 (type-specifier) to -> [(int, 22 (type-specifier) (success)), (void, 23 (type-specifier) (success))]
 22 (type-specifier) (success)
+23 (type-specifier) (success)
 
 fun-declaration
-23 (fun-declaration) to -> [((, 24 (fun-declaration))]
-24 (fun-declaration) to -> [(params, 25 (fun-declaration))]
-25 (fun-declaration) to -> [(), 26 (fun-declaration))]
-26 (fun-declaration) to -> [(compound-stmt, 27 (fun-declaration) (success))]
-27 (fun-declaration) (success)
+24 (fun-declaration) to -> [((, 25 (fun-declaration))]
+25 (fun-declaration) to -> [(params, 26 (fun-declaration))]
+26 (fun-declaration) to -> [(), 27 (fun-declaration))]
+27 (fun-declaration) to -> [(compound-stmt, 28 (fun-declaration) (success))]
+28 (fun-declaration) (success)
 
 params
-28 (params) to -> [(int-starting-param-list, 29 (params) (success)), (void-starting-param-list, 30 (params) (success))]
-29 (params) (success)
+29 (params) to -> [(int-starting-param-list, 30 (params) (success)), (void-starting-param-list, 31 (params) (success))]
 30 (params) (success)
+31 (params) (success)
 
 void-starting-param-list
-31 (void-starting-param-list) to -> [(void, 32 (void-starting-param-list))]
-32 (void-starting-param-list) to -> [(rest-of-void-starting-param-list, 33 (void-starting-param-list) (success))]
-33 (void-starting-param-list) (success)
+32 (void-starting-param-list) to -> [(void, 33 (void-starting-param-list))]
+33 (void-starting-param-list) to -> [(rest-of-void-starting-param-list, 34 (void-starting-param-list) (success))]
+34 (void-starting-param-list) (success)
 
 rest-of-void-starting-param-list
-34 (rest-of-void-starting-param-list) to -> [(ID, 35 (rest-of-void-starting-param-list)), ((), 37 (rest-of-void-starting-param-list) (success))]
-35 (rest-of-void-starting-param-list) to -> [(rest-of-param, 36 (rest-of-void-starting-param-list))]
-37 (rest-of-void-starting-param-list) (success)
-36 (rest-of-void-starting-param-list) to -> [(param-list-prime, 37 (rest-of-void-starting-param-list) (success))]
+35 (rest-of-void-starting-param-list) to -> [(ID, 36 (rest-of-void-starting-param-list)), ((), 39 (rest-of-void-starting-param-list) (success))]
+36 (rest-of-void-starting-param-list) to -> [(rest-of-param, 37 (rest-of-void-starting-param-list))]
+39 (rest-of-void-starting-param-list) (success)
+37 (rest-of-void-starting-param-list) to -> [(param-list-prime, 38 (rest-of-void-starting-param-list) (success))]
+38 (rest-of-void-starting-param-list) (success)
 
 int-starting-param-list
-38 (int-starting-param-list) to -> [(int, 39 (int-starting-param-list))]
-39 (int-starting-param-list) to -> [(ID, 40 (int-starting-param-list))]
-40 (int-starting-param-list) to -> [(rest-of-param, 41 (int-starting-param-list))]
-41 (int-starting-param-list) to -> [(param-list-prime, 42 (int-starting-param-list) (success))]
-42 (int-starting-param-list) (success)
+40 (int-starting-param-list) to -> [(int, 41 (int-starting-param-list))]
+41 (int-starting-param-list) to -> [(ID, 42 (int-starting-param-list))]
+42 (int-starting-param-list) to -> [(rest-of-param, 43 (int-starting-param-list))]
+43 (int-starting-param-list) to -> [(param-list-prime, 44 (int-starting-param-list) (success))]
+44 (int-starting-param-list) (success)
 
 param-list-prime
-43 (param-list-prime) to -> [(,, 44 (param-list-prime)), ((), 46 (param-list-prime) (success))]
-44 (param-list-prime) to -> [(param, 45 (param-list-prime))]
-46 (param-list-prime) (success)
-45 (param-list-prime) to -> [(param-list-prime, 46 (param-list-prime) (success))]
+45 (param-list-prime) to -> [(,, 46 (param-list-prime)), ((), 49 (param-list-prime) (success))]
+46 (param-list-prime) to -> [(param, 47 (param-list-prime))]
+49 (param-list-prime) (success)
+47 (param-list-prime) to -> [(param-list-prime, 48 (param-list-prime) (success))]
+48 (param-list-prime) (success)
 
 param
-47 (param) to -> [(type-specifier, 48 (param))]
-48 (param) to -> [(ID, 49 (param))]
-49 (param) to -> [(rest-of-param, 50 (param) (success))]
-50 (param) (success)
+50 (param) to -> [(type-specifier, 51 (param))]
+51 (param) to -> [(ID, 52 (param))]
+52 (param) to -> [(rest-of-param, 53 (param) (success))]
+53 (param) (success)
 
 rest-of-param
-51 (rest-of-param) to -> [((), 50 (param) (success)), ([, 52 (rest-of-param))]
-50 (param) (success)
-52 (rest-of-param) to -> [(], 53 (rest-of-param) (success))]
-53 (rest-of-param) (success)
+54 (rest-of-param) to -> [((), 55 (rest-of-param) (success)), ([, 56 (rest-of-param))]
+55 (rest-of-param) (success)
+56 (rest-of-param) to -> [(], 57 (rest-of-param) (success))]
+57 (rest-of-param) (success)
 
 compound-stmt
-54 (compound-stmt) to -> [({, 55 (compound-stmt))]
-55 (compound-stmt) to -> [(declaration-list, 56 (compound-stmt))]
-56 (compound-stmt) to -> [(statement-list, 57 (compound-stmt))]
-57 (compound-stmt) to -> [(}, 58 (compound-stmt) (success))]
-58 (compound-stmt) (success)
+58 (compound-stmt) to -> [({, 59 (compound-stmt))]
+59 (compound-stmt) to -> [(declaration-list, 60 (compound-stmt))]
+60 (compound-stmt) to -> [(statement-list, 61 (compound-stmt))]
+61 (compound-stmt) to -> [(}, 62 (compound-stmt) (success))]
+62 (compound-stmt) (success)
 
 statement-list
-59 (statement-list) to -> [(statement-list-prime, 60 (statement-list) (success))]
-60 (statement-list) (success)
-
-statement-list-prime
-61 (statement-list-prime) to -> [(statement, 62 (statement-list-prime)), ((), 63 (statement-list-prime) (success))]
-62 (statement-list-prime) to -> [(statement-list-prime, 63 (statement-list-prime) (success))]
-63 (statement-list-prime) (success)
+63 (statement-list) to -> [(statement, 64 (statement-list)), ((), 66 (statement-list) (success))]
+64 (statement-list) to -> [(statement-list, 65 (statement-list) (success))]
+66 (statement-list) (success)
+65 (statement-list) (success)
 
 statement
-64 (statement) to -> [(expression-stmt, 65 (statement) (success)), (compound-stmt, 66 (statement) (success)), (selection-stmt, 67 (statement) (success)), (iteration-stmt, 68 (statement) (success)), (return-stmt, 69 (statement) (success)), (switch-stmt, 70 (statement) (success))]
-65 (statement) (success)
-66 (statement) (success)
-67 (statement) (success)
+67 (statement) to -> [(expression-stmt, 68 (statement) (success)), (compound-stmt, 69 (statement) (success)), (selection-stmt, 70 (statement) (success)), (iteration-stmt, 71 (statement) (success)), (return-stmt, 72 (statement) (success)), (switch-stmt, 73 (statement) (success))]
 68 (statement) (success)
 69 (statement) (success)
 70 (statement) (success)
+71 (statement) (success)
+72 (statement) (success)
+73 (statement) (success)
 
 expression-stmt
-71 (expression-stmt) to -> [(expression, 72 (expression-stmt)), (continue, 74 (expression-stmt)), (break, 76 (expression-stmt)), (;, 78 (expression-stmt) (success))]
-72 (expression-stmt) to -> [(;, 73 (expression-stmt) (success))]
-74 (expression-stmt) to -> [(;, 75 (expression-stmt) (success))]
-76 (expression-stmt) to -> [(;, 77 (expression-stmt) (success))]
+74 (expression-stmt) to -> [(expression, 75 (expression-stmt)), (continue, 77 (expression-stmt)), (break, 79 (expression-stmt)), (;, 81 (expression-stmt) (success))]
+75 (expression-stmt) to -> [(;, 76 (expression-stmt) (success))]
+77 (expression-stmt) to -> [(;, 78 (expression-stmt) (success))]
+79 (expression-stmt) to -> [(;, 80 (expression-stmt) (success))]
+81 (expression-stmt) (success)
+76 (expression-stmt) (success)
 78 (expression-stmt) (success)
-73 (expression-stmt) (success)
-75 (expression-stmt) (success)
-77 (expression-stmt) (success)
+80 (expression-stmt) (success)
 
 selection-stmt
-79 (selection-stmt) to -> [(if, 80 (selection-stmt))]
-80 (selection-stmt) to -> [((, 81 (selection-stmt))]
-81 (selection-stmt) to -> [(expression, 82 (selection-stmt))]
-82 (selection-stmt) to -> [(), 83 (selection-stmt))]
-83 (selection-stmt) to -> [(statement, 84 (selection-stmt))]
-84 (selection-stmt) to -> [(else, 85 (selection-stmt))]
-85 (selection-stmt) to -> [(statement, 86 (selection-stmt) (success))]
-86 (selection-stmt) (success)
+82 (selection-stmt) to -> [(if, 83 (selection-stmt))]
+83 (selection-stmt) to -> [((, 84 (selection-stmt))]
+84 (selection-stmt) to -> [(expression, 85 (selection-stmt))]
+85 (selection-stmt) to -> [(), 86 (selection-stmt))]
+86 (selection-stmt) to -> [(statement, 87 (selection-stmt))]
+87 (selection-stmt) to -> [(else, 88 (selection-stmt))]
+88 (selection-stmt) to -> [(statement, 89 (selection-stmt) (success))]
+89 (selection-stmt) (success)
 
 iteration-stmt
-87 (iteration-stmt) to -> [(while, 88 (iteration-stmt))]
-88 (iteration-stmt) to -> [((, 89 (iteration-stmt))]
-89 (iteration-stmt) to -> [(expression, 90 (iteration-stmt))]
-90 (iteration-stmt) to -> [(), 91 (iteration-stmt))]
-91 (iteration-stmt) to -> [(statement, 92 (iteration-stmt) (success))]
-92 (iteration-stmt) (success)
+90 (iteration-stmt) to -> [(while, 91 (iteration-stmt))]
+91 (iteration-stmt) to -> [((, 92 (iteration-stmt))]
+92 (iteration-stmt) to -> [(expression, 93 (iteration-stmt))]
+93 (iteration-stmt) to -> [(), 94 (iteration-stmt))]
+94 (iteration-stmt) to -> [(statement, 95 (iteration-stmt) (success))]
+95 (iteration-stmt) (success)
 
 return-stmt
-93 (return-stmt) to -> [(return, 94 (return-stmt))]
-94 (return-stmt) to -> [(rest-of-return-stmt, 95 (return-stmt) (success))]
-95 (return-stmt) (success)
+96 (return-stmt) to -> [(return, 97 (return-stmt))]
+97 (return-stmt) to -> [(rest-of-return-stmt, 98 (return-stmt) (success))]
+98 (return-stmt) (success)
 
 rest-of-return-stmt
-96 (rest-of-return-stmt) to -> [(;, 97 (rest-of-return-stmt) (success)), (expression, 98 (rest-of-return-stmt))]
-97 (rest-of-return-stmt) (success)
-98 (rest-of-return-stmt) to -> [(;, 99 (rest-of-return-stmt) (success))]
-99 (rest-of-return-stmt) (success)
+99 (rest-of-return-stmt) to -> [(;, 100 (rest-of-return-stmt) (success)), (expression, 101 (rest-of-return-stmt))]
+100 (rest-of-return-stmt) (success)
+101 (rest-of-return-stmt) to -> [(;, 102 (rest-of-return-stmt) (success))]
+102 (rest-of-return-stmt) (success)
 
 switch-stmt
-100 (switch-stmt) to -> [(switch, 101 (switch-stmt))]
-101 (switch-stmt) to -> [((, 102 (switch-stmt))]
-102 (switch-stmt) to -> [(expression, 103 (switch-stmt))]
-103 (switch-stmt) to -> [(), 104 (switch-stmt))]
-104 (switch-stmt) to -> [({, 105 (switch-stmt))]
-105 (switch-stmt) to -> [(case-stmts, 106 (switch-stmt))]
-106 (switch-stmt) to -> [(default-stmt, 107 (switch-stmt))]
-107 (switch-stmt) to -> [(}, 108 (switch-stmt) (success))]
-108 (switch-stmt) (success)
+103 (switch-stmt) to -> [(switch, 104 (switch-stmt))]
+104 (switch-stmt) to -> [((, 105 (switch-stmt))]
+105 (switch-stmt) to -> [(expression, 106 (switch-stmt))]
+106 (switch-stmt) to -> [(), 107 (switch-stmt))]
+107 (switch-stmt) to -> [({, 108 (switch-stmt))]
+108 (switch-stmt) to -> [(case-stmts, 109 (switch-stmt))]
+109 (switch-stmt) to -> [(default-stmt, 110 (switch-stmt))]
+110 (switch-stmt) to -> [(}, 111 (switch-stmt) (success))]
+111 (switch-stmt) (success)
 
 case-stmts
-109 (case-stmts) to -> [(case-stmts-prime, 110 (case-stmts) (success))]
-110 (case-stmts) (success)
-
-case-stmts-prime
-111 (case-stmts-prime) to -> [(case-stmt, 112 (case-stmts-prime)), ((), 113 (case-stmts-prime) (success))]
-112 (case-stmts-prime) to -> [(case-stmts-prime, 113 (case-stmts-prime) (success))]
-113 (case-stmts-prime) (success)
+112 (case-stmts) to -> [(case-stmt, 113 (case-stmts)), ((), 115 (case-stmts) (success))]
+113 (case-stmts) to -> [(case-stmts, 114 (case-stmts) (success))]
+115 (case-stmts) (success)
+114 (case-stmts) (success)
 
 case-stmt
-114 (case-stmt) to -> [(case, 115 (case-stmt))]
-115 (case-stmt) to -> [(NUM, 116 (case-stmt))]
-116 (case-stmt) to -> [(:, 117 (case-stmt))]
-117 (case-stmt) to -> [(statement-list, 118 (case-stmt) (success))]
-118 (case-stmt) (success)
+116 (case-stmt) to -> [(case, 117 (case-stmt))]
+117 (case-stmt) to -> [(NUM, 118 (case-stmt))]
+118 (case-stmt) to -> [(:, 119 (case-stmt))]
+119 (case-stmt) to -> [(statement-list, 120 (case-stmt) (success))]
+120 (case-stmt) (success)
 
 default-stmt
-119 (default-stmt) to -> [(default, 120 (default-stmt)), ((), 122 (default-stmt) (success))]
-120 (default-stmt) to -> [(:, 121 (default-stmt))]
-122 (default-stmt) (success)
-121 (default-stmt) to -> [(statement-list, 122 (default-stmt) (success))]
+121 (default-stmt) to -> [(default, 122 (default-stmt)), ((), 125 (default-stmt) (success))]
+122 (default-stmt) to -> [(:, 123 (default-stmt))]
+125 (default-stmt) (success)
+123 (default-stmt) to -> [(statement-list, 124 (default-stmt) (success))]
+124 (default-stmt) (success)
 
 expression
-123 (expression) to -> [(simple-expression, 124 (expression) (success)), (ID, 125 (expression))]
-124 (expression) (success)
-125 (expression) to -> [(id-expression, 126 (expression) (success))]
-126 (expression) (success)
+126 (expression) to -> [(simple-expression, 127 (expression) (success)), (ID, 128 (expression))]
+127 (expression) (success)
+128 (expression) to -> [(id-expression, 129 (expression) (success))]
+129 (expression) (success)
 
 id-expression
-127 (id-expression) to -> [(=, 128 (id-expression)), (id-simple-expression, 130 (id-expression) (success)), ([, 131 (id-expression))]
-128 (id-expression) to -> [(expression, 129 (id-expression) (success))]
-130 (id-expression) (success)
-131 (id-expression) to -> [(bracket-id-expression, 132 (id-expression) (success))]
-129 (id-expression) (success)
+130 (id-expression) to -> [(=, 131 (id-expression)), (id-simple-expression, 133 (id-expression) (success)), ([, 134 (id-expression))]
+131 (id-expression) to -> [(expression, 132 (id-expression) (success))]
+133 (id-expression) (success)
+134 (id-expression) to -> [(bracket-id-expression, 135 (id-expression) (success))]
 132 (id-expression) (success)
+135 (id-expression) (success)
 
 bracket-id-expression
-133 (bracket-id-expression) to -> [(expression, 134 (bracket-id-expression)), (bracket-id-simple-expression, 138 (bracket-id-expression) (success))]
-134 (bracket-id-expression) to -> [(], 135 (bracket-id-expression))]
-138 (bracket-id-expression) (success)
-135 (bracket-id-expression) to -> [(=, 136 (bracket-id-expression))]
-136 (bracket-id-expression) to -> [(expression, 137 (bracket-id-expression) (success))]
-137 (bracket-id-expression) (success)
+136 (bracket-id-expression) to -> [(expression, 137 (bracket-id-expression)), (bracket-id-simple-expression, 141 (bracket-id-expression) (success))]
+137 (bracket-id-expression) to -> [(], 138 (bracket-id-expression))]
+141 (bracket-id-expression) (success)
+138 (bracket-id-expression) to -> [(=, 139 (bracket-id-expression))]
+139 (bracket-id-expression) to -> [(expression, 140 (bracket-id-expression) (success))]
+140 (bracket-id-expression) (success)
 
 simple-expression
-139 (simple-expression) to -> [(additive-expression, 140 (simple-expression))]
-140 (simple-expression) to -> [(rest-of-simple-expression, 141 (simple-expression) (success))]
-141 (simple-expression) (success)
+142 (simple-expression) to -> [(additive-expression, 143 (simple-expression))]
+143 (simple-expression) to -> [(rest-of-simple-expression, 144 (simple-expression) (success))]
+144 (simple-expression) (success)
 
 id-simple-expression
-142 (id-simple-expression) to -> [(id-additive-expression, 143 (id-simple-expression))]
-143 (id-simple-expression) to -> [(rest-of-simple-expression, 144 (id-simple-expression) (success))]
-144 (id-simple-expression) (success)
+145 (id-simple-expression) to -> [(id-additive-expression, 146 (id-simple-expression))]
+146 (id-simple-expression) to -> [(rest-of-simple-expression, 147 (id-simple-expression) (success))]
+147 (id-simple-expression) (success)
 
 bracket-id-simple-expression
-145 (bracket-id-simple-expression) to -> [(bracket-id-additive-expression, 146 (bracket-id-simple-expression))]
-146 (bracket-id-simple-expression) to -> [(rest-of-simple-expression, 147 (bracket-id-simple-expression) (success))]
-147 (bracket-id-simple-expression) (success)
+148 (bracket-id-simple-expression) to -> [(bracket-id-additive-expression, 149 (bracket-id-simple-expression))]
+149 (bracket-id-simple-expression) to -> [(rest-of-simple-expression, 150 (bracket-id-simple-expression) (success))]
+150 (bracket-id-simple-expression) (success)
 
 rest-of-simple-expression
-148 (rest-of-simple-expression) to -> [(RELOP, 149 (rest-of-simple-expression)), ((), 150 (rest-of-simple-expression) (success))]
-149 (rest-of-simple-expression) to -> [(additive-expression, 150 (rest-of-simple-expression) (success))]
-150 (rest-of-simple-expression) (success)
+151 (rest-of-simple-expression) to -> [(RELOP, 152 (rest-of-simple-expression)), ((), 154 (rest-of-simple-expression) (success))]
+152 (rest-of-simple-expression) to -> [(additive-expression, 153 (rest-of-simple-expression) (success))]
+154 (rest-of-simple-expression) (success)
+153 (rest-of-simple-expression) (success)
 
 additive-expression
-151 (additive-expression) to -> [(term, 152 (additive-expression))]
-152 (additive-expression) to -> [(additive-expression-prime, 153 (additive-expression) (success))]
-153 (additive-expression) (success)
+155 (additive-expression) to -> [(term, 156 (additive-expression))]
+156 (additive-expression) to -> [(additive-expression-prime, 157 (additive-expression) (success))]
+157 (additive-expression) (success)
 
 id-additive-expression
-154 (id-additive-expression) to -> [(id-term, 155 (id-additive-expression))]
-155 (id-additive-expression) to -> [(additive-expression-prime, 156 (id-additive-expression) (success))]
-156 (id-additive-expression) (success)
+158 (id-additive-expression) to -> [(id-term, 159 (id-additive-expression))]
+159 (id-additive-expression) to -> [(additive-expression-prime, 160 (id-additive-expression) (success))]
+160 (id-additive-expression) (success)
 
 bracket-id-additive-expression
-157 (bracket-id-additive-expression) to -> [(bracket-id-term, 158 (bracket-id-additive-expression))]
-158 (bracket-id-additive-expression) to -> [(additive-expression-prime, 159 (bracket-id-additive-expression) (success))]
-159 (bracket-id-additive-expression) (success)
+161 (bracket-id-additive-expression) to -> [(bracket-id-term, 162 (bracket-id-additive-expression))]
+162 (bracket-id-additive-expression) to -> [(additive-expression-prime, 163 (bracket-id-additive-expression) (success))]
+163 (bracket-id-additive-expression) (success)
 
 additive-expression-prime
-160 (additive-expression-prime) to -> [(addop, 161 (additive-expression-prime)), ((), 163 (additive-expression-prime) (success))]
-161 (additive-expression-prime) to -> [(term, 162 (additive-expression-prime))]
-163 (additive-expression-prime) (success)
-162 (additive-expression-prime) to -> [(additive-expression-prime, 163 (additive-expression-prime) (success))]
+164 (additive-expression-prime) to -> [(addop, 165 (additive-expression-prime)), ((), 168 (additive-expression-prime) (success))]
+165 (additive-expression-prime) to -> [(term, 166 (additive-expression-prime))]
+168 (additive-expression-prime) (success)
+166 (additive-expression-prime) to -> [(additive-expression-prime, 167 (additive-expression-prime) (success))]
+167 (additive-expression-prime) (success)
 
 addop
-164 (addop) to -> [(+, 165 (addop) (success)), (-, 166 (addop) (success))]
-165 (addop) (success)
-166 (addop) (success)
+169 (addop) to -> [(+, 170 (addop) (success)), (-, 171 (addop) (success))]
+170 (addop) (success)
+171 (addop) (success)
 
 term
-167 (term) to -> [(factor, 168 (term))]
-168 (term) to -> [(term-prime, 169 (term) (success))]
-169 (term) (success)
+172 (term) to -> [(factor, 173 (term))]
+173 (term) to -> [(term-prime, 174 (term) (success))]
+174 (term) (success)
 
 id-term
-170 (id-term) to -> [(id-factor, 171 (id-term))]
-171 (id-term) to -> [(term-prime, 172 (id-term) (success))]
-172 (id-term) (success)
+175 (id-term) to -> [(reference, 176 (id-term))]
+176 (id-term) to -> [(term-prime, 177 (id-term) (success))]
+177 (id-term) (success)
 
 bracket-id-term
-173 (bracket-id-term) to -> [(bracket-id-factor, 174 (bracket-id-term))]
-174 (bracket-id-term) to -> [(term-prime, 175 (bracket-id-term) (success))]
-175 (bracket-id-term) (success)
+178 (bracket-id-term) to -> [(bracket-id-factor, 179 (bracket-id-term))]
+179 (bracket-id-term) to -> [(term-prime, 180 (bracket-id-term) (success))]
+180 (bracket-id-term) (success)
 
 term-prime
-176 (term-prime) to -> [(*, 177 (term-prime)), ((), 179 (term-prime) (success))]
-177 (term-prime) to -> [(factor, 178 (term-prime))]
-179 (term-prime) (success)
-178 (term-prime) to -> [(term-prime, 179 (term-prime) (success))]
+181 (term-prime) to -> [(*, 182 (term-prime)), ((), 185 (term-prime) (success))]
+182 (term-prime) to -> [(factor, 183 (term-prime))]
+185 (term-prime) (success)
+183 (term-prime) to -> [(term-prime, 184 (term-prime) (success))]
+184 (term-prime) (success)
 
 factor
-180 (factor) to -> [((, 181 (factor)), (NUM, 184 (factor) (success))]
-181 (factor) to -> [(expression, 182 (factor))]
-184 (factor) (success)
-182 (factor) to -> [(), 183 (factor) (success))]
-183 (factor) (success)
-
-id-factor
-185 (id-factor) to -> [(reference, 186 (id-factor) (success))]
-186 (id-factor) (success)
+186 (factor) to -> [((, 187 (factor)), (NUM, 190 (factor) (success))]
+187 (factor) to -> [(expression, 188 (factor))]
+190 (factor) (success)
+188 (factor) to -> [(), 189 (factor) (success))]
+189 (factor) (success)
 
 bracket-id-factor
-187 (bracket-id-factor) to -> [(bracket-reference, 188 (bracket-id-factor) (success))]
-188 (bracket-id-factor) (success)
+191 (bracket-id-factor) to -> [(bracket-reference, 192 (bracket-id-factor) (success))]
+192 (bracket-id-factor) (success)
 
 reference
-189 (reference) to -> [(call, 190 (reference) (success)), ((), 190 (reference) (success))]
-190 (reference) (success)
+193 (reference) to -> [(call, 194 (reference) (success)), ((), 195 (reference) (success))]
+194 (reference) (success)
+195 (reference) (success)
 
 bracket-reference
-191 (bracket-reference) to -> [(bracket-var, 192 (bracket-reference) (success))]
-192 (bracket-reference) (success)
+196 (bracket-reference) to -> [(bracket-var, 197 (bracket-reference) (success))]
+197 (bracket-reference) (success)
 
 call
-193 (call) to -> [((, 194 (call))]
-194 (call) to -> [(args, 195 (call))]
-195 (call) to -> [(), 196 (call) (success))]
-196 (call) (success)
+198 (call) to -> [((, 199 (call))]
+199 (call) to -> [(args, 200 (call))]
+200 (call) to -> [(), 201 (call) (success))]
+201 (call) (success)
 
 args
-197 (args) to -> [(arg-list, 198 (args) (success)), ((), 198 (args) (success))]
-198 (args) (success)
+202 (args) to -> [(arg-list, 203 (args) (success)), ((), 204 (args) (success))]
+203 (args) (success)
+204 (args) (success)
 
 arg-list
-199 (arg-list) to -> [(expression, 200 (arg-list))]
-200 (arg-list) to -> [(arg-list-prime, 201 (arg-list) (success))]
-201 (arg-list) (success)
+205 (arg-list) to -> [(expression, 206 (arg-list))]
+206 (arg-list) to -> [(arg-list-prime, 207 (arg-list) (success))]
+207 (arg-list) (success)
 
 arg-list-prime
-202 (arg-list-prime) to -> [(,, 203 (arg-list-prime)), ((), 205 (arg-list-prime) (success))]
-203 (arg-list-prime) to -> [(expression, 204 (arg-list-prime))]
-205 (arg-list-prime) (success)
-204 (arg-list-prime) to -> [(arg-list-prime, 205 (arg-list-prime) (success))]
+208 (arg-list-prime) to -> [(,, 209 (arg-list-prime)), ((), 212 (arg-list-prime) (success))]
+209 (arg-list-prime) to -> [(expression, 210 (arg-list-prime))]
+212 (arg-list-prime) (success)
+210 (arg-list-prime) to -> [(arg-list-prime, 211 (arg-list-prime) (success))]
+211 (arg-list-prime) (success)
 ```
 ## First and Follow
 |Non-terminal|First|Follow|
@@ -506,7 +503,6 @@ arg-list-prime
 |call|(|) * + , - ; RELOP ]|
 |case-stmt|case|case default }|
 |case-stmts|case ε|default }|
-|case-stmts-prime|case ε|default }|
 |compound-stmt|{|( ; EOF ID NUM break case continue default else if int return switch void while { }|
 |declaration|( ; [|( ; EOF ID NUM break continue if int return switch void while { }|
 |declaration-list|int void ε|( ; EOF ID NUM break continue if return switch while { }|
@@ -517,7 +513,6 @@ arg-list-prime
 |fun-declaration|(|( ; EOF ID NUM break continue if int return switch void while { }|
 |id-additive-expression|( * + - ε|) , ; RELOP ]|
 |id-expression|( * + - = RELOP [ ε|) , ; ]|
-|id-factor|( ε|) * + , - ; RELOP ]|
 |id-simple-expression|( * + - RELOP ε|) , ; ]|
 |id-term|( * ε|) + , - ; RELOP ]|
 |int-starting-param-list|int|)|
@@ -537,7 +532,6 @@ arg-list-prime
 |simple-expression|( NUM|) , ; ]|
 |statement|( ; ID NUM break continue if return switch while {|( ; ID NUM break case continue default else if return switch while { }|
 |statement-list|( ; ID NUM break continue if return switch while { ε|case default }|
-|statement-list-prime|( ; ID NUM break continue if return switch while { ε|case default }|
 |switch-stmt|switch|( ; ID NUM break case continue default else if return switch while { }|
 |term|( NUM|) + , - ; RELOP ]|
 |term-prime|* ε|) + , - ; RELOP ]|
