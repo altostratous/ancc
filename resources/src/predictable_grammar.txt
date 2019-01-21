@@ -2,45 +2,45 @@
 2. declaration-list → type-specifier ID declaration declaration-list | ε
 3. declaration → var-declaration | fun-declaration
 4. var-declaration → ; | [ NUM ] ;
-6. type-specifier → int | void
-7. fun-declaration → ( params ) compound-stmt
-8. params → int-starting-param-list | void-starting-param-list
-10. void-starting-param-list → void rest-of-void-starting-param-list
-11. rest-of-void-starting-param-list → ID rest-of-param param-list-prime | ε
-12. int-starting-param-list → int ID rest-of-param param-list-prime
-13. param-list-prime → , param param-list-prime | ε
-14. param → type-specifier ID rest-of-param
-15. rest-of-param → ε | [ ]
-16. compound-stmt → { declaration-list statement-list }
-18. statement-list → statement statement-list | ε
-19. statement → expression-stmt | compound-stmt | selection-stmt | iteration-stmt | return-stmt | switch-stmt
-20. expression-stmt → expression ; | continue ; | break ; | ;
-21. selection-stmt → if ( expression ) statement else statement
-22. iteration-stmt → while ( expression ) statement
-23. return-stmt → return rest-of-return-stmt
-24. rest-of-return-stmt → ; | expression ;
-25. switch-stmt → switch ( expression ) { case-stmts default-stmt }
-27. case-stmts → case-stmt case-stmts | ε
-28. case-stmt → case NUM : statement-list
-29. default-stmt → default : statement-list | ε
-30. expression → simple-expression | ID id-expression
-31. id-expression → = expression | id-simple-expression | [ expression ] bracket-id-expression
-32. bracket-id-expression → = expression | ε
-35. simple-expression → additive-expression rest-of-simple-expression
-36. id-simple-expression → id-additive-expression rest-of-simple-expression
-38. rest-of-simple-expression → RELOP addop-relop-rest | ε
-39. addop-relop-rest → additive-expression | ID id-additive-expression
-39. additive-expression → term additive-expression-prime
-40. id-additive-expression → id-term additive-expression-prime
-42. additive-expression-prime → addop addop-relop-rest | ε
-43. addop → + | -
-44. term → factor term-prime
-45. id-term → reference term-prime
-37. term-prime → * mult-rest | ε
-38. mult-rest → term | ID id-term
-47. factor → ( expression ) | NUM
-50. reference → call | ε
-52. call → ( args )
-53. args → arg-list | ε
-54. arg-list → expression arg-list-prime
-55. arg-list-prime → , expression arg-list-prime | ε
+5. type-specifier → int | void
+6. fun-declaration → ( params ) compound-stmt
+7. params → int-starting-param-list | void-starting-param-list
+8. void-starting-param-list → void rest-of-void-starting-param-list
+9. rest-of-void-starting-param-list → ID rest-of-param param-list-prime | ε
+10. int-starting-param-list → int ID rest-of-param param-list-prime
+11. param-list-prime → , param param-list-prime | ε
+12. param → type-specifier ID rest-of-param
+13. rest-of-param → ε | [ ]
+14. compound-stmt → { declaration-list statement-list }
+15. statement-list → statement statement-list | ε
+16. statement → expression-stmt | compound-stmt | selection-stmt | iteration-stmt | return-stmt | switch-stmt
+17. expression-stmt → expression ; | continue ; | break ; | ;
+18. selection-stmt → if ( expression ) statement else statement
+19. iteration-stmt → while ( expression ) statement
+20. return-stmt → return rest-of-return-stmt
+21. rest-of-return-stmt → ; | expression ;
+22. switch-stmt → switch ( expression ) { case-stmts default-stmt }
+23. case-stmts → case-stmt case-stmts | ε
+24. case-stmt → case NUM : statement-list
+25. default-stmt → default : statement-list | ε
+26. expression → simple-expression | ID id-expression
+27. id-expression → = expression | id-simple-expression | [ expression ] bracket-id-expression
+28. bracket-id-expression → = expression | ε
+29. simple-expression → additive-expression rest-of-simple-expression
+30. id-simple-expression → id-additive-expression rest-of-simple-expression
+31. rest-of-simple-expression → RELOP addop-relop-rest | ε
+32. addop-relop-rest → additive-expression | ID id-additive-expression
+33. additive-expression → term additive-expression-prime
+34. id-additive-expression → id-term additive-expression-prime
+35. additive-expression-prime → addop addop-relop-rest | ε
+36. addop → + | -
+37. term → factor term-prime
+38. id-term → reference term-prime
+39. term-prime → * mult-rest | ε
+40. mult-rest → term | ID id-term
+41. factor → ( expression ) | NUM
+42. reference → call | ε
+43. call → ( args )
+44. args → arg-list | ε
+45. arg-list → expression arg-list-prime
+46. arg-list-prime → , expression arg-list-prime | ε

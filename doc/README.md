@@ -123,48 +123,48 @@
 2. declaration-list → type-specifier ID declaration declaration-list | ε
 3. declaration → var-declaration | fun-declaration
 4. var-declaration → ; | [ NUM ] ;
-6. type-specifier → int | void
-7. fun-declaration → ( params ) compound-stmt
-8. params → int-starting-param-list | void-starting-param-list
-10. void-starting-param-list → void rest-of-void-starting-param-list
-11. rest-of-void-starting-param-list → ID rest-of-param param-list-prime | ε
-12. int-starting-param-list → int ID rest-of-param param-list-prime
-13. param-list-prime → , param param-list-prime | ε
-14. param → type-specifier ID rest-of-param
-15. rest-of-param → ε | [ ]
-16. compound-stmt → { declaration-list statement-list }
-18. statement-list → statement statement-list | ε
-19. statement → expression-stmt | compound-stmt | selection-stmt | iteration-stmt | return-stmt | switch-stmt
-20. expression-stmt → expression ; | continue ; | break ; | ;
-21. selection-stmt → if ( expression ) statement else statement
-22. iteration-stmt → while ( expression ) statement
-23. return-stmt → return rest-of-return-stmt
-24. rest-of-return-stmt → ; | expression ;
-25. switch-stmt → switch ( expression ) { case-stmts default-stmt }
-27. case-stmts → case-stmt case-stmts | ε
-28. case-stmt → case NUM : statement-list
-29. default-stmt → default : statement-list | ε
-30. expression → simple-expression | ID id-expression
-31. id-expression → = expression | id-simple-expression | [ expression ] bracket-id-expression
-32. bracket-id-expression → = expression | ε
-35. simple-expression → additive-expression rest-of-simple-expression
-36. id-simple-expression → id-additive-expression rest-of-simple-expression
-38. rest-of-simple-expression → RELOP addop-relop-rest | ε
-39. addop-relop-rest → additive-expression | ID id-additive-expression
-39. additive-expression → term additive-expression-prime
-40. id-additive-expression → id-term additive-expression-prime
-42. additive-expression-prime → addop addop-relop-rest | ε
-43. addop → + | -
-44. term → factor term-prime
-45. id-term → reference term-prime
-37. term-prime → * term | * ID id-term | ε
-47. factor → ( expression ) | NUM
-50. reference → call | ε
-52. call → ( args )
-53. args → arg-list | ε
-54. arg-list → expression arg-list-prime
-55. arg-list-prime → , expression arg-list-prime | ε
-```
+5. type-specifier → int | void
+6. fun-declaration → ( params ) compound-stmt
+7. params → int-starting-param-list | void-starting-param-list
+8. void-starting-param-list → void rest-of-void-starting-param-list
+9. rest-of-void-starting-param-list → ID rest-of-param param-list-prime | ε
+10. int-starting-param-list → int ID rest-of-param param-list-prime
+11. param-list-prime → , param param-list-prime | ε
+12. param → type-specifier ID rest-of-param
+13. rest-of-param → ε | [ ]
+14. compound-stmt → { declaration-list statement-list }
+15. statement-list → statement statement-list | ε
+16. statement → expression-stmt | compound-stmt | selection-stmt | iteration-stmt | return-stmt | switch-stmt
+17. expression-stmt → expression ; | continue ; | break ; | ;
+18. selection-stmt → if ( expression ) statement else statement
+19. iteration-stmt → while ( expression ) statement
+20. return-stmt → return rest-of-return-stmt
+21. rest-of-return-stmt → ; | expression ;
+22. switch-stmt → switch ( expression ) { case-stmts default-stmt }
+23. case-stmts → case-stmt case-stmts | ε
+24. case-stmt → case NUM : statement-list
+25. default-stmt → default : statement-list | ε
+26. expression → simple-expression | ID id-expression
+27. id-expression → = expression | id-simple-expression | [ expression ] bracket-id-expression
+28. bracket-id-expression → = expression | ε
+29. simple-expression → additive-expression rest-of-simple-expression
+30. id-simple-expression → id-additive-expression rest-of-simple-expression
+31. rest-of-simple-expression → RELOP addop-relop-rest | ε
+32. addop-relop-rest → additive-expression | ID id-additive-expression
+33. additive-expression → term additive-expression-prime
+34. id-additive-expression → id-term additive-expression-prime
+35. additive-expression-prime → addop addop-relop-rest | ε
+36. addop → + | -
+37. term → factor term-prime
+38. id-term → reference term-prime
+39. term-prime → * mult-rest | ε
+40. mult-rest → term | ID id-term
+41. factor → ( expression ) | NUM
+42. reference → call | ε
+43. call → ( args )
+44. args → arg-list | ε
+45. arg-list → expression arg-list-prime
+46. arg-list-prime → , expression arg-list-prime | ε```
 ## State Diagram
 ```
 
@@ -417,48 +417,51 @@ id-term
 172 (id-term) (success)
 
 term-prime
-173 (term-prime) to -> [(*, 174 (term-prime)), (*, 176 (term-prime)), ((), 179 (term-prime) (success))]
-174 (term-prime) to -> [(term, 175 (term-prime) (success))]
-176 (term-prime) to -> [(ID, 177 (term-prime))]
-179 (term-prime) (success)
+173 (term-prime) to -> [(*, 174 (term-prime)), ((), 176 (term-prime) (success))]
+174 (term-prime) to -> [(mult-rest, 175 (term-prime) (success))]
+176 (term-prime) (success)
 175 (term-prime) (success)
-177 (term-prime) to -> [(id-term, 178 (term-prime) (success))]
-178 (term-prime) (success)
+
+mult-rest
+177 (mult-rest) to -> [(term, 178 (mult-rest) (success)), (ID, 179 (mult-rest))]
+178 (mult-rest) (success)
+179 (mult-rest) to -> [(id-term, 180 (mult-rest) (success))]
+180 (mult-rest) (success)
 
 factor
-180 (factor) to -> [((, 181 (factor)), (NUM, 184 (factor) (success))]
-181 (factor) to -> [(expression, 182 (factor))]
+181 (factor) to -> [((, 182 (factor)), (NUM, 185 (factor) (success))]
+182 (factor) to -> [(expression, 183 (factor))]
+185 (factor) (success)
+183 (factor) to -> [(), 184 (factor) (success))]
 184 (factor) (success)
-182 (factor) to -> [(), 183 (factor) (success))]
-183 (factor) (success)
 
 reference
-185 (reference) to -> [(call, 186 (reference) (success)), ((), 187 (reference) (success))]
-186 (reference) (success)
+186 (reference) to -> [(call, 187 (reference) (success)), ((), 188 (reference) (success))]
 187 (reference) (success)
+188 (reference) (success)
 
 call
-188 (call) to -> [((, 189 (call))]
-189 (call) to -> [(args, 190 (call))]
-190 (call) to -> [(), 191 (call) (success))]
-191 (call) (success)
+189 (call) to -> [((, 190 (call))]
+190 (call) to -> [(args, 191 (call))]
+191 (call) to -> [(), 192 (call) (success))]
+192 (call) (success)
 
 args
-192 (args) to -> [(arg-list, 193 (args) (success)), ((), 194 (args) (success))]
-193 (args) (success)
+193 (args) to -> [(arg-list, 194 (args) (success)), ((), 195 (args) (success))]
 194 (args) (success)
+195 (args) (success)
 
 arg-list
-195 (arg-list) to -> [(expression, 196 (arg-list))]
-196 (arg-list) to -> [(arg-list-prime, 197 (arg-list) (success))]
-197 (arg-list) (success)
+196 (arg-list) to -> [(expression, 197 (arg-list))]
+197 (arg-list) to -> [(arg-list-prime, 198 (arg-list) (success))]
+198 (arg-list) (success)
 
 arg-list-prime
-198 (arg-list-prime) to -> [(,, 199 (arg-list-prime)), ((), 202 (arg-list-prime) (success))]
-199 (arg-list-prime) to -> [(expression, 200 (arg-list-prime))]
+199 (arg-list-prime) to -> [(,, 200 (arg-list-prime)), ((), 203 (arg-list-prime) (success))]
+200 (arg-list-prime) to -> [(expression, 201 (arg-list-prime))]
+203 (arg-list-prime) (success)
+201 (arg-list-prime) to -> [(arg-list-prime, 202 (arg-list-prime) (success))]
 202 (arg-list-prime) (success)
-200 (arg-list-prime) to -> [(arg-list-prime, 201 (arg-list-prime) (success))]
-201 (arg-list-prime) (success)
 ```
 ## First and Follow
 |Non-terminal|First|Follow|
@@ -488,6 +491,7 @@ arg-list-prime
 |id-term|( * ε|) + , - ; RELOP ]|
 |int-starting-param-list|int|)|
 |iteration-stmt|while|( ; ID NUM break case continue default else if return switch while { }|
+|mult-rest|( ID NUM|) + , - ; RELOP ]|
 |param|int void|) ,|
 |param-list-prime|, ε|)|
 |params|int void|)|
