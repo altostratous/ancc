@@ -36,7 +36,7 @@
 36. minus-expr → term #AddOp additive-expression-prime | ID id-term #AddOp additive-expression-prime
 37. term → factor term-prime
 38. id-term → reference term-prime
-39. term-prime → * mult-rest | ε
+39. term-prime → * mult-rest #MultOp | ε
 40. mult-rest → term | ID id-term
 41. factor → ( expression ) | #PushNum NUM
 42. reference → call | ε

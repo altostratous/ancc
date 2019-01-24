@@ -52,7 +52,10 @@ class Scanner:
 
     def get_next_token(self, scope=0):
 
-        assert scope < len(self.symbol_table) + 1
+        assert scope <= len(self.symbol_table), "{} {}".format(scope, len(self.symbol_table))
+        if scope == len(self.symbol_table):
+            self.symbol_table.append({})
+
         self.symbol_table = self.symbol_table[0: scope + 1]
 
         def digit():
@@ -105,7 +108,7 @@ class Scanner:
             if st in RESERVED_WORDS:
                 return self.return_token(st, None)
             if st not in self.symbol_table[scope]:
-                self.symbol_table[scope][st] = self.malloc(self.symbol_table[scope])
+                self.symbol_table[scope][st] = self.malloc()
             return self.return_token('ID', self.symbol_table[scope][st])
         if next_char in string.digits:
             self.index -= 1

@@ -47,3 +47,12 @@ class AddOpAction(Action):
         parser.semantic_stack.pop()
         parser.semantic_stack.pop()
         parser.semantic_stack += [tmp]
+
+
+class MultOpAction(Action):
+    def do(self, parser):
+        tmp = parser.get_temp()
+        parser.program.add_inst(Mnemonic.MULTIPLY, parser.semantic_stack[-2], parser.semantic_stack[-1], tmp)
+        parser.semantic_stack.pop()
+        parser.semantic_stack.pop()
+        parser.semantic_stack += [tmp]
