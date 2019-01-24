@@ -56,6 +56,7 @@ class Parser:
         self.program = Program()
         self.errors = []
         self.scope = 0
+        self.break_stack = []
 
     @property
     def lookahead_literal(self):
@@ -101,7 +102,7 @@ class Parser:
                     return next_state, None, None
             elif self.lookahead_literal in self.first[literal]:
                 return next_state, literal, None
-        print(self.stack)
+        # print(self.stack)
         return None, None, ParseError(self.lookahead_literal, current_state.non_terminal)
 
     def parse(self):

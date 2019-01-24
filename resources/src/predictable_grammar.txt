@@ -14,30 +14,30 @@
 14. compound-stmt → { declaration-list statement-list }
 15. statement-list → statement statement-list | ε
 16. statement → expression-stmt | compound-stmt | selection-stmt | iteration-stmt | return-stmt | switch-stmt
-17. expression-stmt → expression ; | continue ; | break ; | ;
+17. expression-stmt → expression ; #PopID  | continue ; #Continue | break ; #Break | ;
 18. selection-stmt → if ( expression ) #IfSave statement #IfJumpSave else statement #IfJump
-19. iteration-stmt → while ( expression ) statement
+19. iteration-stmt → while #WhileLabel ( expression ) #WhileSave statement #While
 20. return-stmt → return rest-of-return-stmt
 21. rest-of-return-stmt → ; | expression ;
-22. switch-stmt → switch ( expression ) { case-stmts default-stmt }
+22. switch-stmt → switch #SwitchSave ( expression ) { case-stmts default-stmt } #Switch
 23. case-stmts → case-stmt case-stmts | ε
-24. case-stmt → case NUM : statement-list
-25. default-stmt → default : statement-list | ε
-26. expression → simple-expression | ID id-expression
-27. id-expression → = expression | id-simple-expression | [ expression ] bracket-id-expression
+24. case-stmt → case #CaseInsert NUM : statement-list
+25. default-stmt → default #DefaultInsert : statement-list | ε
+26. expression → simple-expression | #PushID ID id-expression
+27. id-expression → = expression #Assign | id-simple-expression | [ expression ] bracket-id-expression
 28. bracket-id-expression → = expression | ε
 29. simple-expression → additive-expression rest-of-simple-expression
 30. id-simple-expression → id-additive-expression rest-of-simple-expression
 31. rest-of-simple-expression → #PushRelOp RELOP addop-relop-rest #RelOp | ε
-32. addop-relop-rest → additive-expression | ID id-additive-expression
+32. addop-relop-rest → additive-expression | #PushID ID id-additive-expression
 33. additive-expression → term additive-expression-prime
 34. id-additive-expression → id-term additive-expression-prime
 35. additive-expression-prime → #PushAddOp + addop-relop-rest #AddOp | #PushSubOp - minus-expr | ε
-36. minus-expr → term #AddOp additive-expression-prime | ID id-term #AddOp additive-expression-prime
+36. minus-expr → term #AddOp additive-expression-prime | #PushID ID id-term #AddOp additive-expression-prime
 37. term → factor term-prime
 38. id-term → reference term-prime
 39. term-prime → * mult-rest #MultOp | ε
-40. mult-rest → term | ID id-term
+40. mult-rest → term | #PushID ID id-term
 41. factor → ( expression ) | #PushNum NUM
 42. reference → call | ε
 43. call → ( args ) #Print
