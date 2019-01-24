@@ -36,6 +36,9 @@ class ParseError(Exception):
             self.lookahead, self.non_terminal
         )
 
+    def __repr__(self):
+        return str(self)
+
 
 class Parser:
     def __init__(self, state_machines, start_state, scanner):
@@ -54,17 +57,23 @@ class Parser:
         self.errors = []
 
     @property
-    def lookahead(self):
+    def lookahead_literal(self):
+        if self.lookahead_token is None:
+            return None
+        return self.lookahead_token.literal
+
+    @property
+    def lookahead_token(self):
         if self._lookahead is None:
             next_token = self.scanner.get_next_token()
             if next_token:
-                self._lookahead = next_token.literal
+                self._lookahead = next_token
         return self._lookahead
 
     def match(self, s):
-        if self.lookahead != s:
+        if self.lookahead_literal != s:
             return False
-        self.tree_stack[-1][1].append(self.lookahead.text)
+        self.tree_stack[-1][1].append(self.lookahead_literal.text)
         self._lookahead = None
         return True
 
@@ -73,29 +82,30 @@ class Parser:
             return None, None, None
         for literal, next_state in current_state.nexts:
             # ε transition
-            if not literal and self.lookahead in self.follow[current_state.non_terminal]:
+            if not literal and self.lookahead_literal in self.follow[current_state.non_terminal]:
                 assert next_state.is_success
                 return next_state, None, None
             elif literal.is_action:
                 literal.do(self)
                 return next_state, None, None
             # an ε potent rule
-            elif not literal.is_terminal and () in self.first[literal] and self.lookahead in self.follow[literal]:
+            elif not literal.is_terminal and () in self.first[literal] and self.lookahead_literal in self.follow[literal]:
                 return next_state, literal, None
             elif literal.is_terminal:
                 if self.match(literal):
                     return next_state, None, None
-            elif self.lookahead in self.first[literal]:
+            elif self.lookahead_literal in self.first[literal]:
                 return next_state, literal, None
-        return None, None, ParseError(self.lookahead, current_state.non_terminal)
+        print(self.stack)
+        return None, None, ParseError(self.lookahead_literal, current_state.non_terminal)
 
     def parse(self):
-        while self.stack and self.lookahead:
+        while self.stack and self.lookahead_literal:
             next_state, new_flow, error = self.find_next_state(self.stack[-1])
             if error:
                 self.errors.append(error)
                 current_non_terminal = self.stack[-1].non_terminal
-                while self.lookahead not in self.follow[current_non_terminal]:
+                while self.lookahead_literal not in self.follow[current_non_terminal]:
                     self._lookahead = None
                 while not self.stack[-1].is_success:
                     self.stack[-1] = self.stack[-1].nexts[0][1]

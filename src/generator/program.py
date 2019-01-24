@@ -29,7 +29,7 @@ class Inst:
         return Inst(Mnemonic.FAKE)
 
     def __str__(self):
-        return '(' + ','.join(self.arr) +')'
+        return '(' + ', '.join(self.arr) +')'
 
     def __repr__(self):
         return str(self)
