@@ -7,6 +7,23 @@ RESERVED_WORDS = ['int', 'void', 'continue', 'break', 'if', 'else', 'while', 're
 SINGLE_CHARACTERS = [';', ',', '[', ']', '{', '}', '(', ')', ':', '*']
 
 
+class SemanticError(Exception):
+    pass
+
+
+class UndefinedIDError(SemanticError):
+
+    def __init__(self, text, *args: object) -> None:
+        super().__init__(*args)
+        self.text = text
+
+    def __str__(self):
+        return "Undefined ID {}".format(self.text)
+
+    def __repr__(self):
+        return str(self)
+
+
 class Scanner:
     def __init__(self, input_string, literals):
         self.literals = dict([(literal.text, literal) for literal in literals])
@@ -14,14 +31,30 @@ class Scanner:
         self.index = 0
         self.len = len(input_string)
         self.prev_token = None
-        self.symbol_table = {}
+        self.symbol_table = []
+        self.first_free_memory = 0
+
+    def malloc(self, size=1):
+        address = self.first_free_memory
+        self.first_free_memory += size
+        return address
+
+    def get_symbol_address(self, symbol_text):
+        for scope_table in reversed(self.symbol_table):
+            if symbol_text in scope_table:
+                return scope_table[symbol_text]
+        raise UndefinedIDError(symbol_text)
 
     def return_token(self, text, attr):
         t = Token(text, attr, self.literals[text])
         self.prev_token = t
         return t
 
-    def get_next_token(self):
+    def get_next_token(self, scope=0):
+
+        assert scope < len(self.symbol_table) + 1
+        self.symbol_table = self.symbol_table[0: scope + 1]
+
         def digit():
             digit_string = ""
             while self.index < self.len and self.input[self.index] in string.digits:
@@ -71,9 +104,9 @@ class Scanner:
                 self.index += 1
             if st in RESERVED_WORDS:
                 return self.return_token(st, None)
-            if st not in self.symbol_table:
-                self.symbol_table[st] = len(self.symbol_table)
-            return self.return_token('ID', self.symbol_table[st])
+            if st not in self.symbol_table[scope]:
+                self.symbol_table[scope][st] = self.malloc(self.symbol_table[scope])
+            return self.return_token('ID', self.symbol_table[scope][st])
         if next_char in string.digits:
             self.index -= 1
             return self.return_token('NUM', digit())
