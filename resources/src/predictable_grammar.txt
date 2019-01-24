@@ -32,8 +32,8 @@
 32. addop-relop-rest → additive-expression | ID id-additive-expression
 33. additive-expression → term additive-expression-prime
 34. id-additive-expression → id-term additive-expression-prime
-35. additive-expression-prime → #PushAddOp addop addop-relop-rest #AddOp | ε
-36. addop → + | -
+35. additive-expression-prime → #PushAddOp + addop-relop-rest #AddOp | #PushSubOp - minus-expr | ε
+36. minus-expr → term #AddOp additive-expression-prime | ID id-term #AddOp additive-expression-prime
 37. term → factor term-prime
 38. id-term → reference term-prime
 39. term-prime → * mult-rest | ε

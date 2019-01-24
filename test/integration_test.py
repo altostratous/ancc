@@ -37,7 +37,6 @@ class Test(TestCase):
                         print(parser.tree)
                         pass
                     else:
-                        print(parser.tree)
                         with open(os.path.join(filename + '.nco'), mode='w') as output_file:
                             output_file.write(str(parser.program))
                         os.system('cp ' + filename + '.nco output.txt')

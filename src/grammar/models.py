@@ -17,8 +17,6 @@ class Literal:
 
     @property
     def is_terminal(self):
-        if self.is_action:
-            return False
         return self.rules is None
 
     @property
@@ -45,6 +43,8 @@ class Literal:
                 for literal_text in list_of_right_hand_side_texts:
                     if literal_text not in literals_map:
                         literals_map[literal_text] = Literal.create(literal_text)
+                        if literals_map[literal_text].is_action:
+                            list_of_non_terminals.append(literals_map[literal_text])
             literals_map[left_hand_side_text].rules = [
                 [
                     literals_map[rule_literal] for rule_literal in right_hand_side_rule_texts

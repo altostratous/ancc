@@ -22,7 +22,7 @@ class Mnemonic:
 
 class Inst:
     def __init__(self, mne, *args):
-        self.arr = [mne, *args]
+        self.arr = [mne, *map(str, args)]
 
     @staticmethod
     def fake():

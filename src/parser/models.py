@@ -70,6 +70,13 @@ class Parser:
                 self._lookahead = next_token
         return self._lookahead
 
+    def get_temp(self):
+        # TODO:
+        if not hasattr(self, 'tmptmp'):
+            self.tmptmp = 3400000
+        self.tmptmp += 4
+        return self.tmptmp
+
     def match(self, s):
         if self.lookahead_literal != s:
             return False
@@ -84,9 +91,6 @@ class Parser:
             # ε transition
             if not literal and self.lookahead_literal in self.follow[current_state.non_terminal]:
                 assert next_state.is_success
-                return next_state, None, None
-            elif literal.is_action:
-                literal.do(self)
                 return next_state, None, None
             # an ε potent rule
             elif not literal.is_terminal and () in self.first[literal] and self.lookahead_literal in self.follow[literal]:
@@ -127,6 +131,8 @@ class Parser:
     def parsed(self, state):
         if len(self.stack) > 0:
             self.tree_stack.pop()
+        if state.non_terminal.is_action:
+            state.non_terminal.do(self)
 
     def entered(self, state):
         opening = (state.non_terminal.text, [])

@@ -153,20 +153,35 @@
 32. addop-relop-rest → additive-expression | ID id-additive-expression
 33. additive-expression → term additive-expression-prime
 34. id-additive-expression → id-term additive-expression-prime
-35. additive-expression-prime → addop addop-relop-rest | ε
-36. addop → + | -
+35. additive-expression-prime → #PushAddOp + addop-relop-rest #AddOp | #PushAddOp - term #AddOp additive-expression-prime | ε
 37. term → factor term-prime
 38. id-term → reference term-prime
 39. term-prime → * mult-rest | ε
 40. mult-rest → term | ID id-term
-41. factor → ( expression ) | NUM
+41. factor → ( expression ) | #PushNum NUM
 42. reference → call | ε
-43. call → ( args )
+43. call → ( args ) #Print
 44. args → arg-list | ε
 45. arg-list → expression arg-list-prime
 46. arg-list-prime → , expression arg-list-prime | ε```
 ## State Diagram
 ```
+
+#AddOp
+173 (#AddOp) to -> [((), 174 (#AddOp) (success))]
+174 (#AddOp) (success)
+
+#Print
+205 (#Print) to -> [((), 206 (#Print) (success))]
+206 (#Print) (success)
+
+#PushAddOp
+171 (#PushAddOp) to -> [((), 172 (#PushAddOp) (success))]
+172 (#PushAddOp) (success)
+
+#PushNum
+195 (#PushNum) to -> [((), 196 (#PushNum) (success))]
+196 (#PushNum) (success)
 
 additive-expression
 154 (additive-expression) to -> [(term, 155 (additive-expression))]
@@ -174,15 +189,17 @@ additive-expression
 156 (additive-expression) (success)
 
 additive-expression-prime
-160 (additive-expression-prime) to -> [(addop, 161 (additive-expression-prime)), ((), 163 (additive-expression-prime) (success))]
-161 (additive-expression-prime) to -> [(addop-relop-rest, 162 (additive-expression-prime) (success))]
-163 (additive-expression-prime) (success)
-162 (additive-expression-prime) (success)
-
-addop
-164 (addop) to -> [(+, 165 (addop) (success)), (-, 166 (addop) (success))]
-165 (addop) (success)
-166 (addop) (success)
+160 (additive-expression-prime) to -> [(#PushAddOp, 161 (additive-expression-prime)), (#PushAddOp, 165 (additive-expression-prime)), ((), 170 (additive-expression-prime) (success))]
+161 (additive-expression-prime) to -> [(+, 162 (additive-expression-prime))]
+165 (additive-expression-prime) to -> [(-, 166 (additive-expression-prime))]
+170 (additive-expression-prime) (success)
+162 (additive-expression-prime) to -> [(addop-relop-rest, 163 (additive-expression-prime))]
+166 (additive-expression-prime) to -> [(term, 167 (additive-expression-prime))]
+163 (additive-expression-prime) to -> [(#AddOp, 164 (additive-expression-prime) (success))]
+167 (additive-expression-prime) to -> [(#AddOp, 168 (additive-expression-prime))]
+164 (additive-expression-prime) (success)
+168 (additive-expression-prime) to -> [(additive-expression-prime, 169 (additive-expression-prime) (success))]
+169 (additive-expression-prime) (success)
 
 addop-relop-rest
 150 (addop-relop-rest) to -> [(additive-expression, 151 (addop-relop-rest) (success)), (ID, 152 (addop-relop-rest))]
@@ -191,21 +208,21 @@ addop-relop-rest
 153 (addop-relop-rest) (success)
 
 arg-list
-196 (arg-list) to -> [(expression, 197 (arg-list))]
-197 (arg-list) to -> [(arg-list-prime, 198 (arg-list) (success))]
-198 (arg-list) (success)
+210 (arg-list) to -> [(expression, 211 (arg-list))]
+211 (arg-list) to -> [(arg-list-prime, 212 (arg-list) (success))]
+212 (arg-list) (success)
 
 arg-list-prime
-199 (arg-list-prime) to -> [(,, 200 (arg-list-prime)), ((), 203 (arg-list-prime) (success))]
-200 (arg-list-prime) to -> [(expression, 201 (arg-list-prime))]
-203 (arg-list-prime) (success)
-201 (arg-list-prime) to -> [(arg-list-prime, 202 (arg-list-prime) (success))]
-202 (arg-list-prime) (success)
+213 (arg-list-prime) to -> [(,, 214 (arg-list-prime)), ((), 217 (arg-list-prime) (success))]
+214 (arg-list-prime) to -> [(expression, 215 (arg-list-prime))]
+217 (arg-list-prime) (success)
+215 (arg-list-prime) to -> [(arg-list-prime, 216 (arg-list-prime) (success))]
+216 (arg-list-prime) (success)
 
 args
-193 (args) to -> [(arg-list, 194 (args) (success)), ((), 195 (args) (success))]
-194 (args) (success)
-195 (args) (success)
+207 (args) to -> [(arg-list, 208 (args) (success)), ((), 209 (args) (success))]
+208 (args) (success)
+209 (args) (success)
 
 bracket-id-expression
 136 (bracket-id-expression) to -> [(=, 137 (bracket-id-expression)), ((), 139 (bracket-id-expression) (success))]
@@ -214,10 +231,11 @@ bracket-id-expression
 138 (bracket-id-expression) (success)
 
 call
-189 (call) to -> [((, 190 (call))]
-190 (call) to -> [(args, 191 (call))]
-191 (call) to -> [(), 192 (call) (success))]
-192 (call) (success)
+200 (call) to -> [((, 201 (call))]
+201 (call) to -> [(args, 202 (call))]
+202 (call) to -> [(), 203 (call))]
+203 (call) to -> [(#Print, 204 (call) (success))]
+204 (call) (success)
 
 case-stmt
 114 (case-stmt) to -> [(case, 115 (case-stmt))]
@@ -276,11 +294,12 @@ expression-stmt
 78 (expression-stmt) (success)
 
 factor
-181 (factor) to -> [((, 182 (factor)), (NUM, 185 (factor) (success))]
-182 (factor) to -> [(expression, 183 (factor))]
-185 (factor) (success)
-183 (factor) to -> [(), 184 (factor) (success))]
-184 (factor) (success)
+189 (factor) to -> [((, 190 (factor)), (#PushNum, 193 (factor))]
+190 (factor) to -> [(expression, 191 (factor))]
+193 (factor) to -> [(NUM, 194 (factor) (success))]
+191 (factor) to -> [(), 192 (factor) (success))]
+194 (factor) (success)
+192 (factor) (success)
 
 fun-declaration
 22 (fun-declaration) to -> [((, 23 (fun-declaration))]
@@ -310,9 +329,9 @@ id-simple-expression
 145 (id-simple-expression) (success)
 
 id-term
-170 (id-term) to -> [(reference, 171 (id-term))]
-171 (id-term) to -> [(term-prime, 172 (id-term) (success))]
-172 (id-term) (success)
+178 (id-term) to -> [(reference, 179 (id-term))]
+179 (id-term) to -> [(term-prime, 180 (id-term) (success))]
+180 (id-term) (success)
 
 int-starting-param-list
 38 (int-starting-param-list) to -> [(int, 39 (int-starting-param-list))]
@@ -330,10 +349,10 @@ iteration-stmt
 93 (iteration-stmt) (success)
 
 mult-rest
-177 (mult-rest) to -> [(term, 178 (mult-rest) (success)), (ID, 179 (mult-rest))]
-178 (mult-rest) (success)
-179 (mult-rest) to -> [(id-term, 180 (mult-rest) (success))]
-180 (mult-rest) (success)
+185 (mult-rest) to -> [(term, 186 (mult-rest) (success)), (ID, 187 (mult-rest))]
+186 (mult-rest) (success)
+187 (mult-rest) to -> [(id-term, 188 (mult-rest) (success))]
+188 (mult-rest) (success)
 
 param
 48 (param) to -> [(type-specifier, 49 (param))]
@@ -359,9 +378,9 @@ program
 3 (program) (success)
 
 reference
-186 (reference) to -> [(call, 187 (reference) (success)), ((), 188 (reference) (success))]
-187 (reference) (success)
-188 (reference) (success)
+197 (reference) to -> [(call, 198 (reference) (success)), ((), 199 (reference) (success))]
+198 (reference) (success)
+199 (reference) (success)
 
 rest-of-param
 52 (rest-of-param) to -> [((), 53 (rest-of-param) (success)), ([, 54 (rest-of-param))]
@@ -435,15 +454,15 @@ switch-stmt
 109 (switch-stmt) (success)
 
 term
-167 (term) to -> [(factor, 168 (term))]
-168 (term) to -> [(term-prime, 169 (term) (success))]
-169 (term) (success)
+175 (term) to -> [(factor, 176 (term))]
+176 (term) to -> [(term-prime, 177 (term) (success))]
+177 (term) (success)
 
 term-prime
-173 (term-prime) to -> [(*, 174 (term-prime)), ((), 176 (term-prime) (success))]
-174 (term-prime) to -> [(mult-rest, 175 (term-prime) (success))]
-176 (term-prime) (success)
-175 (term-prime) (success)
+181 (term-prime) to -> [(*, 182 (term-prime)), ((), 184 (term-prime) (success))]
+182 (term-prime) to -> [(mult-rest, 183 (term-prime) (success))]
+184 (term-prime) (success)
+183 (term-prime) (success)
 
 type-specifier
 19 (type-specifier) to -> [(int, 20 (type-specifier) (success)), (void, 21 (type-specifier) (success))]
@@ -466,9 +485,12 @@ void-starting-param-list
 ## First and Follow
 |Non-terminal|First|Follow|
 |:----------:|:---:|:----:|
+|#AddOp|ε|) + , - ; RELOP ]|
+|#Print|ε|) * + , - ; RELOP ]|
+|#PushAddOp|ε|+ -|
+|#PushNum|ε|NUM|
 |additive-expression|( NUM|) , ; RELOP ]|
 |additive-expression-prime|+ - ε|) , ; RELOP ]|
-|addop|+ -|( ID NUM|
 |addop-relop-rest|( ID NUM|) , ; RELOP ]|
 |arg-list|( ID NUM|)|
 |arg-list-prime|, ε|)|
