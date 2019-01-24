@@ -44,7 +44,7 @@ class Scanner:
         self.index = 0
         self.len = len(input_string)
         self.prev_token = None
-        self.symbol_table = []
+        self.symbol_table = [{'output': -1}]
         self.first_free_memory = 0
 
     def malloc(self, size=1):
@@ -120,7 +120,7 @@ class Scanner:
                 self.index += 1
             if st in RESERVED_WORDS:
                 return self.return_token(st, None)
-            if is_declaration:
+            if self.prev_token.text in ['int', 'void']:
                 if st in self.symbol_table[scope]:
                     raise DuplicateDeclaration(st)
                 self.symbol_table[scope][st] = self.malloc()
