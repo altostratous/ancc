@@ -1,7 +1,7 @@
 int var1;
 int function1(int a){
-    d = 4;
+    var1 = 4;
     var1 = 2;
-    function2(function1(), d);
+    function1(function1(), var1);
     return 1;
 }

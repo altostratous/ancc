@@ -42,8 +42,8 @@ class TestScanner(TestCase):
             '+98': self.get_token('NUM', 98),
             '-025': self.get_token('NUM', -25),
             # ID
-            'SomeID': self.get_token('ID', 0),  # the index in symbol table
-            'Zed56': self.get_token('ID', 0)
+            'int SomeID': self.get_token('int', None),  # the index in symbol table
+            'void SomeID': self.get_token('void', None)
         })
 
         for lexeme in test_vector.keys():
@@ -54,20 +54,25 @@ class TestScanner(TestCase):
             )
 
     def test_additive_expression_sense(self):
-        scanner = Scanner('five = -145+theID+5+variable', self.all_literals)
+        scanner = Scanner('int five; five = -145+five+5+five', self.all_literals)
+        self.assertEqual(scanner.get_next_token(), self.get_token('int', None))
+        self.assertEqual(scanner.get_next_token(), self.get_token('ID', 0))
+        self.assertEqual(scanner.get_next_token(), self.get_token(';', None))
         self.assertEqual(scanner.get_next_token(), self.get_token('ID', 0))
         self.assertEqual(scanner.get_next_token(), self.get_token('=', None))
         self.assertEqual(scanner.get_next_token(), self.get_token('NUM', -145))
         self.assertEqual(scanner.get_next_token(), self.get_token('+', None))
-        self.assertEqual(scanner.get_next_token(), self.get_token('ID', 1))
+        self.assertEqual(scanner.get_next_token(), self.get_token('ID', 0))
         self.assertEqual(scanner.get_next_token(), self.get_token('+', None))
         self.assertEqual(scanner.get_next_token(), self.get_token('NUM', 5))
         self.assertEqual(scanner.get_next_token(), self.get_token('+', None))
-        self.assertEqual(scanner.get_next_token(), self.get_token('ID', 2))
+        self.assertEqual(scanner.get_next_token(), self.get_token('ID', 0))
         self.assertEqual(scanner.get_next_token(), self.get_token('EOF', None))
 
     def test_complex_expression(self):
         scanner = Scanner("""
+            int y;
+            int x;
             if (x == -125) {
                 y = 125;
                 x = +58; 
@@ -75,24 +80,30 @@ class TestScanner(TestCase):
                 output(25);
         """, self.all_literals)
 
+        self.assertEqual(scanner.get_next_token(), self.get_token('int', None))
+        self.assertEqual(scanner.get_next_token(), self.get_token('ID', 0))
+        self.assertEqual(scanner.get_next_token(), self.get_token(';', None))
+        self.assertEqual(scanner.get_next_token(), self.get_token('int', None))
+        self.assertEqual(scanner.get_next_token(), self.get_token('ID', 1))
+        self.assertEqual(scanner.get_next_token(), self.get_token(';', None))
         self.assertEqual(scanner.get_next_token(), self.get_token('if', None))
         self.assertEqual(scanner.get_next_token(), self.get_token('(', None))
-        self.assertEqual(scanner.get_next_token(), self.get_token('ID', 0))
+        self.assertEqual(scanner.get_next_token(), self.get_token('ID', 1))
         self.assertEqual(scanner.get_next_token(), self.get_token('RELOP', 'E'))
         self.assertEqual(scanner.get_next_token(), self.get_token('NUM', -125))
         self.assertEqual(scanner.get_next_token(), self.get_token(')', None))
         self.assertEqual(scanner.get_next_token(), self.get_token('{', None))
-        self.assertEqual(scanner.get_next_token(), self.get_token('ID', 1))
+        self.assertEqual(scanner.get_next_token(), self.get_token('ID', 0))
         self.assertEqual(scanner.get_next_token(), self.get_token('=', None))
         self.assertEqual(scanner.get_next_token(), self.get_token('NUM', 125))
         self.assertEqual(scanner.get_next_token(), self.get_token(';', None))
-        self.assertEqual(scanner.get_next_token(), self.get_token('ID', 0))
+        self.assertEqual(scanner.get_next_token(), self.get_token('ID', 1))
         self.assertEqual(scanner.get_next_token(), self.get_token('=', None))
         self.assertEqual(scanner.get_next_token(), self.get_token('NUM', 58))
         self.assertEqual(scanner.get_next_token(), self.get_token(';', None))
         self.assertEqual(scanner.get_next_token(), self.get_token('}', None))
         self.assertEqual(scanner.get_next_token(), self.get_token('else', None))
-        self.assertEqual(scanner.get_next_token(), self.get_token('ID', 2))
+        self.assertEqual(scanner.get_next_token(), self.get_token('ID', -1))
         self.assertEqual(scanner.get_next_token(), self.get_token('(', None))
         self.assertEqual(scanner.get_next_token(), self.get_token('NUM', 25))
         self.assertEqual(scanner.get_next_token(), self.get_token(')', None))

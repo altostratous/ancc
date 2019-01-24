@@ -34,7 +34,7 @@ int array1[5];
 void main(void){
     int i;
     i = 5;
-    if (function(i) == i + 48 - var1)
+    if (function2(i) == i + 48 - var1)
        return;
     else while(i){
         array1[i = i - 1] = i;

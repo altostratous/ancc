@@ -8,33 +8,30 @@ SINGLE_CHARACTERS = [';', ',', '[', ']', '{', '}', '(', ')', ':', '*']
 
 
 class SemanticError(Exception):
-    pass
+
+    def __init__(self, text, line, column, *args: object) -> None:
+        super().__init__(*args)
+        self.text = text
+        self.line = line
+        self.column = column
+
+    def __repr__(self):
+        return str(self)
+
+    def __str__(self):
+        return "Semantic error at {}:{}".format(self.line, self.column)
 
 
 class UndefinedIDError(SemanticError):
 
-    def __init__(self, text, *args: object) -> None:
-        super().__init__(*args)
-        self.text = text
-
     def __str__(self):
-        return "Undefined ID {}".format(self.text)
-
-    def __repr__(self):
-        return str(self)
+        return super(UndefinedIDError, self).__str__() + ": Undefined ID {}".format(self.text)
 
 
 class DuplicateDeclaration(SemanticError):
 
-    def __init__(self, text, *args: object) -> None:
-        super().__init__(*args)
-        self.text = text
-
     def __str__(self):
-        return "Duplicate declaration of ID {}".format(self.text)
-
-    def __repr__(self):
-        return str(self)
+        return super(DuplicateDeclaration, self).__str__() + ": Duplicate declaration of ID {}".format(self.text)
 
 
 class Scanner:
@@ -56,14 +53,14 @@ class Scanner:
         for scope_table in reversed(self.symbol_table):
             if symbol_text in scope_table:
                 return scope_table[symbol_text]
-        raise UndefinedIDError(symbol_text)
+        raise UndefinedIDError(symbol_text, *self.line_and_column())
 
     def return_token(self, text, attr):
         t = Token(text, attr, self.literals[text])
         self.prev_token = t
         return t
 
-    def get_next_token(self, scope=0, is_declaration=True):
+    def get_next_token(self, scope=0):
 
         assert scope <= len(self.symbol_table), "{} {}".format(scope, len(self.symbol_table))
         if scope == len(self.symbol_table):
@@ -120,9 +117,9 @@ class Scanner:
                 self.index += 1
             if st in RESERVED_WORDS:
                 return self.return_token(st, None)
-            if self.prev_token.text in ['int', 'void']:
+            if self.prev_token and self.prev_token.text in ['int', 'void']:
                 if st in self.symbol_table[scope]:
-                    raise DuplicateDeclaration(st)
+                    raise DuplicateDeclaration(st, *self.line_and_column())
                 self.symbol_table[scope][st] = self.malloc()
             return self.return_token('ID', self.get_symbol_address(st))
         if next_char in string.digits:
@@ -134,3 +131,13 @@ class Scanner:
                 return self.return_token('NUM', m * digit())
             else:
                 return self.return_token(next_char, None)
+
+    def line_and_column(self):
+        line = 0
+        column = 0
+        for i in range(0, self.index):
+            column += 1
+            if self.input[i] == '\n':
+                line += 1
+                column = 0
+        return line, column

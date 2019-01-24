@@ -69,7 +69,7 @@ class Parser:
     @property
     def lookahead_token(self):
         if self._lookahead is None:
-            next_token = self.scanner.get_next_token(self.scope, self.is_declaration)
+            next_token = self.scanner.get_next_token(self.scope)
             if next_token:
                 self._lookahead = next_token
         return self._lookahead
@@ -111,6 +111,8 @@ class Parser:
                 current_non_terminal = self.stack[-1].non_terminal
                 while self.lookahead_literal not in self.follow[current_non_terminal]:
                     self._lookahead = None
+                    if not self.lookahead_literal:
+                        return self.errors
                 while not self.stack[-1].is_success:
                     self.stack[-1] = self.stack[-1].nexts[0][1]
                 continue
