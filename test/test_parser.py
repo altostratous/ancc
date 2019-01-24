@@ -52,7 +52,7 @@ class TestParser(TestCase):
 class TestPanicMode(TestCase):
 
     test_cases = [
-        # ['expression_error.nc', [('NUM', 'expression')], 'predictable_grammar_v2.txt'],
+        ['expression_error.nc', [('NUM', 'expression')], 'predictable_grammar_v2.txt'],
         ['function_declaration_error.nc',
          [(',', 'void-starting-param-list'), ('NUM', 'expression')],
          'predictable_grammar_v2.txt']
