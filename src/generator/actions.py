@@ -135,6 +135,7 @@ class WhileAction(Action):
         parser.program.edit_inst(parser.break_stack.pop(), Mnemonic.JUMP, parser.program.pc)
         parser.continue_stack.pop()
 
+
 class SwitchSaveAction(Action):
     def do(self, parser):
         parser.program.add_inst(Mnemonic.JUMP, parser.program.pc + 2)

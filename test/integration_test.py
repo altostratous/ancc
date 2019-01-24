@@ -11,7 +11,7 @@ from ui.manage import BASE_DIR
 
 
 class Test(TestCase):
-    test_cases = ['hello_world']
+    test_cases = [file_name.split('.')[0] for file_name in os.listdir(os.path.join(BASE_DIR, 'resources/test/output'))]
 
     def test(self):
         with open(os.path.join(BASE_DIR, 'resources/src/predictable_grammar.txt')) as grammar_file:
@@ -32,10 +32,8 @@ class Test(TestCase):
                     )
                     errors = parser.parse()
                     if errors:
-                        # TODO
                         print(errors)
-                        print(parser.tree)
-                        pass
+                        self.fail()
                     else:
                         with open(os.path.join(filename + '.nco'), mode='w') as output_file:
                             output_file.write(str(parser.program))
@@ -46,5 +44,7 @@ class Test(TestCase):
                             os.system('./tester.out > tmptmp')
                         else:
                             assert 0, "I don't give a F*** to Windows"
-                        os.system('mv tmptmp ../output/' + filename + '.txt')
-                        os.system('rm output.txt')
+                        if 0 != os.system('diff tmptmp ../output/' + filename + '.txt'):
+                            print("Integration test {} failed.".format(filename))
+                            self.fail()
+                        self.assertEqual(0, os.system('rm output.txt tmptmp'))
