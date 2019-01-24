@@ -54,6 +54,6 @@ class Program:
         self.insts += [Inst.fake()]
         self.pc += 1
 
-    def edit_inst(self, index, inst):
-        assert self.insts[index][0] == Mnemonic.FAKE
-        self.insts[index] = inst
+    def edit_inst(self, index, *args):
+        assert self.insts[index].arr[0] == Mnemonic.FAKE
+        self.insts[index] = Inst(*args)

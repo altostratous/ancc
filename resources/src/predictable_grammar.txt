@@ -15,7 +15,7 @@
 15. statement-list → statement statement-list | ε
 16. statement → expression-stmt | compound-stmt | selection-stmt | iteration-stmt | return-stmt | switch-stmt
 17. expression-stmt → expression ; | continue ; | break ; | ;
-18. selection-stmt → if ( expression ) statement else statement
+18. selection-stmt → if ( expression ) #IfSave statement #IfJumpSave else statement #IfJump
 19. iteration-stmt → while ( expression ) statement
 20. return-stmt → return rest-of-return-stmt
 21. rest-of-return-stmt → ; | expression ;
@@ -28,7 +28,7 @@
 28. bracket-id-expression → = expression | ε
 29. simple-expression → additive-expression rest-of-simple-expression
 30. id-simple-expression → id-additive-expression rest-of-simple-expression
-31. rest-of-simple-expression → RELOP addop-relop-rest | ε
+31. rest-of-simple-expression → #PushRelOp RELOP addop-relop-rest #RelOp | ε
 32. addop-relop-rest → additive-expression | ID id-additive-expression
 33. additive-expression → term additive-expression-prime
 34. id-additive-expression → id-term additive-expression-prime
