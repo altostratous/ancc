@@ -24,6 +24,19 @@ class State:
         return str(self) + (' to -> ' + str(self.nexts) if not self.is_success else '')
 
 
+class ParseError(Exception):
+
+    def __init__(self, lookahead, non_terminal, *args):
+        super().__init__(*args)
+        self.lookahead = lookahead
+        self.non_terminal = non_terminal
+
+    def __str__(self):
+        return "Unexpected {} in {}.".format(
+            self.lookahead, self.non_terminal
+        )
+
+
 class Parser:
     def __init__(self, program, state_machines, start_state, scanner):
         self.state_machines = state_machines
@@ -38,11 +51,14 @@ class Parser:
         self.tree_stack = [self.tree]
         self.semantic_stack = []
         self.program = Program()
+        self.errors = []
 
     @property
     def lookahead(self):
         if self._lookahead is None:
-            self._lookahead = self.scanner.get_next_token().literal
+            next_token = self.scanner.get_next_token()
+            if next_token:
+                self._lookahead = next_token.literal
         return self._lookahead
 
     def match(self, s):
@@ -54,26 +70,37 @@ class Parser:
 
     def find_next_state(self, current_state):
         if current_state.is_success:
-            return None, None
+            return None, None, None
         for literal, next_state in current_state.nexts:
             # ε transition
             if not literal and self.lookahead in self.follow[current_state.non_terminal]:
                 assert next_state.is_success
-                return next_state, None
+                return next_state, None, None
             elif literal.is_action:
                 literal.do(self)
+                return next_state, None, None
             # an ε potent rule
             elif not literal.is_terminal and () in self.first[literal] and self.lookahead in self.follow[literal]:
-                return next_state, literal
+                return next_state, literal, None
             elif literal.is_terminal:
                 if self.match(literal):
-                    return next_state, None
+                    return next_state, None, None
             elif self.lookahead in self.first[literal]:
-                return next_state, literal
+                return next_state, literal, None
+        return None, None, ParseError(self.lookahead, current_state.non_terminal)
 
     def parse(self):
-        while self.stack:
-            next_state, new_flow = self.find_next_state(self.stack[-1])
+        errors = []
+        while self.stack and self.lookahead:
+            next_state, new_flow, error = self.find_next_state(self.stack[-1])
+            if error:
+                self.errors.append(error)
+                current_non_terminal = self.stack[-1].non_terminal
+                while self.lookahead not in self.follow[current_non_terminal]:
+                    self._lookahead = None
+                while not self.stack[-1].is_success:
+                    self.stack[-1] = self.stack[-1].nexts[0][1]
+                continue
             if next_state is None:
                 if len(self.stack) > 1:
                     self.stack[-2] = dict(self.stack[-2].nexts)[self.stack[-1].non_terminal]
@@ -85,7 +112,9 @@ class Parser:
                     self.entered(state_to_push)
                 else:
                     self.stack[-1] = next_state
+        return self.errors
 
+    # noinspection PyUnusedLocal
     def parsed(self, state):
         if len(self.stack) > 0:
             self.tree_stack.pop()

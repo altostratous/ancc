@@ -35,7 +35,10 @@ class Scanner:
             while self.index < self.len and self.input[self.index] in string.whitespace:
                 self.index += 1
             if self.len == self.index:
+                self.index += 1
                 return self.return_token('EOF', None)
+            if self.len < self.index:
+                return None
             next_char = self.input[self.index]
             self.index += 1
             if next_char == '/':

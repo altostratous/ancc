@@ -17,6 +17,8 @@ class Literal:
 
     @property
     def is_terminal(self):
+        if self.is_action:
+            return False
         return self.rules is None
 
     @property

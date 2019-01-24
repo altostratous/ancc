@@ -7,7 +7,7 @@ from grammar.models import Literal
 def dfs(first, literal, mark):
     mark[literal] = 1
     for rule in literal.rules:
-        if len(rule) and not rule[0].is_terminal:
+        if len(rule) and not rule[0].is_terminal and not rule[0].is_action:
             if not rule[0] in mark:
                 if not dfs(first, rule[0], mark):
                     return False
@@ -71,7 +71,7 @@ def compute_non_terminals_follows(non_terminals, first):
             for rule in non_terminal.rules:
                 for i in range(len(rule)):
                     first_literal = rule[i]
-                    if first_literal.is_terminal:
+                    if first_literal.is_terminal or first_literal.is_action:
                         continue
                     first2 = compute_first_of_expression(rule[i + 1:], first)
                     follow[first_literal], continue_computation = inner_add(
@@ -103,6 +103,8 @@ def compute_non_terminals_firsts(non_terminals):
                     first[literal].add(())
                 must_include_epsilon = True
                 for sym in rule:
+                    if sym.is_action:
+                        continue
                     if sym.is_terminal:
                         first[literal], changed = inner_add(first[literal], {sym}, changed)
                         must_include_epsilon = False
@@ -124,6 +126,8 @@ def compute_first_of_expression(expressions, first):
         return {()}
     ans = set()
     for exp in expressions:
+        if exp.is_action:
+            continue
         if exp.is_terminal:
             return ans.union({exp}) - {()}
         ans = ans.union(first[exp])
@@ -190,11 +194,3 @@ def check_predictability(grammar, first, follow):
     if not error:
         print("All ok and predictable")
     return not error
-
-
-def get_terminals(grammar):
-    for non_terminal in grammar:
-        for rule in non_terminal.rules:
-            for literal in rule:
-                if literal.is_terminal:
-                    yield literal

@@ -48,3 +48,33 @@ class TestParser(TestCase):
                     self.assertEqual(parse_tree[0], expected_parse_tree[0], "Error in " + filename)
                     self.assertListEqual(parse_tree[1], expected_parse_tree[1], "Error in " + filename)
 
+
+class TestPanicMode(TestCase):
+
+    test_cases = [
+        ['expression_error.nc', [('NUM', 'expression')], 'predictable_grammar_v2.txt'],
+        ['function_declaration_error.nc',
+         [(',', 'void-starting-param-list'), ('NUM', 'expression')],
+         'predictable_grammar_v2.txt']
+    ]
+
+    def test_success_order(self):
+        for filename, expected_parse_errors, grammar_filename in TestPanicMode.test_cases:
+
+            with open(os.path.join(os.path.join(BASE_DIR, 'resources/test/grammar'), grammar_filename)) as grammar_file:
+                with open(os.path.join(os.path.join(BASE_DIR, 'resources/test/code'), filename)) as test_file:
+                    non_terminals = Literal.parse(grammar_file)
+                    all_literals = get_all_literals_from_non_terminals(non_terminals)
+                    start, states = create_transition_diagram(non_terminals)
+                    parser = Parser(
+                        states, start,
+                        Scanner(
+                            test_file.read(),
+                            all_literals
+                        )
+                    )
+                    errors = parser.parse()
+                    self.assertEqual(len(expected_parse_errors), len(errors))
+                    for error in errors:
+                        self.assertIn(
+                            (error.lookahead.text, error.non_terminal.text), expected_parse_errors)
