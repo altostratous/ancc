@@ -52,6 +52,7 @@ class Parser:
         self.semantic_stack = []
         self.program = Program()
         self.errors = []
+        self.is_declaration = True
 
     @property
     def lookahead(self):
@@ -115,10 +116,14 @@ class Parser:
 
     # noinspection PyUnusedLocal
     def parsed(self, state):
+        if state.non_terminal.contains('statement-list'):
+            self.is_declaration = True
         if len(self.stack) > 0:
             self.tree_stack.pop()
 
     def entered(self, state):
+        if state.non_terminal.contains('statement-list'):
+            self.is_declaration = False
         opening = (state.non_terminal.text, [])
         self.tree_stack[-1][1].append(opening)
         self.tree_stack.append(opening)
