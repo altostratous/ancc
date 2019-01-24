@@ -6,8 +6,12 @@ import os
 from grammar.models import Literal
 from parser.models import Parser
 from parser.utils import create_transition_diagram, get_all_literals_from_non_terminals
+from resources.test.parse_trees.easy2_pt import easy2_expected_parse_tree
+from resources.test.parse_trees.easy_pt import easy_expected_parse_tree
+from resources.test.parse_trees.final_pt import final_expected_parse_tree
 from resources.test.parse_trees.hello_world_pt import hello_world_expected_parse_tree
 from resources.test.parse_trees.if_while_pt import if_while_expected_parse_tree
+from resources.test.parse_trees.switch_pt import switch_expected_parse_tree
 from resources.test.parse_trees.test2_pt import test2_expected_parse_tree
 from scanner.scanner import Scanner
 from ui.manage import BASE_DIR
@@ -17,6 +21,10 @@ class TestParser(TestCase):
     test_cases = [['hello_world.nc', hello_world_expected_parse_tree, 'predictable_grammar_v1.txt'],
                   ['test2.nc', test2_expected_parse_tree, 'predictable_grammar_v1.txt'],
                   ['if_while.nc', if_while_expected_parse_tree, 'predictable_grammar_v2.txt'],
+                  ['switch.nc', switch_expected_parse_tree, 'predictable_grammar_v2.txt'],
+                  ['easy.nc', easy_expected_parse_tree, 'predictable_grammar_v2.txt'],
+                  ['easy2.nc', easy2_expected_parse_tree, 'predictable_grammar_v3.txt'],
+                  ['final.nc', final_expected_parse_tree, 'predictable_grammar_v3.txt'],
                 ]
     maxDiff = None
 
