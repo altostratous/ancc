@@ -1,3 +1,3 @@
 void main(void) {
-    output(0);
+    output(12 + 34);
 }

@@ -32,15 +32,15 @@
 32. addop-relop-rest → additive-expression | ID id-additive-expression
 33. additive-expression → term additive-expression-prime
 34. id-additive-expression → id-term additive-expression-prime
-35. additive-expression-prime → addop addop-relop-rest | ε
+35. additive-expression-prime → #PushAddOp addop addop-relop-rest #AddOp | ε
 36. addop → + | -
 37. term → factor term-prime
 38. id-term → reference term-prime
 39. term-prime → * mult-rest | ε
 40. mult-rest → term | ID id-term
-41. factor → ( expression ) #Print | NUM
+41. factor → ( expression ) | #PushNum NUM
 42. reference → call | ε
-43. call → ( args )
+43. call → ( args ) #Print
 44. args → arg-list | ε
 45. arg-list → expression arg-list-prime
 46. arg-list-prime → , expression arg-list-prime | ε
