@@ -38,7 +38,7 @@ class ParseError(Exception):
 
 
 class Parser:
-    def __init__(self, program, state_machines, start_state, scanner):
+    def __init__(self, state_machines, start_state, scanner):
         self.state_machines = state_machines
         self.start_state = start_state
         self.scanner = scanner
@@ -90,7 +90,6 @@ class Parser:
         return None, None, ParseError(self.lookahead, current_state.non_terminal)
 
     def parse(self):
-        errors = []
         while self.stack and self.lookahead:
             next_state, new_flow, error = self.find_next_state(self.stack[-1])
             if error:

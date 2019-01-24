@@ -59,7 +59,7 @@ class Literal:
         from generator import actions
         if not left_hand_side_text.startswith('#'):
             return Literal(left_hand_side_text)
-        action_class_name = left_hand_side_text.replace('#', '')
+        action_class_name = left_hand_side_text.replace('#', '') + 'Action'
         action_class = getattr(actions, action_class_name)
         return action_class(left_hand_side_text)
 

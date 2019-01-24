@@ -38,7 +38,7 @@
 38. id-term → reference term-prime
 39. term-prime → * mult-rest | ε
 40. mult-rest → term | ID id-term
-41. factor → ( expression ) | NUM
+41. factor → ( expression ) #Print | NUM
 42. reference → call | ε
 43. call → ( args )
 44. args → arg-list | ε
