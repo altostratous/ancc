@@ -14,7 +14,7 @@ def print_dfa(q, out=sys.stdout):
 
 
 def print_diagram(state_machines, out=sys.stdout):
-    for literal, state in state_machines.items():
+    for literal, state in sorted(state_machines.items()):
         print(file=out)
         print(literal, file=out)
         print_dfa([state], out=out)

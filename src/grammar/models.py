@@ -39,12 +39,12 @@ class Literal:
                 ] for text in right_hand_sides_text.split('|')
             ]
             if left_hand_side_text not in literals_map:
-                literals_map[left_hand_side_text] = Literal(left_hand_side_text)
+                literals_map[left_hand_side_text] = Literal.create(left_hand_side_text)
             list_of_non_terminals.append(literals_map[left_hand_side_text])
             for list_of_right_hand_side_texts in list_of_list_of_right_hand_side_texts:
                 for literal_text in list_of_right_hand_side_texts:
                     if literal_text not in literals_map:
-                        literals_map[literal_text] = Literal(literal_text)
+                        literals_map[literal_text] = Literal.create(literal_text)
             literals_map[left_hand_side_text].rules = [
                 [
                     literals_map[rule_literal] for rule_literal in right_hand_side_rule_texts
@@ -53,6 +53,15 @@ class Literal:
             ]
 
         return list_of_non_terminals
+
+    @staticmethod
+    def create(left_hand_side_text):
+        from generator import actions
+        if not left_hand_side_text.startswith('#'):
+            return Literal(left_hand_side_text)
+        action_class_name = left_hand_side_text.replace('#', '')
+        action_class = getattr(actions, action_class_name)
+        return action_class(left_hand_side_text)
 
 
 class Token(object):
