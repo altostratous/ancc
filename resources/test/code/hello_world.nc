@@ -1,15 +1,11 @@
 void main(void) {
-    int a;
-    int b;
-    a = 0;
-    b = 0;
-    while (1){
-        a = a + 1;
-        if (a == 5)
-            continue;
-        else if (a == 20)
-            break;
-        else
-            output(a);
+    int a[10];
+    int i;
+    i = 1;
+    a[0] = 0;
+    while (i < 10){
+        a[i] = a[i-1] + i * i;
+        i = i+1;
     }
+    output(a[9]);
 }

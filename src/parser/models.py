@@ -129,7 +129,7 @@ class Parser:
 
     # noinspection PyUnusedLocal
     def parsed(self, state):
-        if state.non_terminal.text == 'fun-declaration':
+        if state.non_terminal.text == 'compound-stmt':
             self.scope -= 1
         if state.non_terminal.text == 'statement-list':
             self.is_declaration = True
@@ -139,7 +139,7 @@ class Parser:
             state.non_terminal.do(self)
 
     def entered(self, state):
-        if state.non_terminal.text == 'fun-declaration':
+        if state.non_terminal.text == 'fun-declaration' or state.non_terminal.text == 'compound-stmt':
             self.scope += 1
         if state.non_terminal.text == 'statement-list':
             self.is_declaration = False

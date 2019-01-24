@@ -1,7 +1,7 @@
 1. program → declaration-list EOF
-2. declaration-list → type-specifier ID declaration declaration-list | ε
+2. declaration-list → type-specifier #PushID ID declaration #PopID declaration-list | ε
 3. declaration → var-declaration | fun-declaration
-4. var-declaration → ; | [ NUM ] ;
+4. var-declaration → ; | [ #ArrayDefinition NUM ] ;
 5. type-specifier → int | void
 6. fun-declaration → ( params ) compound-stmt
 7. params → int-starting-param-list | void-starting-param-list
@@ -25,7 +25,7 @@
 25. default-stmt → default #DefaultInsert : statement-list | ε
 26. expression → simple-expression | #PushID ID id-expression
 27. id-expression → = expression #Assign | id-simple-expression | [ expression ] bracket-id-expression
-28. bracket-id-expression → = expression | ε
+28. bracket-id-expression → = expression #AssignArray | #ArrayAccess id-additive-expression
 29. simple-expression → additive-expression rest-of-simple-expression
 30. id-simple-expression → id-additive-expression rest-of-simple-expression
 31. rest-of-simple-expression → #PushRelOp RELOP addop-relop-rest #RelOp | ε

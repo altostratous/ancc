@@ -1,4 +1,4 @@
-from generator.program import Mnemonic, immval
+from generator.program import Mnemonic, immval, indval
 from grammar.models import Literal
 
 
@@ -200,3 +200,25 @@ class BreakAction(Action):
 class ContinueAction(Action):
     def do(self, parser):
         parser.program.add_inst(Mnemonic.JUMP, parser.continue_stack[-1])
+
+
+class ArrayDefinitionAction(Action):
+    def do(self, parser):
+        assert parser.lookahead_token.text == 'NUM'
+        addr = parser.scanner.malloc(parser.lookahead_token.attribute)
+        parser.program.add_inst(Mnemonic.ASSIGN, immval(addr), parser.semantic_stack[-1])
+
+
+class AssignArrayAction(Action):
+    def do(self, parser):
+        tmp = parser.get_temp()
+        parser.program.add_inst(Mnemonic.ADD, parser.semantic_stack[-3], parser.semantic_stack[-2], tmp)
+        parser.program.add_inst(Mnemonic.ASSIGN, parser.semantic_stack.pop(), indval(tmp))
+        parser.semantic_stack.pop()
+
+
+class ArrayAccessAction(Action):
+    def do(self, parser):
+        tmp = parser.get_temp()
+        parser.program.add_inst(Mnemonic.ADD, parser.semantic_stack.pop(), parser.semantic_stack.pop(), tmp)
+        parser.semantic_stack += [indval(tmp)]
