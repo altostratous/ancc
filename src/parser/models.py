@@ -1,3 +1,4 @@
+from generator.program import Program
 from grammar.utils import compute_non_terminals_firsts, compute_non_terminals_follows
 
 
@@ -24,7 +25,7 @@ class State:
 
 
 class Parser:
-    def __init__(self, state_machines, start_state, scanner):
+    def __init__(self, program, state_machines, start_state, scanner):
         self.state_machines = state_machines
         self.start_state = start_state
         self.scanner = scanner
@@ -35,6 +36,8 @@ class Parser:
         self.follow = compute_non_terminals_follows(non_terminals, self.first)
         self.tree = (start_state.non_terminal.text, [])
         self.tree_stack = [self.tree]
+        self.semantic_stack = []
+        self.program = Program()
 
     @property
     def lookahead(self):
@@ -57,6 +60,8 @@ class Parser:
             if not literal and self.lookahead in self.follow[current_state.non_terminal]:
                 assert next_state.is_success
                 return next_state, None
+            elif literal.is_action:
+                literal.do(self)
             # an ε potent rule
             elif not literal.is_terminal and () in self.first[literal] and self.lookahead in self.follow[literal]:
                 return next_state, literal

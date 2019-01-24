@@ -19,6 +19,10 @@ class Literal:
     def is_terminal(self):
         return self.rules is None
 
+    @property
+    def is_action(self):
+        return False
+
     @staticmethod
     def parse(raw_grammar_file):
         literals_map = {'ε': Literal('ε')}
