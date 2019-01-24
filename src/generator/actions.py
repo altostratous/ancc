@@ -117,6 +117,7 @@ class WhileLabelAction(Action):
         parser.break_stack += [parser.program.pc]
         parser.program.add_fake_inst()
 
+        parser.continue_stack += [parser.program.pc]
         parser.semantic_stack += [parser.program.pc]
 
 
@@ -132,7 +133,7 @@ class WhileAction(Action):
                                  parser.semantic_stack.pop(), parser.program.pc + 1)
         parser.program.add_inst(Mnemonic.JUMP, parser.semantic_stack.pop())
         parser.program.edit_inst(parser.break_stack.pop(), Mnemonic.JUMP, parser.program.pc)
-
+        parser.continue_stack.pop()
 
 class SwitchSaveAction(Action):
     def do(self, parser):
@@ -198,4 +199,4 @@ class BreakAction(Action):
 
 class ContinueAction(Action):
     def do(self, parser):
-        parser.program.add_inst(Mnemonic.JUMP, parser.break_stack[-1] + 1)
+        parser.program.add_inst(Mnemonic.JUMP, parser.continue_stack[-1])

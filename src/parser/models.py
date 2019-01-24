@@ -57,6 +57,8 @@ class Parser:
         self.errors = []
         self.scope = 0
         self.break_stack = []
+        self.continue_stack = []
+        self.is_declaration = True
 
     @property
     def lookahead_literal(self):
@@ -67,17 +69,13 @@ class Parser:
     @property
     def lookahead_token(self):
         if self._lookahead is None:
-            next_token = self.scanner.get_next_token(self.scope)
+            next_token = self.scanner.get_next_token(self.scope, self.is_declaration)
             if next_token:
                 self._lookahead = next_token
         return self._lookahead
 
     def get_temp(self):
-        # TODO:
-        if not hasattr(self, 'tmptmp'):
-            self.tmptmp = 3400000
-        self.tmptmp += 4
-        return self.tmptmp
+        return self.scanner.malloc()
 
     def match(self, s):
         if self.lookahead_literal != s:
@@ -133,6 +131,8 @@ class Parser:
     def parsed(self, state):
         if state.non_terminal.text == 'fun-declaration':
             self.scope -= 1
+        if state.non_terminal.text == 'statement-list':
+            self.is_declaration = True
         if len(self.stack) > 0:
             self.tree_stack.pop()
         if state.non_terminal.is_action:
@@ -141,6 +141,8 @@ class Parser:
     def entered(self, state):
         if state.non_terminal.text == 'fun-declaration':
             self.scope += 1
+        if state.non_terminal.text == 'statement-list':
+            self.is_declaration = False
         opening = (state.non_terminal.text, [])
         self.tree_stack[-1][1].append(opening)
         self.tree_stack.append(opening)

@@ -24,6 +24,19 @@ class UndefinedIDError(SemanticError):
         return str(self)
 
 
+class DuplicateDeclaration(SemanticError):
+
+    def __init__(self, text, *args: object) -> None:
+        super().__init__(*args)
+        self.text = text
+
+    def __str__(self):
+        return "Duplicate declaration of ID {}".format(self.text)
+
+    def __repr__(self):
+        return str(self)
+
+
 class Scanner:
     def __init__(self, input_string, literals):
         self.literals = dict([(literal.text, literal) for literal in literals])
@@ -50,7 +63,7 @@ class Scanner:
         self.prev_token = t
         return t
 
-    def get_next_token(self, scope=0):
+    def get_next_token(self, scope=0, is_declaration=True):
 
         assert scope <= len(self.symbol_table), "{} {}".format(scope, len(self.symbol_table))
         if scope == len(self.symbol_table):
@@ -107,9 +120,11 @@ class Scanner:
                 self.index += 1
             if st in RESERVED_WORDS:
                 return self.return_token(st, None)
-            if st not in self.symbol_table[scope]:
+            if is_declaration:
+                if st in self.symbol_table[scope]:
+                    raise DuplicateDeclaration(st)
                 self.symbol_table[scope][st] = self.malloc()
-            return self.return_token('ID', self.symbol_table[scope][st])
+            return self.return_token('ID', self.get_symbol_address(st))
         if next_char in string.digits:
             self.index -= 1
             return self.return_token('NUM', digit())
