@@ -64,13 +64,19 @@ class Literal:
         return action_class(left_hand_side_text)
 
 
+class DataType(object):
+    INTEGER = 'int'
+    VOID = 'void'
+
+
 class Token(object):
 
-    def __init__(self, text, attribute, literal):
+    def __init__(self, text, attribute, literal, data_type=None):
         super(Token, self).__init__()
         self.text = text
         self.attribute = attribute
         self.literal = literal
+        self.type = data_type
 
     def __eq__(self, o) -> bool:
         if o is None:

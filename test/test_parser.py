@@ -43,7 +43,7 @@ class TestParser(TestCase):
                             all_literals
                         )
                     )
-                    parser.parse()
+                    errors = parser.parse()
                     parse_tree = parser.tree
                     self.assertEqual(parse_tree[0], expected_parse_tree[0], "Error in " + filename)
                     self.assertListEqual(parse_tree[1], expected_parse_tree[1], "Error in " + filename)

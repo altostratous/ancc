@@ -1,4 +1,5 @@
 from generator.program import Program
+from grammar.models import Literal, Token
 from grammar.utils import compute_non_terminals_firsts, compute_non_terminals_follows
 
 
@@ -68,14 +69,14 @@ class Parser(object):
             next_token = self.scanner.get_next_token(self.scope)
             if next_token:
                 self._lookahead = next_token
-            else:
-                pass
+        assert self._lookahead is None or isinstance(self._lookahead, Token), self._lookahead
         return self._lookahead
 
     @property
     def lookahead_literal(self):
         if self.lookahead_token is None:
             return None
+        assert isinstance(self.lookahead_token.literal, Literal)
         return self.lookahead_token.literal
 
     def get_temp(self):
@@ -89,6 +90,8 @@ class Parser(object):
         return True
 
     def find_next_state(self, current_state):
+        if current_state.non_terminal.text == 'compound-stmt' and self.lookahead_literal == 'void':
+            print('hey')
         if current_state.is_success:
             return None, None, None
         for literal, next_state in current_state.nexts:

@@ -1,6 +1,6 @@
 import string
 
-from grammar.models import Token
+from grammar.models import Token, DataType
 
 RESERVED_WORDS = ['int', 'void', 'continue', 'break', 'if', 'else', 'while', 'return', 'switch', 'case', 'default']
 
@@ -42,7 +42,7 @@ class Scanner:
         self.len = len(input_string)
         self.prev_token = None
         self.first_free_memory = 0
-        self.symbol_table = [{'output': 0}]
+        self.symbol_table = [{'output': Token('ID', 0, self.literals['ID'], DataType.VOID)}]
         self.malloc(1)  # reserve for output function
 
     def malloc(self, size=1):
@@ -50,22 +50,30 @@ class Scanner:
         self.first_free_memory += size
         return address
 
-    def get_symbol_address(self, symbol_text):
+    def get_symbol_token(self, symbol_text):
         for scope_table in reversed(self.symbol_table):
             if symbol_text in scope_table:
                 return scope_table[symbol_text]
         raise UndefinedIDError(symbol_text, *self.line_and_column())
 
+    def get_symbol_address(self, symbol_text):
+        return self.get_symbol_token(symbol_text).attribute
+
     def return_token(self, text, attr):
-        t = Token(text, attr, self.literals[text])
+        data_type = None
+        if self.prev_token is not None:
+            if self.prev_token.text in ['void', 'int']:
+                data_type = self.prev_token.text
+        t = Token(text, attr, self.literals[text], data_type)
         self.prev_token = t
+        assert isinstance(t, Token)
         return t
 
     def get_next_token(self, scope=0):
 
         assert scope <= len(self.symbol_table), "{} {}".format(scope, len(self.symbol_table))
         if scope == len(self.symbol_table):
-            self.symbol_table.append({})
+            self.symbol_table.append({'output': self.symbol_table[0]['output']})
 
         self.symbol_table = self.symbol_table[0: scope + 1]
 
@@ -121,8 +129,8 @@ class Scanner:
             if self.prev_token and self.prev_token.text in ['int', 'void']:
                 if st in self.symbol_table[scope]:
                     raise DuplicateDeclaration(st, *self.line_and_column())
-                self.symbol_table[scope][st] = self.malloc()
-            return self.return_token('ID', self.get_symbol_address(st))
+                self.symbol_table[scope][st] = self.return_token('ID', self.malloc())
+            return self.return_repeated_token(st)
         if next_char in string.digits:
             self.index -= 1
             return self.return_token('NUM', digit())
@@ -132,6 +140,7 @@ class Scanner:
                 return self.return_token('NUM', m * digit())
             else:
                 return self.return_token(next_char, None)
+        assert False
 
     def line_and_column(self):
         line = 1
@@ -142,3 +151,10 @@ class Scanner:
                 line += 1
                 column = 0
         return line, column
+
+    def return_repeated_token(self, param):
+        token = self.get_symbol_token(param)
+        self.prev_token = token
+        if not isinstance(token, Token):
+            assert False
+        return token
