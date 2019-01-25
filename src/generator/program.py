@@ -20,6 +20,7 @@ class Mnemonic:
     PRINT = 'PRINT'
     FAKE = 'FAKE'
 
+
 class Inst:
     def __init__(self, mne, *args):
         self.arr = [mne, *map(str, args)]
@@ -28,8 +29,12 @@ class Inst:
     def fake():
         return Inst(Mnemonic.FAKE)
 
+    @staticmethod
+    def nop():
+        return Inst(Mnemonic.ASSIGN, 0, 0)
+
     def __str__(self):
-        return '(' + ', '.join(self.arr) +')'
+        return '(' + ', '.join(self.arr) + ')'
 
     def __repr__(self):
         return str(self)
@@ -52,6 +57,13 @@ class Program:
 
     def add_fake_inst(self):
         self.insts += [Inst.fake()]
+        self.pc += 1
+
+    def add_word(self):
+        self.add_nop()
+
+    def add_nop(self):
+        self.insts += [Inst.nop()]
         self.pc += 1
 
     def edit_inst(self, index, *args):

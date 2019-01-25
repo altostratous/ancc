@@ -233,3 +233,37 @@ class IncreaseScopeAction(Action):
 class DecreaseScopeAction(Action):
     def do(self, parser):
         parser.scope -= 1
+
+
+class FunctionSaveAction(Action):
+    def do(self, parser):
+        activity_record_address = parser.scanner.malloc(2)
+        start_pc_address = activity_record_address
+        return_address_address = activity_record_address + 1
+        parser.semantic_stack.append(return_address_address)
+        # write the record address to the function symbol memory
+        parser.program.add_inst(Mnemonic.ASSIGN, immval(activity_record_address), parser.semantic_stack[-2])
+        # write the start address to the first word of activity record
+        parser.program.add_inst(Mnemonic.ASSIGN, immval(parser.program.pc + 2), start_pc_address)
+        parser.semantic_stack.append(parser.program.pc)
+        parser.program.add_fake_inst() # skip running the function on the first pass
+
+
+class FunctionAction(Action):
+    def do(self, parser):
+        parser.program.edit_inst(parser.semantic_stack.pop(), Mnemonic.JUMP, parser.program.pc + 1)
+        parser.program.add_inst(Mnemonic.JUMP, indval(parser.semantic_stack.pop()))
+
+
+class CallMainAction(Action):
+    def do(self, parser):
+        main_symbol_address = parser.scanner.get_symbol_address('main')
+        activity_record_address = parser.get_temp()
+        return_address_address = parser.get_temp()
+        parser.program.add_inst(Mnemonic.ASSIGN, main_symbol_address, activity_record_address)
+        parser.program.add_inst(Mnemonic.ADD, activity_record_address, immval(1), return_address_address)
+        parser.program.add_inst(Mnemonic.ASSIGN, immval(parser.program.pc + 3), indval(return_address_address))
+        start_pc = parser.get_temp()
+        parser.program.add_inst(Mnemonic.ASSIGN, indval(activity_record_address), start_pc)
+        parser.program.add_inst(Mnemonic.JUMP, indval(start_pc))
+        parser.program.add_nop()
