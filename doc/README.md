@@ -151,21 +151,22 @@
 30. id-simple-expression → id-additive-expression rest-of-simple-expression
 31. rest-of-simple-expression → #PushRelOp RELOP addop-relop-rest #RelOp | ε
 32. addop-relop-rest → additive-expression | #PushID ID addop-relop-rest-reference
-32. addop-relop-rest-reference → id-additive-expression | [ expression ] #ArrayAccess id-additive-expression
-33. additive-expression → term additive-expression-prime
-34. id-additive-expression → id-term additive-expression-prime
-35. additive-expression-prime → #PushAddOp + addop-relop-rest #AddOp | #PushSubOp - minus-expr | ε
-36. minus-expr → term #AddOp additive-expression-prime | #PushID ID id-term #AddOp additive-expression-prime
-37. term → factor term-prime
-38. id-term → reference term-prime
-39. term-prime → * mult-rest #MultOp | ε
-40. mult-rest → term | #PushID ID id-term
-41. factor → ( expression ) | #PushNum NUM
-42. reference → call | ε
-43. call → ( args ) #Print
-44. args → arg-list | ε
-45. arg-list → expression arg-list-prime
-46. arg-list-prime → , expression arg-list-prime | ε```
+33. addop-relop-rest-reference → id-additive-expression | [ expression ] #ArrayAccess id-additive-expression
+34. additive-expression → term additive-expression-prime
+35. id-additive-expression → id-term additive-expression-prime
+36. additive-expression-prime → #PushAddOp + addop-relop-rest #AddOp | #PushSubOp - minus-expr | ε
+37. minus-expr → term #AddOp additive-expression-prime | #PushID ID id-term #AddOp additive-expression-prime
+38. term → factor term-prime
+39. id-term → reference term-prime
+40. term-prime → * mult-rest #MultOp | ε
+41. mult-rest → term | #PushID ID id-term
+42. factor → ( expression ) | #PushNum NUM
+43. reference → call | ε
+44. call → ( args ) #Print
+45. args → arg-list | ε
+46. arg-list → expression arg-list-prime
+47. arg-list-prime → , expression arg-list-prime | ε
+```
 ## State Diagram
 ```
 

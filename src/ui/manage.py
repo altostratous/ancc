@@ -6,7 +6,7 @@ from os import path
 
 from grammar.models import Literal
 from grammar.utils import check_predictability
-from parser.utils import create_transition_diagram, print_diagram
+from parser.utils import create_transition_diagram, print_diagram, escape
 
 BASE_DIR = path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
@@ -81,9 +81,10 @@ def generate():
                             '```\n',
                         ])
                         for line in predictable_grammar_file:
-                            doc_file.write(line)
+                            doc_file.write(escape(line))
 
                         doc_file.writelines([
+                            '\n',
                             '```\n',
                             '## State Diagram\n',
                             '```\n',

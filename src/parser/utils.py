@@ -2,10 +2,14 @@ from parser.models import State
 import sys
 
 
+def escape(string):
+    return string.replace('#', '#')
+
+
 def print_dfa(q, out=sys.stdout):
     i = 0
     while i < len(q):
-        print(q[i].full_repr(), file=out)
+        print(escape(q[i].full_repr()), file=out)
         # print(q[i].nexts)
         for _, next_state in q[i].nexts:
             if next_state not in q:
@@ -16,7 +20,7 @@ def print_dfa(q, out=sys.stdout):
 def print_diagram(state_machines, out=sys.stdout):
     for literal, state in sorted(state_machines.items()):
         print(file=out)
-        print(literal, file=out)
+        print(escape(literal.text), file=out)
         print_dfa([state], out=out)
 
 
