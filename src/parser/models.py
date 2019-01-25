@@ -135,7 +135,7 @@ class Parser:
             self.scope -= 1
         if len(self.stack) > 0:
             self.tree_stack.pop()
-        if state.non_terminal.is_action:
+        if state.non_terminal.is_action and not self.errors:
             state.non_terminal.do(self)
 
     def entered(self, state):

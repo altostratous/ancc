@@ -49,10 +49,11 @@ class Inst:
 
 
 class Program:
-    def __init__(self, stack):
+    def __init__(self, stack_address):
         self.insts = []
         self.pc = 0
-        self.sp = stack
+        self.sp = stack_address
+        self.add_inst(Mnemonic.ASSIGN, immval(stack_address + 1), self.sp)
 
     def __str__(self):
         s = ''
@@ -76,12 +77,12 @@ class Program:
         self.pc += 1
 
     def add_push(self, arg):
-        self.add_inst(Mnemonic.ASSIGN, arg, self.sp)
+        self.add_inst(Mnemonic.ASSIGN, arg, indval(self.sp))
         self.add_inst(Mnemonic.ADD, self.sp, immval(1), self.sp)
 
     def add_pop(self, arg):
-        self.add_inst(Mnemonic.ASSIGN, self.sp, arg)
         self.add_inst(Mnemonic.SUBTRACT, self.sp, immval(1), self.sp)
+        self.add_inst(Mnemonic.ASSIGN, indval(self.sp), arg)
 
     def edit_inst(self, index, *args):
         assert self.insts[index].arr[0] == Mnemonic.FAKE

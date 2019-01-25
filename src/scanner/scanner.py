@@ -41,8 +41,9 @@ class Scanner:
         self.index = 0
         self.len = len(input_string)
         self.prev_token = None
-        self.symbol_table = [{'output': -1}]
         self.first_free_memory = 0
+        self.symbol_table = [{'output': 0}]
+        self.malloc(1)  # reserve for output function
 
     def malloc(self, size=1):
         address = self.first_free_memory
