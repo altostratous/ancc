@@ -1,5 +1,5 @@
 from generator.program import Mnemonic, immval, indval
-from grammar.models import Literal
+from grammar.models import Literal, DataType
 
 
 class Action(Literal):
@@ -246,6 +246,7 @@ class FunctionSaveAction(Action):
 
 class FunctionAction(Action):
     def do(self, parser):
+        parser.scanner.get_token_by_address(521)
         parser.program.edit_inst(parser.semantic_stack.pop(), Mnemonic.JUMP, parser.program.pc + 1)
         parser.program.add_inst(Mnemonic.JUMP, indval(parser.return_stack.pop()))
 
@@ -278,6 +279,7 @@ class PullIDAction(Action):
 class CallAction(Action):
     def do(self, parser):
         function_symbol_address = parser.semantic_stack[-1]
+        function_data_type = parser.scanner.get_token_by_address(function_symbol_address).data_type
         activity_record_address = parser.get_temp()
         return_address_address = parser.get_temp()
         parser.program.add_inst(Mnemonic.ASSIGN, function_symbol_address, activity_record_address)
@@ -286,6 +288,10 @@ class CallAction(Action):
         start_pc = parser.get_temp()
         parser.program.add_inst(Mnemonic.ASSIGN, indval(activity_record_address), start_pc)
         parser.program.add_inst(Mnemonic.JUMP, indval(start_pc))
+        if function_data_type == DataType.INTEGER:
+            return_value = parser.get_temp()
+            parser.program.add_pop(return_value)
+            parser.semantic_stack[-1] = return_value
 
 
 class PushParameterAction(Action):
@@ -317,3 +323,10 @@ class DefinePrintAction(Action):
         # # Function
         parser.program.edit_inst(parser.semantic_stack.pop(), Mnemonic.JUMP, parser.program.pc + 1)
         parser.program.add_inst(Mnemonic.JUMP, indval(parser.semantic_stack.pop()))
+
+
+class PushReturnValueAction(Action):
+    def do(self, parser):
+        parser.program.add_push(parser.semantic_stack.pop())
+
+

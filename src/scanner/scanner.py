@@ -59,6 +59,12 @@ class Scanner:
     def get_symbol_address(self, symbol_text):
         return self.get_symbol_token(symbol_text).attribute
 
+    def get_token_by_address(self, address):
+        for scope in self.symbol_table:
+            for token in scope.values():
+                if token.attribute == address:
+                    return token
+
     def return_token(self, text, attr):
         data_type = None
         if self.prev_token is not None:

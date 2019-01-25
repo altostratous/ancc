@@ -76,7 +76,7 @@ class Token(object):
         self.text = text
         self.attribute = attribute
         self.literal = literal
-        self.type = data_type
+        self.data_type = data_type
 
     def __eq__(self, o) -> bool:
         if o is None:
