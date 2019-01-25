@@ -133,8 +133,8 @@ class Scanner:
                 return self.return_token(next_char, None)
 
     def line_and_column(self):
-        line = 0
-        column = 0
+        line = 1
+        column = 1
         for i in range(0, self.index):
             column += 1
             if self.input[i] == '\n':

@@ -18,11 +18,11 @@ void main(void) {
                 continue;
             } else ;
 
-            if (i < a[j]) {
-                /*int temp;
+            if (a[i] < a[j]) {
+                int temp;
                 temp = a[i];
                 a[i] = a[j];
-                a[j] = temp;*/
+                a[j] = temp;
             } else ;
 
             j = j + 1;

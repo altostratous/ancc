@@ -26,14 +26,16 @@ class State:
 
 class ParseError(Exception):
 
-    def __init__(self, lookahead, non_terminal, *args):
+    def __init__(self, lookahead, non_terminal, line, column, *args):
         super().__init__(*args)
         self.lookahead = lookahead
         self.non_terminal = non_terminal
+        self.line = line
+        self.column = column
 
     def __str__(self):
-        return "Unexpected {} in {}.".format(
-            self.lookahead, self.non_terminal
+        return "Unexpected {} in {} at {}:{}".format(
+            self.lookahead, self.non_terminal, self.line, self.column
         )
 
     def __repr__(self):
@@ -100,8 +102,7 @@ class Parser:
                     return next_state, None, None
             elif self.lookahead_literal in self.first[literal]:
                 return next_state, literal, None
-        # print(self.stack)
-        return None, None, ParseError(self.lookahead_literal, current_state.non_terminal)
+        return None, None, ParseError(self.lookahead_literal, current_state.non_terminal, *self.scanner.line_and_column())
 
     def parse(self):
         while self.stack and self.lookahead_literal:
