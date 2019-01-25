@@ -42,7 +42,7 @@ class ParseError(Exception):
         return str(self)
 
 
-class Parser:
+class Parser(object):
     def __init__(self, state_machines, start_state, scanner, stack_size=500):
         self.state_machines = state_machines
         self.start_state = start_state
@@ -60,12 +60,7 @@ class Parser:
         self.scope = 0
         self.break_stack = []
         self.continue_stack = []
-
-    @property
-    def lookahead_literal(self):
-        if self.lookahead_token is None:
-            return None
-        return self.lookahead_token.literal
+        self.return_stack = []
 
     @property
     def lookahead_token(self):
@@ -73,7 +68,15 @@ class Parser:
             next_token = self.scanner.get_next_token(self.scope)
             if next_token:
                 self._lookahead = next_token
+            else:
+                pass
         return self._lookahead
+
+    @property
+    def lookahead_literal(self):
+        if self.lookahead_token is None:
+            return None
+        return self.lookahead_token.literal
 
     def get_temp(self):
         return self.scanner.malloc()

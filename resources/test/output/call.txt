@@ -1,1 +1,2 @@
-PRINT    56
+PRINT    2
+PRINT    1

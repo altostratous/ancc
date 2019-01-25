@@ -3,7 +3,7 @@
 3. declaration → var-declaration | fun-declaration
 4. var-declaration → ; | [ #ArrayDefinition NUM ] ;
 5. type-specifier → int | void
-6. fun-declaration → #FunctionSave ( #IncreaseScope params ) fun-compound-stmt #Function
+6. fun-declaration → #FunctionSave ( #IncreaseScope params ) fun-compound-stmt
 7. params → int-starting-param-list | void-starting-param-list
 8. void-starting-param-list → void rest-of-void-starting-param-list
 9. rest-of-void-starting-param-list → ID rest-of-param param-list-prime | ε
@@ -17,7 +17,7 @@
 17. expression-stmt → expression ; #PopID  | continue ; #Continue | break ; #Break | ;
 18. selection-stmt → if ( expression ) #IfSave statement #IfJumpSave else statement #IfJump
 19. iteration-stmt → while #WhileLabel ( expression ) #WhileSave statement #While
-20. return-stmt → return rest-of-return-stmt #Function
+20. return-stmt → return rest-of-return-stmt #FunctionReturn
 21. rest-of-return-stmt → ; | expression ;
 22. switch-stmt → switch #SwitchSave ( expression ) { case-stmts default-stmt } #Switch
 23. case-stmts → case-stmt case-stmts | ε
@@ -45,4 +45,4 @@
 45. args → arg-list | ε
 46. arg-list → expression #PushParameter arg-list-prime
 47. arg-list-prime → , expression #PushParameter arg-list-prime | ε
-48. fun-compound-stmt → { declaration-list statement-list #DecreaseScope }
+48. fun-compound-stmt → { declaration-list statement-list #Function #DecreaseScope }

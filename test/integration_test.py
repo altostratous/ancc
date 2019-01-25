@@ -1,5 +1,6 @@
 import os
 import platform
+import pprint
 from unittest import TestCase
 
 from grammar.models import Literal
@@ -46,5 +47,6 @@ class Test(TestCase):
                             assert 0, "I don't give a F*** to Windows"
                         if 0 != os.system('diff tmptmp ../output/' + filename + '.txt'):
                             print("Integration test {} failed.".format(filename))
+                            pprint.pprint(parser.tree)
                             self.fail()
                         self.assertEqual(0, os.system('rm output.txt tmptmp'))

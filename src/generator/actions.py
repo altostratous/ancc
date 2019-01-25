@@ -235,9 +235,9 @@ class FunctionSaveAction(Action):
         activity_record_address = parser.scanner.malloc(2)
         start_pc_address = activity_record_address
         return_address_address = activity_record_address + 1
-        parser.semantic_stack.append(return_address_address)
+        parser.return_stack.append(return_address_address)
         # write the record address to the function symbol memory
-        parser.program.add_inst(Mnemonic.ASSIGN, immval(activity_record_address), parser.semantic_stack[-2])
+        parser.program.add_inst(Mnemonic.ASSIGN, immval(activity_record_address), parser.semantic_stack[-1])
         # write the start address to the first word of activity record
         parser.program.add_inst(Mnemonic.ASSIGN, immval(parser.program.pc + 2), start_pc_address)
         parser.semantic_stack.append(parser.program.pc)
@@ -247,7 +247,12 @@ class FunctionSaveAction(Action):
 class FunctionAction(Action):
     def do(self, parser):
         parser.program.edit_inst(parser.semantic_stack.pop(), Mnemonic.JUMP, parser.program.pc + 1)
-        parser.program.add_inst(Mnemonic.JUMP, indval(parser.semantic_stack.pop()))
+        parser.program.add_inst(Mnemonic.JUMP, indval(parser.return_stack.pop()))
+
+
+class FunctionReturnAction(Action):
+    def do(self, parser):
+        parser.program.add_inst(Mnemonic.JUMP, indval(parser.return_stack[-1]))
 
 
 class CallMainAction(Action):
