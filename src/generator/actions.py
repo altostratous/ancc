@@ -246,7 +246,7 @@ class FunctionSaveAction(Action):
         # write the start address to the first word of activity record
         parser.program.add_inst(Mnemonic.ASSIGN, immval(parser.program.pc + 2), start_pc_address)
         parser.semantic_stack.append(parser.program.pc)
-        parser.program.add_fake_inst() # skip running the function on the first pass
+        parser.program.add_fake_inst()  # skip running the function on the first pass
 
 
 class FunctionAction(Action):
@@ -267,3 +267,27 @@ class CallMainAction(Action):
         parser.program.add_inst(Mnemonic.ASSIGN, indval(activity_record_address), start_pc)
         parser.program.add_inst(Mnemonic.JUMP, indval(start_pc))
         parser.program.add_nop()
+
+
+class PullIDAction(Action):
+    def do(self, parser):
+        assert parser.lookahead_token.text == 'ID'
+        parser.program.add_pop(parser.lookahead_token.attribute)
+
+
+class CallAction(Action):
+    def do(self, parser):
+        function_symbol_address = parser.semantic_stack[-1]
+        activity_record_address = parser.get_temp()
+        return_address_address = parser.get_temp()
+        parser.program.add_inst(Mnemonic.ASSIGN, function_symbol_address, activity_record_address)
+        parser.program.add_inst(Mnemonic.ADD, activity_record_address, immval(1), return_address_address)
+        parser.program.add_inst(Mnemonic.ASSIGN, immval(parser.program.pc + 3), indval(return_address_address))
+        start_pc = parser.get_temp()
+        parser.program.add_inst(Mnemonic.ASSIGN, indval(activity_record_address), start_pc)
+        parser.program.add_inst(Mnemonic.JUMP, indval(start_pc))
+
+
+class PushParameterAction(Action):
+    def do(self, parser):
+        parser.program.add_push(parser.semantic_stack.pop())

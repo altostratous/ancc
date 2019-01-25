@@ -43,7 +43,7 @@ class ParseError(Exception):
 
 
 class Parser:
-    def __init__(self, state_machines, start_state, scanner):
+    def __init__(self, state_machines, start_state, scanner, stack_size=500):
         self.state_machines = state_machines
         self.start_state = start_state
         self.scanner = scanner
@@ -55,7 +55,7 @@ class Parser:
         self.tree = (start_state.non_terminal.text, [])
         self.tree_stack = [self.tree]
         self.semantic_stack = []
-        self.program = Program()
+        self.program = Program(self.scanner.malloc(stack_size))
         self.errors = []
         self.scope = 0
         self.break_stack = []

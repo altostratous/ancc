@@ -135,7 +135,7 @@ class Scanner:
     def line_and_column(self):
         line = 1
         column = 1
-        for i in range(0, self.index):
+        for i in range(0, min(self.index, len(self.input))):
             column += 1
             if self.input[i] == '\n':
                 line += 1
