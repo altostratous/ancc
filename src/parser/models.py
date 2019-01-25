@@ -1,6 +1,7 @@
 from generator.program import Program
 from grammar.models import Literal, Token
 from grammar.utils import compute_non_terminals_firsts, compute_non_terminals_follows
+from parser.errors import ParseError
 
 
 class State:
@@ -23,24 +24,6 @@ class State:
 
     def full_repr(self):
         return str(self) + (' to -> ' + str(self.nexts) if not self.is_success else '')
-
-
-class ParseError(Exception):
-
-    def __init__(self, lookahead, non_terminal, line, column, *args):
-        super().__init__(*args)
-        self.lookahead = lookahead
-        self.non_terminal = non_terminal
-        self.line = line
-        self.column = column
-
-    def __str__(self):
-        return "Unexpected {} in {} at {}:{}".format(
-            self.lookahead, self.non_terminal, self.line, self.column
-        )
-
-    def __repr__(self):
-        return str(self)
 
 
 class Parser(object):
@@ -107,7 +90,7 @@ class Parser(object):
                     return next_state, None, None
             elif self.lookahead_literal in self.first[literal]:
                 return next_state, literal, None
-        return None, None, ParseError(self.lookahead_literal, current_state.non_terminal, *self.scanner.line_and_column())
+        return None, None, ParseError(self.lookahead_literal, current_state.non_terminal, self.scanner)
 
     def parse(self):
         while self.stack and self.lookahead_literal:
