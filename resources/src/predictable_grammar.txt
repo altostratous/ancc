@@ -43,6 +43,6 @@
 43. reference → call | ε
 44. call → ( args ) #Call
 45. args → arg-list | ε
-46. arg-list → expression #PushParameter arg-list-prime
-47. arg-list-prime → , expression #PushParameter arg-list-prime | ε
+46. arg-list → expression arg-list-prime #PushParameter
+47. arg-list-prime → , expression arg-list-prime #PushParameter | ε
 48. fun-compound-stmt → { declaration-list statement-list #Function #DecreaseScope }
