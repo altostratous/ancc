@@ -7,7 +7,7 @@
 7. params → int-starting-param-list | void-starting-param-list
 8. void-starting-param-list → void rest-of-void-starting-param-list
 9. rest-of-void-starting-param-list → ID rest-of-param param-list-prime | ε
-10. int-starting-param-list → int #PullID ID rest-of-param param-list-prime
+10. int-starting-param-list → int ID rest-of-param param-list-prime
 11. param-list-prime → , param param-list-prime | ε
 12. param → type-specifier ID rest-of-param
 13. rest-of-param → ε | [ ]
