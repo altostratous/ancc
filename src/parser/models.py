@@ -60,7 +60,6 @@ class Parser:
         self.scope = 0
         self.break_stack = []
         self.continue_stack = []
-        self.is_declaration = True
 
     @property
     def lookahead_literal(self):
@@ -134,8 +133,6 @@ class Parser:
     def parsed(self, state):
         if state.non_terminal.text == 'compound-stmt':
             self.scope -= 1
-        if state.non_terminal.text == 'statement-list':
-            self.is_declaration = True
         if len(self.stack) > 0:
             self.tree_stack.pop()
         if state.non_terminal.is_action:
@@ -144,8 +141,6 @@ class Parser:
     def entered(self, state):
         if state.non_terminal.text == 'fun-declaration' or state.non_terminal.text == 'compound-stmt':
             self.scope += 1
-        if state.non_terminal.text == 'statement-list':
-            self.is_declaration = False
         opening = (state.non_terminal.text, [])
         self.tree_stack[-1][1].append(opening)
         self.tree_stack.append(opening)

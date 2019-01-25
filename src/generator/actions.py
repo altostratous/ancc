@@ -223,3 +223,13 @@ class ArrayAccessAction(Action):
         tmp = parser.get_temp()
         parser.program.add_inst(Mnemonic.ADD, parser.semantic_stack.pop(), parser.semantic_stack.pop(), tmp)
         parser.semantic_stack += [indval(tmp)]
+
+
+class IncreaseScopeAction(Action):
+    def do(self, parser):
+        parser.scope += 1
+
+
+class DecreaseScopeAction(Action):
+    def do(self, parser):
+        parser.scope -= 1
