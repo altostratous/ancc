@@ -63,6 +63,9 @@ class AddOpAction(Action):
 class RelOpAction(Action):
     def do(self, parser):
         tmp = parser.get_temp()
+        if parser.semantic_stack[-1] == 'None' or parser.semantic_stack[-3] == 'None':
+            raise SemanticError('Cannot compare a void value', parser.scanner)
+
         if parser.semantic_stack[-2] == 'L':
             parser.program.add_inst(Mnemonic.LESS_THAN, parser.semantic_stack[-3],
                                     parser.semantic_stack[-1], tmp)
@@ -80,6 +83,9 @@ class RelOpAction(Action):
 class MultOpAction(Action):
     def do(self, parser):
         tmp = parser.get_temp()
+        if parser.semantic_stack[-1] == 'None' or parser.semantic_stack[-2] == 'None':
+            raise SemanticError('Cannot mult a void value', parser.scanner)
+
         parser.program.add_inst(Mnemonic.MULTIPLY, parser.semantic_stack[-2],
                                 parser.semantic_stack[-1], tmp)
         parser.semantic_stack.pop()
@@ -96,6 +102,9 @@ class IfSaveAction(Action):
 class IfJumpSaveAction(Action):
     def do(self, parser):
         # Jump
+        if parser.semantic_stack[-2] == 'None':
+            raise SemanticError('Cannot use a void value as if condition', parser.scanner)
+
         parser.program.edit_inst(parser.semantic_stack.pop(), Mnemonic.JUMP_FALSE,
                                  parser.semantic_stack.pop(), parser.program.pc + 1)
 
@@ -129,6 +138,9 @@ class WhileSaveAction(Action):
 
 class WhileAction(Action):
     def do(self, parser):
+        if parser.semantic_stack[-2] == 'None':
+            raise SemanticError('Cannot use a void value as while condition', parser.scanner)
+
         parser.program.edit_inst(parser.semantic_stack.pop(), Mnemonic.JUMP_FALSE,
                                  parser.semantic_stack.pop(), parser.program.pc + 1)
         parser.program.add_inst(Mnemonic.JUMP, parser.semantic_stack.pop())
@@ -182,12 +194,18 @@ class SwitchSaveAction(Action):
 class SwitchPatchJumpOnTestAction(Action):
     def do(self, parser):
         default = parser.semantic_stack[-4]
+        if default == 'None':
+            raise SemanticError('Cannot use a void value as switch condition', parser.scanner)
+
         parser.program.edit_inst(parser.semantic_stack.pop(), Mnemonic.JUMP_FALSE, default, parser.program.pc)
 
 
 class SwitchPatchJumpOnNotTestAction(Action):
     def do(self, parser):
         test = parser.semantic_stack[-3]
+        if test == 'None':
+            raise SemanticError('Cannot use a void value as switch condition', parser.scanner)
+
         parser.program.edit_inst(parser.semantic_stack.pop(), Mnemonic.JUMP_FALSE, test, parser.program.pc)
 
 
@@ -199,6 +217,10 @@ class PushIDAction(Action):
 
 class AssignAction(Action):
     def do(self, parser):
+        if parser.scanner.get_token_by_address(parser.semantic_stack[-2]) and parser.scanner.get_token_by_address(parser.semantic_stack[-2]).declaration_type == DeclarationType.ARRAY:
+            raise SemanticError('Assignment to array is not allowed', parser.scanner)
+        if parser.scanner.get_token_by_address(parser.semantic_stack[-1]) and parser.scanner.get_token_by_address(parser.semantic_stack[-1]).declaration_type == DeclarationType.ARRAY:
+            raise SemanticError('Assignment from array is not allowed', parser.scanner)
         parser.program.add_inst(Mnemonic.ASSIGN, parser.semantic_stack.pop(),
                                 parser.semantic_stack[-1])
 
@@ -233,6 +255,8 @@ class ArrayDefinitionAction(Action):
 
 class AssignArrayAction(Action):
     def do(self, parser):
+        if parser.scanner.get_token_by_address(parser.semantic_stack[-1]) and parser.scanner.get_token_by_address(parser.semantic_stack[-1]).declaration_type == DeclarationType.ARRAY:
+            raise SemanticError('Assignment from array is not allowed', parser.scanner)
         tmp = parser.get_temp()
         parser.program.add_inst(Mnemonic.ADD, parser.semantic_stack[-3], parser.semantic_stack[-2], tmp)
         parser.program.add_inst(Mnemonic.ASSIGN, parser.semantic_stack.pop(), indval(tmp))
@@ -388,7 +412,15 @@ class DefinePrintAction(Action):
 
 class PushReturnValueAction(Action):
     def do(self, parser):
+        if parser.function_stack[-1].data_type == DataType.VOID:
+            raise SemanticError('Invalid return value for a void function', parser.scanner)
         parser.program.add_push(parser.semantic_stack.pop())
+
+class NoReturnAction(Action):
+    def do(self, parser):
+        if parser.function_stack[-1].data_type != DataType.VOID:
+            raise SemanticError('Invalid return value for a non-void function', parser.scanner)
+
 
 
 class VarDefinitionAction(Action):
