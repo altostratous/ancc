@@ -1,7 +1,7 @@
 import string
 
-from grammar.models import Token, DataType
-from scanner.errors import DuplicateDeclaration, UndefinedIDError, LexicalError, NumberFormatError
+from grammar.models import Token, DataType, DeclarationType
+from scanner.errors import DuplicateDeclaration, UndefinedIDError, LexicalError, NumberFormatError, SemanticError
 
 RESERVED_WORDS = ['int', 'void', 'continue', 'break', 'if', 'else', 'while', 'return', 'switch', 'case', 'default']
 
@@ -37,11 +37,19 @@ class Scanner:
         self.first_free_memory += size
         return address
 
-    def get_symbol_token(self, symbol_text):
-        for scope_table in reversed(self.symbol_table):
+    def find_symbol_token(self, symbol_text, scope=None):
+        for i, scope_table in enumerate(reversed(self.symbol_table)):
+            if scope is not None:
+                if scope != i:
+                    continue
             if symbol_text in scope_table:
                 return scope_table[symbol_text]
-        raise UndefinedIDError(symbol_text, self)
+
+    def get_symbol_token(self, symbol_text):
+        result = self.find_symbol_token(symbol_text)
+        if result is None:
+            raise UndefinedIDError(symbol_text, self)
+        return result
 
     def get_symbol_address(self, symbol_text):
         return self.get_symbol_token(symbol_text).attribute
@@ -123,6 +131,7 @@ class Scanner:
                 if st in self.symbol_table[scope]:
                     raise DuplicateDeclaration(st, *self.line_and_column())
                 self.symbol_table[scope][st] = self.return_token('ID', self.malloc())
+                self.analyze_semantics()
             return self.return_repeated_token(st)
         if next_char in string.digits:
             self.index -= 1
@@ -151,3 +160,25 @@ class Scanner:
         if not isinstance(token, Token):
             assert False
         return token
+
+    def analyze_semantics(self):
+        self.check_main()
+        self.check_declaration_and_data_type_consistency()
+
+    def check_main(self):
+        main_token = self.find_symbol_token('main', 0)
+        if main_token is None:
+            return
+        if main_token.data_type != DataType.VOID:
+            raise SemanticError('main should be of type `void`')
+        # TODO check main have (void) as args
+        if main_token.declaration_type in {DeclarationType.VARIABLE, DeclarationType.ARRAY}:
+            raise SemanticError('main function in the parent scope should be declared as a function')
+
+    def check_declaration_and_data_type_consistency(self):
+        for scope_table in self.symbol_table:
+            for name, token in scope_table.items():
+                if token.declaration_type is not None:
+                    if token.declaration_type in {DeclarationType.VARIABLE, DeclarationType.ARRAY} and token.data_type != DataType.INTEGER:
+                        raise SemanticError('variable {} should be of type `int`'.format(name))
+

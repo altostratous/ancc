@@ -1,5 +1,6 @@
 from generator.program import Mnemonic, immval, indval
-from grammar.models import Literal, DataType
+from grammar.models import Literal, DataType, DeclarationType
+from scanner.errors import SemanticError
 
 
 class Action(Literal):
@@ -190,17 +191,24 @@ class PopIDAction(Action):
 
 class BreakAction(Action):
     def do(self, parser):
+        if len(parser.break_stack) == 0:
+            raise SemanticError('`break` statement has no parent `while` or `switch`')
         parser.program.add_inst(Mnemonic.JUMP, parser.break_stack[-1])
 
 
 class ContinueAction(Action):
     def do(self, parser):
+        if len(parser.continue_stack) == 0:
+            raise SemanticError('`continue` statement has no parent `while`')
+            # TODO make keywords quoted in error strings
         parser.program.add_inst(Mnemonic.JUMP, parser.continue_stack[-1])
 
 
 class ArrayDefinitionAction(Action):
     def do(self, parser):
         assert parser.lookahead_token.text == 'NUM'
+        parser.scanner.get_token_by_address(parser.semantic_stack[-1]).declaration_type = DeclarationType.ARRAY
+        parser.scanner.analyze_semantics()
         addr = parser.scanner.malloc(parser.lookahead_token.attribute)
         parser.program.add_inst(Mnemonic.ASSIGN, immval(addr), parser.semantic_stack[-1])
 
@@ -232,6 +240,8 @@ class DecreaseScopeAction(Action):
 
 class FunctionSaveAction(Action):
     def do(self, parser):
+        parser.scanner.get_token_by_address(parser.semantic_stack[-1]).declaration_type = DeclarationType.FUNCTION
+        parser.scanner.analyze_semantics()
         activity_record_address = parser.scanner.malloc(2)
         start_pc_address = activity_record_address
         return_address_address = activity_record_address + 1
@@ -246,7 +256,6 @@ class FunctionSaveAction(Action):
 
 class FunctionAction(Action):
     def do(self, parser):
-        parser.scanner.get_token_by_address(521)
         parser.program.edit_inst(parser.semantic_stack.pop(), Mnemonic.JUMP, parser.program.pc + 1)
         parser.program.add_inst(Mnemonic.JUMP, indval(parser.return_stack.pop()))
 
@@ -330,3 +339,7 @@ class PushReturnValueAction(Action):
         parser.program.add_push(parser.semantic_stack.pop())
 
 
+class VarDefinitionAction(Action):
+    def do(self, parser):
+        parser.scanner.get_token_by_address(parser.semantic_stack[-1]).declaration_type = DeclarationType.VARIABLE
+        parser.scanner.analyze_semantics()
