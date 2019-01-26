@@ -12,7 +12,7 @@ from core.defines import BASE_DIR
 
 
 class Test(TestCase):
-    test_cases = ['switch_code_generation' for file_name in os.listdir(os.path.join(BASE_DIR, 'resources/test/output'))]
+    test_cases = ['parameter_passing' for file_name in os.listdir(os.path.join(BASE_DIR, 'resources/test/output'))]
 
     def test(self):
         with open(os.path.join(BASE_DIR, 'resources/src/predictable_grammar.txt')) as grammar_file:

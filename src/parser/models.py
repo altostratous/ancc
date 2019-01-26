@@ -80,9 +80,12 @@ class Parser(object):
             return None, None, None
         for literal, next_state in current_state.nexts:
             # ε transition
-            if not literal and self.lookahead_literal in self.follow[current_state.non_terminal]:
-                assert next_state.is_success
-                return next_state, None, None
+            if not literal:
+                if self.lookahead_literal in self.follow[current_state.non_terminal]:
+                    assert next_state.is_success
+                    return next_state, None, None
+                else:
+                    continue
             # an ε potent rule
             elif not literal.is_terminal and () in self.first[literal] and self.lookahead_literal in self.follow[literal]:
                 return next_state, literal, None
