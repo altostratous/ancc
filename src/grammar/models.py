@@ -1,4 +1,31 @@
 class Literal:
+    CONVENTIONS = {
+        'stmt': 'statement',
+        'addop': 'additive operation',
+        'fun': 'function',
+        'param': 'parameter',
+        'relop': 'relative operation',
+        'expr': 'expression',
+        'arg': 'argument',
+        'prime': '',
+        'rest': '',
+        'NUM': 'number',
+        'RELOP': 'relative operator',
+        'ID': 'identifier',
+        'int': 'integer',
+        'EOF': 'end of file',
+        ',': '`,`',
+        '(': '`(`',
+        ')': '`)`',
+        '{': '`{`',
+        '}': '`}`',
+        ';': '`;`',
+        '[': '`,`',
+        ']': '`,`',
+        '+': '`,`',
+        '*': '`*`',
+    }
+
     def __init__(self, text, rules=None):
         self.text = text
         self.rules = rules
@@ -22,6 +49,20 @@ class Literal:
     @property
     def is_action(self):
         return False
+
+    @property
+    def verbose_name(self):
+        if self.text == '-':
+            return '`-`'
+        parts = self.text.split('-')
+        result = ''
+        for part in parts:
+            result += ' '
+            if part in Literal.CONVENTIONS:
+                result += Literal.CONVENTIONS[part]
+            else:
+                result += part
+        return result[1:]
 
     @staticmethod
     def parse(raw_grammar_file):

@@ -20,7 +20,17 @@ class Scanner:
         self.malloc(1)  # reserve for output function
 
     def summary(self):
-        return self.input[max(0, self.index - 10):min(self.len, self.index + 10)]
+        result = ''
+        index = self.index - 2
+        while index >= 0 and self.input[index] != '\n':
+            result = self.input[index] + result
+            index -= 1
+        result += '>'
+        index = self.index - 1
+        while index < self.len and self.input[index] != '\n':
+            result += self.input[index]
+            index += 1
+        return result
 
     def malloc(self, size=1):
         address = self.first_free_memory

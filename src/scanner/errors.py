@@ -6,11 +6,17 @@ class SemanticError(ANCCError):
         super().__init__(*args)
         self.text = text
 
-    def __repr__(self):
-        return str(self)
-
     def __str__(self):
         return super().__str__() + "Semantic Error"
+
+
+class LexicalError(ANCCError):
+    def __init__(self, text, *args: object) -> None:
+        super().__init__(*args)
+        self.text = text
+
+    def __str__(self):
+        return super().__str__() + "Lexical Error"
 
 
 class DuplicateDeclaration(SemanticError):

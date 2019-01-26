@@ -74,7 +74,8 @@ class TestPanicMode(TestCase):
                         )
                     )
                     errors = parser.parse()
+                    print(errors)
                     self.assertEqual(len(expected_parse_errors), len(errors))
                     for error in errors:
                         self.assertIn(
-                            (error.lookahead.text, error.non_terminal.text), expected_parse_errors)
+                            (error.lookahead_literal.text, error.non_terminal.text), expected_parse_errors)

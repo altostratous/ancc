@@ -73,8 +73,6 @@ class Parser(object):
         return True
 
     def find_next_state(self, current_state):
-        if current_state.non_terminal.text == 'compound-stmt' and self.lookahead_literal == 'void':
-            print('hey')
         if current_state.is_success:
             return None, None, None
         for literal, next_state in current_state.nexts:
