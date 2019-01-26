@@ -136,16 +136,12 @@ class Parser(object):
 
     # noinspection PyUnusedLocal
     def parsed(self, state):
-        if state.non_terminal.text == 'compound-stmt':
-            self.scope -= 1
         if len(self.stack) > 0:
             self.tree_stack.pop()
         if state.non_terminal.is_action and not self.errors:
             state.non_terminal.do(self)
 
     def entered(self, state):
-        if state.non_terminal.text == 'fun-declaration' or state.non_terminal.text == 'compound-stmt':
-            self.scope += 1
         opening = (state.non_terminal.text, [])
         self.tree_stack[-1][1].append(opening)
         self.tree_stack.append(opening)
