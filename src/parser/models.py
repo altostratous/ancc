@@ -48,6 +48,8 @@ class Parser(object):
         self.break_stack = []
         self.continue_stack = []
         self.return_stack = []
+        self.function_stack = []
+        self.argument_stack = []
 
     @property
     def lookahead_token(self):
@@ -97,8 +99,10 @@ class Parser(object):
         return None, None, ParseError(self.lookahead_literal, current_state.non_terminal, self.scanner)
 
     def parse(self):
-        while self.stack and self.lookahead_literal:
+        while self.stack:
             try:
+                if not self.lookahead_literal:
+                    break
                 next_state, new_flow, error = self.find_next_state(self.stack[-1])
                 if error:
                     self.errors.append(error)

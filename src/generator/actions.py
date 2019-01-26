@@ -257,6 +257,7 @@ class DecreaseScopeAction(Action):
 class FunctionSaveAction(Action):
     def do(self, parser):
         parser.scanner.get_token_by_address(parser.semantic_stack[-1]).declaration_type = DeclarationType.FUNCTION
+        parser.function_stack += [parser.scanner.get_token_by_address(parser.semantic_stack[-1])]
         parser.scanner.analyze_semantics()
         activity_record_address = parser.scanner.malloc(2)
         start_pc_address = activity_record_address
@@ -274,10 +275,14 @@ class FunctionAction(Action):
     def do(self, parser):
         parser.program.edit_inst(parser.semantic_stack.pop(), Mnemonic.JUMP, parser.program.pc + 1)
         parser.program.add_inst(Mnemonic.JUMP, indval(parser.return_stack.pop()))
+        if parser.function_stack[-1].has_return == False and parser.function_stack[-1].data_type != DataType.VOID:
+            raise SemanticError('Missing return statement inside the function', parser.scanner)
+        parser.function_stack.pop()
 
 
 class FunctionReturnAction(Action):
     def do(self, parser):
+        parser.function_stack[-1].has_return = True
         parser.program.add_inst(Mnemonic.JUMP, indval(parser.return_stack[-1]))
 
 
@@ -317,11 +322,38 @@ class CallAction(Action):
             return_value = parser.get_temp()
             parser.program.add_pop(return_value)
             parser.semantic_stack[-1] = return_value
+        else:
+            parser.semantic_stack[-1] = 'None'
+        if parser.argument_stack[-1]:
+            raise SemanticError('Too few arguments passed', parser.scanner)
+        parser.argument_stack.pop()
+
+
+class CallBeforeAction(Action):
+    def do(self, parser):
+        function_symbol_address = parser.semantic_stack[-1]
+        prototype = parser.scanner.get_token_by_address(function_symbol_address).prototype
+        parser.argument_stack += [prototype[:]]
 
 
 class PushParameterAction(Action):
     def do(self, parser):
-        parser.program.add_push(parser.semantic_stack.pop())
+        top_of_stack = parser.semantic_stack.pop()
+        if top_of_stack == 'None':
+            raise SemanticError('Cannot pass a void argument to a function', parser.scanner)
+        if not parser.argument_stack[-1]:
+            raise SemanticError('Too many arguments passed', parser.scanner)
+        if isinstance(top_of_stack, str) and top_of_stack[0] == '#':
+            if parser.argument_stack[-1][0].declaration_type == DeclarationType.ARRAY:
+                print(parser.argument_stack[-1])
+                raise SemanticError('Cannot convert an integer literal to an array', parser.scanner)
+
+        if isinstance(top_of_stack, int) and parser.scanner.get_token_by_address(top_of_stack) and parser.scanner.get_token_by_address(top_of_stack).declaration_type == DeclarationType.ARRAY:
+            if parser.argument_stack[-1][0].declaration_type == DeclarationType.VARIABLE:
+                raise SemanticError('Cannot convert an array to an integer type', parser.scanner)
+
+        parser.argument_stack[-1] = parser.argument_stack[-1][1:]
+        parser.program.add_push(top_of_stack)
 
 
 class DefinePrintAction(Action):
@@ -359,3 +391,17 @@ class VarDefinitionAction(Action):
     def do(self, parser):
         parser.scanner.get_token_by_address(parser.semantic_stack[-1]).declaration_type = DeclarationType.VARIABLE
         parser.scanner.analyze_semantics()
+
+
+class NewParamAction(Action):
+    def do(self, parser):
+        token = parser.lookahead_token
+        if token.data_type == DataType.VOID:
+            raise SemanticError("Cannot declare a variable with void type", parser.scanner)
+        token.declaration_type = DeclarationType.VARIABLE
+        parser.function_stack[-1].prototype.append(token)
+
+
+class ArrayParamAction(Action):
+    def do(self, parser):
+        parser.function_stack[-1].prototype[-1].declaration_type = DeclarationType.ARRAY

@@ -13,7 +13,7 @@ class Scanner:
         self.len = len(input_string)
         self.prev_token = None
         self.first_free_memory = 0
-        self.symbol_table = [{'output': Token('ID', 0, self.literals['ID'], DataType.VOID)}]
+        self.symbol_table = [{'output': Token('ID', 0, self.literals['ID'], DataType.VOID, DeclarationType.FUNCTION, [Token('ID', -1, self.literals['ID'], DataType.INTEGER)])}]
         self.malloc(1)  # reserve for output function
 
     def summary(self):
@@ -30,6 +30,8 @@ class Scanner:
         return result
 
     def malloc(self, size=1):
+        if size <= 0:
+            raise SemanticError('Array size must be a positive integer value', self)
         address = self.first_free_memory
         self.first_free_memory += size
         return address
@@ -57,12 +59,12 @@ class Scanner:
                 if token.attribute == address:
                     return token
 
-    def return_token(self, text, attr):
+    def return_token(self, text, attr, lexeme):
         data_type = None
         if self.prev_token is not None:
             if self.prev_token.text in ['void', 'int']:
                 data_type = self.prev_token.text
-        t = Token(text, attr, self.literals[text], data_type)
+        t = Token(text, attr, self.literals[text], data_type, lexeme=lexeme)
         self.prev_token = t
         assert isinstance(t, Token)
         return t
@@ -89,7 +91,7 @@ class Scanner:
                 self.index += 1
             if self.len == self.index:
                 self.index += 1
-                return self.return_token('EOF', None)
+                return self.return_token('EOF', None, '')
             if self.len < self.index:
                 return None
             next_char = self.input[self.index]
@@ -109,36 +111,36 @@ class Scanner:
                 break
 
         if next_char in SINGLE_CHARACTERS:
-            return self.return_token(next_char, None)
+            return self.return_token(next_char, None, '')
         if next_char == '<':
-            return self.return_token('RELOP', 'L')
+            return self.return_token('RELOP', 'L', '')
         if next_char == '=':
             if self.index < self.len and self.input[self.index] == '=':
                 self.index += 1
-                return self.return_token('RELOP', 'E')
-            return self.return_token(next_char, None)
+                return self.return_token('RELOP', 'E', '')
+            return self.return_token(next_char, None, '')
         if next_char in string.ascii_letters:
             st = next_char
             while self.index < self.len and self.input[self.index] in (string.ascii_letters + string.digits):
                 st += self.input[self.index]
                 self.index += 1
             if st in RESERVED_WORDS:
-                return self.return_token(st, None)
+                return self.return_token(st, None, st)
             if self.prev_token and self.prev_token.text in ['int', 'void']:
                 if st in self.symbol_table[scope]:
                     raise DuplicateDeclaration(st, *self.line_and_column())
-                self.symbol_table[scope][st] = self.return_token('ID', self.malloc())
+                self.symbol_table[scope][st] = self.return_token('ID', self.malloc(), st)
                 self.analyze_semantics()
             return self.return_repeated_token(st)
         if next_char in string.digits:
             self.index -= 1
-            return self.return_token('NUM', digit())
+            return self.return_token('NUM', digit(), '')
         if next_char in ['+', '-']:
             if self.prev_token is None or self.prev_token.text not in [']', ')', 'NUM', 'ID']:
                 m = -1 if next_char == '-' else +1
-                return self.return_token('NUM', m * digit())
+                return self.return_token('NUM', m * digit(), '')
             else:
-                return self.return_token(next_char, None)
+                return self.return_token(next_char, None, '')
         assert False
 
     def line_and_column(self):
