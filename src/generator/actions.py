@@ -255,6 +255,8 @@ class ArrayDefinitionAction(Action):
 
 class AssignArrayAction(Action):
     def do(self, parser):
+        if parser.scanner.get_token_by_address(parser.semantic_stack[-1]) and parser.scanner.get_token_by_address(parser.semantic_stack[-1]).declaration_type == DeclarationType.ARRAY:
+            raise SemanticError('Assignment from array is not allowed', parser.scanner)
         tmp = parser.get_temp()
         parser.program.add_inst(Mnemonic.ADD, parser.semantic_stack[-3], parser.semantic_stack[-2], tmp)
         parser.program.add_inst(Mnemonic.ASSIGN, parser.semantic_stack.pop(), indval(tmp))

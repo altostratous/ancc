@@ -4,7 +4,7 @@ void main(void){
     }
     int a[10];
     int b;
-    b = f();
+    a[10] = a;
     while (f() * 2)
         output(2);
 }
