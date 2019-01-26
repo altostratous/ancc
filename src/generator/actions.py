@@ -44,6 +44,8 @@ class PushRelOpAction(Action):
 class AddOpAction(Action):
     def do(self, parser):
         tmp = parser.get_temp()
+        if parser.semantic_stack[-1] == 'None' or parser.semantic_stack[-3] == 'None':
+            raise SemanticError('Cannot add/sub a void value', parser.scanner)
         if parser.semantic_stack[-2] == '+':
             parser.program.add_inst(Mnemonic.ADD, parser.semantic_stack[-3],
                                     parser.semantic_stack[-1], tmp)
@@ -216,7 +218,7 @@ class BreakAction(Action):
 class ContinueAction(Action):
     def do(self, parser):
         if len(parser.continue_stack) == 0:
-            raise SemanticError('`continue` statement has no parent `while`')
+            raise SemanticError('`continue` statement has no parent `while`', parser.scanner)
         parser.program.add_inst(Mnemonic.JUMP, parser.continue_stack[-1])
 
 
@@ -277,6 +279,8 @@ class FunctionAction(Action):
         parser.program.add_inst(Mnemonic.JUMP, indval(parser.return_stack.pop()))
         if parser.function_stack[-1].has_return == False and parser.function_stack[-1].data_type != DataType.VOID:
             raise SemanticError('Missing return statement inside the function', parser.scanner)
+        if len(parser.function_stack) == 1 and parser.function_stack[-1].lexeme == 'main' and parser.function_stack[-1].data_type != DataType.VOID:
+            raise SemanticError('Invalid prototype for function main', parser.scanner)
         parser.function_stack.pop()
 
 
@@ -399,6 +403,8 @@ class NewParamAction(Action):
         if token.data_type == DataType.VOID:
             raise SemanticError("Cannot declare a variable with void type", parser.scanner)
         token.declaration_type = DeclarationType.VARIABLE
+        if len(parser.function_stack) == 1 and parser.function_stack[-1].lexeme == 'main':
+            raise SemanticError('Invalid prototype for function main', parser.scanner)
         parser.function_stack[-1].prototype.append(token)
 
 

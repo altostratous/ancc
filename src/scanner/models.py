@@ -128,7 +128,7 @@ class Scanner:
                 return self.return_token(st, None, st)
             if self.prev_token and self.prev_token.text in ['int', 'void']:
                 if st in self.symbol_table[scope]:
-                    raise DuplicateDeclaration(st, *self.line_and_column())
+                    raise DuplicateDeclaration(st, self)
                 self.symbol_table[scope][st] = self.return_token('ID', self.malloc(), st)
                 self.analyze_semantics()
             return self.return_repeated_token(st)
