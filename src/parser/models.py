@@ -1,7 +1,8 @@
 from generator.program import Program
 from grammar.models import Literal, Token
 from grammar.utils import compute_non_terminals_firsts, compute_non_terminals_follows
-from parser.errors import ParseError
+from parser.errors import ParseError, ANCCError
+from scanner.errors import LexicalError, SemanticError
 
 
 class State:
@@ -92,28 +93,36 @@ class Parser(object):
 
     def parse(self):
         while self.stack and self.lookahead_literal:
-            next_state, new_flow, error = self.find_next_state(self.stack[-1])
-            if error:
-                self.errors.append(error)
-                current_non_terminal = self.stack[-1].non_terminal
-                while self.lookahead_literal not in self.follow[current_non_terminal]:
-                    self._lookahead = None
-                    if not self.lookahead_literal:
-                        return self.errors
-                while not self.stack[-1].is_success:
-                    self.stack[-1] = self.stack[-1].nexts[0][1]
-                continue
-            if next_state is None:
-                if len(self.stack) > 1:
-                    self.stack[-2] = dict(self.stack[-2].nexts)[self.stack[-1].non_terminal]
-                self.parsed(self.stack.pop())
-            else:
-                if new_flow:
-                    state_to_push = self.state_machines[new_flow]
-                    self.stack.append(state_to_push)
-                    self.entered(state_to_push)
+            try:
+                next_state, new_flow, error = self.find_next_state(self.stack[-1])
+                if error:
+                    self.errors.append(error)
+                    current_non_terminal = self.stack[-1].non_terminal
+                    while self.lookahead_literal not in self.follow[current_non_terminal]:
+                        self._lookahead = None
+                        if not self.lookahead_literal:
+                            return self.errors
+                    while not self.stack[-1].is_success:
+                        self.stack[-1] = self.stack[-1].nexts[0][1]
+                    continue
+                if next_state is None:
+                    if len(self.stack) > 1:
+                        self.stack[-2] = dict(self.stack[-2].nexts)[self.stack[-1].non_terminal]
+                    self.parsed(self.stack.pop())
                 else:
-                    self.stack[-1] = next_state
+                    if new_flow:
+                        state_to_push = self.state_machines[new_flow]
+                        self.stack.append(state_to_push)
+                        self.entered(state_to_push)
+                    else:
+                        self.stack[-1] = next_state
+            except LexicalError as lexical_error:
+                self.errors.append(lexical_error)
+                self.parser.skip()
+            except SemanticError as semantic_error:
+                self.errors.append(semantic_error)
+            except ANCCError as ancc_error:
+                self.errors.append(ancc_error)
         return self.errors
 
     # noinspection PyUnusedLocal

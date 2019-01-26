@@ -40,9 +40,9 @@ class Test(TestCase):
                             output_file.write(str(parser.program))
                         os.system('cp ' + filename + '.nco output.txt')
                         if platform.system() == 'Darwin':
-                            os.system('./tester_Mac.out > tmptmp')
+                            os.system('../../../bin/tester_mac.out > tmptmp')
                         elif platform.system() == 'Linux':
-                            os.system('./tester.out > tmptmp')
+                            os.system('../../../bin/tester_linux.out > tmptmp')
                         else:
                             assert 0, "I don't give a F*** to Windows"
                         if 0 != os.system('diff tmptmp ../output/' + filename + '.txt'):

@@ -29,3 +29,9 @@ class UndefinedIDError(SemanticError):
 
     def __str__(self):
         return super(UndefinedIDError, self).__str__() + ": Undefined ID {}".format(self.text)
+
+
+class NumberFormatError(LexicalError):
+
+    def __str__(self):
+        return super().__str__() + 'malformed number.'

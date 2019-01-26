@@ -1,7 +1,7 @@
 import string
 
 from grammar.models import Token, DataType
-from scanner.errors import DuplicateDeclaration, UndefinedIDError
+from scanner.errors import DuplicateDeclaration, UndefinedIDError, LexicalError, NumberFormatError
 
 RESERVED_WORDS = ['int', 'void', 'continue', 'break', 'if', 'else', 'while', 'return', 'switch', 'case', 'default']
 
@@ -76,7 +76,7 @@ class Scanner:
                 digit_string += self.input[self.index]
                 self.index += 1
             if digit_string == "":
-                return "EXP"
+                raise NumberFormatError(self)
             return int(digit_string)
 
         while True:
@@ -97,7 +97,7 @@ class Scanner:
                         self.index += 1
                     self.index += 2
                     if self.index >= self.len:
-                        return "EXP"
+                        raise LexicalError("unexpected end of file.")
                 else:
                     break
             else:
