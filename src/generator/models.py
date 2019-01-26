@@ -1,27 +1,5 @@
-def immval(x):
-    return '#' + str(x)
-
-
-def indval(x):
-    return '@' + str(x)
-
-
-class Mnemonic:
-    ASSIGN = 'ASSIGN'
-    ADD = 'ADD'
-    SUBTRACT = 'SUB'
-    MULTIPLY = 'MULT'
-    NOT = 'NOT'
-    AND = 'AND'
-    EQUALS = 'EQ'
-    LESS_THAN = 'LT'
-    JUMP_FALSE = 'JPF'
-    JUMP = 'JP'
-    PRINT = 'PRINT'
-    FAKE = 'FAKE'
-    PUSH = 'PUSH'
-    POP = 'POP'
-    NOP = 'NOP'
+from generator.defines import Mnemonic
+from generator.utils import indval, immval
 
 
 class Inst:

@@ -6,13 +6,12 @@ import traceback
 from collections import OrderedDict
 from os import path
 
+from core.defines import BASE_DIR
 from grammar.models import Literal
 from grammar.utils import check_predictability
 from parser.models import Parser
 from parser.utils import create_transition_diagram, print_diagram, escape, get_all_literals_from_non_terminals
-from scanner.scanner import Scanner
-
-BASE_DIR = path.dirname(os.path.dirname(os.path.dirname(__file__)))
+from scanner.models import Scanner
 
 
 def generate():

@@ -1,4 +1,4 @@
-from parser.errors import ANCCError
+from core.errors import ANCCError
 
 
 class SemanticError(ANCCError):

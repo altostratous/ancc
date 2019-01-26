@@ -1,11 +1,8 @@
 import string
 
-from grammar.models import Token, DataType, DeclarationType
+from core.models import Token
+from core.defines import DataType, DeclarationType, RESERVED_WORDS, SINGLE_CHARACTERS
 from scanner.errors import DuplicateDeclaration, UndefinedIDError, LexicalError, NumberFormatError, SemanticError
-
-RESERVED_WORDS = ['int', 'void', 'continue', 'break', 'if', 'else', 'while', 'return', 'switch', 'case', 'default']
-
-SINGLE_CHARACTERS = [';', ',', '[', ']', '{', '}', '(', ')', ':', '*']
 
 
 class Scanner:

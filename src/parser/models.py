@@ -1,7 +1,9 @@
-from generator.program import Program
-from grammar.models import Literal, Token
+from generator.models import Program
+from grammar.models import Literal
+from core.models import Token
 from grammar.utils import compute_non_terminals_firsts, compute_non_terminals_follows
-from parser.errors import ParseError, ANCCError
+from parser.errors import ParseError
+from core.errors import ANCCError
 from scanner.errors import LexicalError, SemanticError
 
 

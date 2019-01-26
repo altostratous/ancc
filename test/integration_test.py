@@ -7,8 +7,8 @@ from grammar.models import Literal
 from parser.models import Parser
 from parser.utils import create_transition_diagram
 from parser.utils import get_all_literals_from_non_terminals
-from scanner.scanner import Scanner
-from ui.manage import BASE_DIR
+from scanner.models import Scanner
+from core.defines import BASE_DIR
 
 
 class Test(TestCase):

@@ -13,8 +13,8 @@ from resources.test.parse_trees.hello_world_pt import hello_world_expected_parse
 from resources.test.parse_trees.if_while_pt import if_while_expected_parse_tree
 from resources.test.parse_trees.switch_pt import switch_expected_parse_tree
 from resources.test.parse_trees.test2_pt import test2_expected_parse_tree
-from scanner.scanner import Scanner
-from ui.manage import BASE_DIR
+from scanner.models import Scanner
+from core.defines import BASE_DIR
 
 
 class TestParser(TestCase):

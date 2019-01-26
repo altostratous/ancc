@@ -4,12 +4,12 @@ from unittest import TestCase
 from os import path
 import os
 
-from grammar.models import Literal, Token
+from grammar.models import Literal
+from core.models import Token
 from parser.utils import get_all_literals_from_non_terminals
-from scanner.scanner import Scanner
+from scanner.models import Scanner
 
-from scanner.scanner import RESERVED_WORDS
-from ui.manage import BASE_DIR
+from core.defines import RESERVED_WORDS, BASE_DIR
 
 
 class TestScanner(TestCase):

@@ -1,5 +1,7 @@
-from generator.program import Mnemonic, immval, indval
-from grammar.models import Literal, DataType, DeclarationType
+from generator.defines import Mnemonic
+from generator.utils import indval, immval
+from grammar.models import Literal
+from core.defines import DataType, DeclarationType
 from scanner.errors import SemanticError
 
 
@@ -200,7 +202,6 @@ class ContinueAction(Action):
     def do(self, parser):
         if len(parser.continue_stack) == 0:
             raise SemanticError('`continue` statement has no parent `while`')
-            # TODO make keywords quoted in error strings
         parser.program.add_inst(Mnemonic.JUMP, parser.continue_stack[-1])
 
 

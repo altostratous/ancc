@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from grammar.models import Literal
 from grammar.utils import compute_non_terminals_firsts, compute_non_terminals_follows, check_predictability
-from ui.manage import BASE_DIR
+from core.defines import BASE_DIR
 
 
 class TestUtilities(TestCase):

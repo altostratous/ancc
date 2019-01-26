@@ -1,5 +1,8 @@
+from core.defines import RESERVED_WORDS
+
+
 class Literal:
-    CONVENTIONS = {
+    VERBOSE_TRANSLATION = {
         'stmt': 'statement',
         'addop': 'additive operation',
         'fun': 'function',
@@ -25,6 +28,9 @@ class Literal:
         '+': '`,`',
         '*': '`*`',
     }
+
+    for keyword in RESERVED_WORDS:
+        VERBOSE_TRANSLATION[keyword] = '`{}`'.format(keyword)
 
     def __init__(self, text, rules=None):
         self.text = text
@@ -58,8 +64,8 @@ class Literal:
         result = ''
         for part in parts:
             result += ' '
-            if part in Literal.CONVENTIONS:
-                result += Literal.CONVENTIONS[part]
+            if part in Literal.VERBOSE_TRANSLATION:
+                result += Literal.VERBOSE_TRANSLATION[part]
             else:
                 result += part
         return result[1:]
@@ -105,34 +111,3 @@ class Literal:
         return action_class(left_hand_side_text)
 
 
-class DataType(object):
-    INTEGER = 'int'
-    VOID = 'void'
-
-
-class DeclarationType(object):
-    ARRAY = 'array'
-    FUNCTION = 'function'
-    VARIABLE = 'variable'
-
-
-class Token(object):
-
-    def __init__(self, text, attribute, literal, data_type=None, declaration_type=None):
-        super(Token, self).__init__()
-        self.text = text
-        self.attribute = attribute
-        self.literal = literal
-        self.data_type = data_type
-        self.declaration_type = declaration_type
-
-    def __eq__(self, o) -> bool:
-        if o is None:
-            return False
-        return o.text == self.text and o.attribute == self.attribute
-
-    def __str__(self) -> str:
-        return 'Token(`{}`, {})'.format(self.text, self.attribute)
-
-    def __repr__(self) -> str:
-        return str(self)
