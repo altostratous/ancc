@@ -12,6 +12,7 @@ void main(void) {
         output(b);
         output(c);
         output(d);
+        return 3;
     }
     int a;
     dualprint(1, 2);

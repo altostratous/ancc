@@ -18,7 +18,7 @@
 18. selection-stmt → if ( expression ) #IfSave statement #IfJumpSave else statement #IfJump
 19. iteration-stmt → while #WhileLabel ( expression ) #WhileSave statement #While
 20. return-stmt → return rest-of-return-stmt #FunctionReturn
-21. rest-of-return-stmt → ; | expression #PushReturnValue ;
+21. rest-of-return-stmt → #NoReturn ; | expression #PushReturnValue ;
 22. switch-stmt → switch #SwitchPushTest ( expression ) { case-stmts default-stmt } #SwitchPop
 23. case-stmts → case-stmt case-stmts | ε
 24. case-stmt → case #SwitchTest NUM : #SwitchSave statement-list #SwitchPatchJumpOnNotTest
