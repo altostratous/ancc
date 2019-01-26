@@ -8,8 +8,8 @@ int function1(int a){
     }
     int d;
     int function3(void){
-        int c;
-        c = 0;
+        int cd;
+        cd = 0;
         switch(var1){
             case 1:
                 c = 2 * a * d;
