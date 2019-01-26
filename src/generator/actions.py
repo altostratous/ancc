@@ -134,44 +134,59 @@ class WhileAction(Action):
         parser.continue_stack.pop()
 
 
+class SwitchPushTestAction(Action):
+    def do(self, parser):
+        test = parser.get_temp()
+        default = parser.get_temp()
+        parser.program.add_inst(Mnemonic.ASSIGN, immval(1), default)
+        parser.program.add_inst(Mnemonic.ASSIGN, immval(0), test)
+        parser.program.add_inst(Mnemonic.JUMP, parser.program.pc + 2)
+        parser.semantic_stack.append(parser.program.pc)
+        parser.break_stack.append(parser.program.pc)
+        parser.program.add_fake_inst()
+        parser.semantic_stack.append(default)
+        parser.semantic_stack.append(test)
+
+
+class SwitchPopAction(Action):
+    def do(self, parser):
+        parser.semantic_stack.pop()
+        parser.semantic_stack.pop()
+        parser.semantic_stack.pop()
+        parser.program.edit_inst(parser.semantic_stack.pop(), Mnemonic.JUMP, parser.program.pc)
+
+
+class SwitchTestAction(Action):
+    def do(self, parser):
+        test = parser.semantic_stack[-2]
+        default = parser.semantic_stack[-3]
+        is_equal = parser.get_temp()
+        parser.program.add_inst(
+            Mnemonic.EQUALS, parser.semantic_stack[-1], immval(parser.lookahead_token.attribute), is_equal
+        )
+        parser.program.add_inst(
+            Mnemonic.JUMP_FALSE, is_equal, parser.program.pc + 3
+        )
+        parser.program.add_inst(Mnemonic.ASSIGN, immval(1), test)
+        parser.program.add_inst(Mnemonic.ASSIGN, immval(0), default)
+
+
 class SwitchSaveAction(Action):
     def do(self, parser):
-        parser.program.add_inst(Mnemonic.JUMP, parser.program.pc + 2)
-
-        # Save
-        parser.semantic_stack += [parser.program.pc]
+        parser.semantic_stack.append(parser.program.pc)
         parser.program.add_fake_inst()
 
-        parser.semantic_stack += [parser.program.pc]
-        parser.program.add_fake_inst()
-        parser.program.add_fake_inst()
-        parser.program.add_fake_inst()
-        parser.program.add_fake_inst()
-        parser.program.add_fake_inst()
 
-        parser.semantic_stack += [[]]
-        parser.semantic_stack += [0]  # Whether we have default or not
-
-
-class CaseInsertAction(Action):
+class SwitchPatchJumpOnTestAction(Action):
     def do(self, parser):
-        assert parser.lookahead_token.text == 'NUM'
-        parser.semantic_stack[-2].append((parser.lookahead_token.attribute, parser.program.pc))
+        default = parser.semantic_stack[-4]
+        parser.program.edit_inst(parser.semantic_stack.pop(), Mnemonic.JUMP_FALSE, default, parser.program.pc)
 
 
-class DefaultInsertAction(Action):
+class SwitchPatchJumpOnNotTestAction(Action):
     def do(self, parser):
-        assert parser.semantic_stack[-1] == 0
-        parser.semantic_stack[-1] = 1
-
-
-class SwitchAction(Action):
-    def do(self, parser):
-        l = parser.semantic_stack[-2]
-        min1, max1 = max(l), min(l)
-        l = map(lambda x: x - min1, l)
-        max1 -= min1
-        addr = parser.scanner.malloc(max1)
+        test = parser.semantic_stack[-3]
+        parser.program.edit_inst(parser.semantic_stack.pop(), Mnemonic.JUMP_FALSE, test, parser.program.pc)
 
 
 class PushIDAction(Action):
@@ -194,7 +209,7 @@ class PopIDAction(Action):
 class BreakAction(Action):
     def do(self, parser):
         if len(parser.break_stack) == 0:
-            raise SemanticError('`break` statement has no parent `while` or `switch`')
+            raise SemanticError('`break` statement has no parent `while` or `switch`', parser.scanner)
         parser.program.add_inst(Mnemonic.JUMP, parser.break_stack[-1])
 
 

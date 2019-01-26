@@ -19,10 +19,10 @@
 19. iteration-stmt → while #WhileLabel ( expression ) #WhileSave statement #While
 20. return-stmt → return rest-of-return-stmt #FunctionReturn
 21. rest-of-return-stmt → ; | expression #PushReturnValue ;
-22. switch-stmt → switch #SwitchSave ( expression ) { case-stmts default-stmt } #Switch
+22. switch-stmt → switch #SwitchPushTest ( expression ) { case-stmts default-stmt } #SwitchPop
 23. case-stmts → case-stmt case-stmts | ε
-24. case-stmt → case #CaseInsert NUM : statement-list
-25. default-stmt → default #DefaultInsert : statement-list | ε
+24. case-stmt → case #SwitchTest NUM : #SwitchSave statement-list #SwitchPatchJumpOnNotTest
+25. default-stmt → default : #SwitchSave statement-list #SwitchPatchJumpOnTest | ε
 26. expression → simple-expression | #PushID ID id-expression
 27. id-expression → = expression #Assign | id-simple-expression | [ expression ] bracket-id-expression
 28. bracket-id-expression → = expression #AssignArray | #ArrayAccess id-simple-expression

@@ -18,12 +18,12 @@ class Scanner:
 
     def summary(self):
         result = ''
-        index = self.index - 2
+        index = self.index - 1
         while index >= 0 and self.input[index] != '\n':
             result = self.input[index] + result
             index -= 1
-        result += '>'
-        index = self.index - 1
+        result += '<'
+        index = self.index
         while index < self.len and self.input[index] != '\n':
             result += self.input[index]
             index += 1
@@ -37,7 +37,7 @@ class Scanner:
     def find_symbol_token(self, symbol_text, scope=None):
         for i, scope_table in enumerate(reversed(self.symbol_table)):
             if scope is not None:
-                if scope != i:
+                if scope != len(self.symbol_table) - 1 - i:
                     continue
             if symbol_text in scope_table:
                 return scope_table[symbol_text]
@@ -167,15 +167,15 @@ class Scanner:
         if main_token is None:
             return
         if main_token.data_type != DataType.VOID:
-            raise SemanticError('main should be of type `void`')
+            raise SemanticError('main should be of type `void`', self)
         # TODO check main have (void) as args
         if main_token.declaration_type in {DeclarationType.VARIABLE, DeclarationType.ARRAY}:
-            raise SemanticError('main function in the parent scope should be declared as a function')
+            raise SemanticError('main function in the parent scope should be declared as a function', self)
 
     def check_declaration_and_data_type_consistency(self):
         for scope_table in self.symbol_table:
             for name, token in scope_table.items():
                 if token.declaration_type is not None:
                     if token.declaration_type in {DeclarationType.VARIABLE, DeclarationType.ARRAY} and token.data_type != DataType.INTEGER:
-                        raise SemanticError('variable {} should be of type `int`'.format(name))
+                        raise SemanticError('variable {} should be of type `int`'.format(name), self)
 

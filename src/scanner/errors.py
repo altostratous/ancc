@@ -7,7 +7,7 @@ class SemanticError(ANCCError):
         self.text = text
 
     def __str__(self):
-        return super().__str__() + "Semantic Error"
+        return super().__str__() + " Semantic Error: {}".format(self.text)
 
 
 class LexicalError(ANCCError):
