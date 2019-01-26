@@ -6,6 +6,6 @@ INITIAL_DIR=`pwd`
 cd "${DIR}"
 
 cd ..
-export PYTHONPATH="src:test" && python3 src/ui/manage.py "$@"
+export PYTHONPATH="src:test:$INITIAL_DIR" && python3 src/ui/manage.py "$@"
 
 cd "${INITIAL_DIR}"

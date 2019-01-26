@@ -1,12 +1,16 @@
 import os
 import sys
+import platform
 import subprocess
+import traceback
 from collections import OrderedDict
 from os import path
 
 from grammar.models import Literal
 from grammar.utils import check_predictability
-from parser.utils import create_transition_diagram, print_diagram, escape
+from parser.models import Parser
+from parser.utils import create_transition_diagram, print_diagram, escape, get_all_literals_from_non_terminals
+from scanner.scanner import Scanner
 
 BASE_DIR = path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
@@ -119,6 +123,33 @@ def test():
     subprocess.run(['python3', '-m', 'unittest', 'test_scanner'])
 
 
+def print_usage():
+    print("Usage:")
+    print("\tancc <nc code file> <output path> [--no-run]")
+    print("\tancc test")
+    print("\tancc generate")
+
+
+def compile_nc_code(input_string):
+    with open(os.path.join(BASE_DIR, 'resources/src/predictable_grammar.txt')) as grammar_file:
+        non_terminals = Literal.parse(grammar_file)
+        all_literals = get_all_literals_from_non_terminals(non_terminals)
+        start, states = create_transition_diagram(non_terminals)
+        parser = Parser(
+            states, start,
+            Scanner(
+                input_string,
+                all_literals
+            )
+        )
+        errors = parser.parse()
+        if errors:
+            for error in errors:
+                print(sys.stderr, error)
+            return ''
+        return str(parser.program)
+
+
 if __name__ == "__main__":
 
     if sys.argv[1] == 'generate':
@@ -126,4 +157,29 @@ if __name__ == "__main__":
     elif sys.argv[1] == 'test':
         test()
     else:
-        print('No such command `{}`.'.format(sys.argv[1]))
+        if len(sys.argv) not in [3, 4]:
+            print_usage()
+            exit(1)
+        try:
+            output_code = compile_nc_code(open(sys.argv[1]).read())
+            open(sys.argv[2], mode='w').write(output_code)
+            if len(sys.argv) == 4:
+                if sys.argv[3] == '--no-run':
+                    exit(0)
+                else:
+                    print("Unknown argument {}".format(sys.argv[3]))
+                    print_usage()
+            open("output.txt", mode='w').write(output_code)
+            if platform.system() == 'Darwin':
+                os.system('bin/tester_mac.out')
+            elif platform.system() == 'Linux':
+                os.system('bin/tester_linux.out')
+            else:
+                print(sys.stderr, 'Unrecognized OS {}'.format(sys.platform.system()))
+                exit(1)
+        except Exception as exception:
+            print(sys.stderr, "ANCC Unknown Error: " + str(exception))
+            traceback.print_exc()
+        finally:
+            os.system('rm -f output.txt')
+
