@@ -275,6 +275,8 @@ class AssignArrayAction(Action):
 class ArrayAccessAction(Action):
     def do(self, parser):
         tmp = parser.get_temp()
+        if parser.scanner.get_token_by_address(parser.semantic_stack[-2]) and parser.scanner.get_token_by_address(parser.semantic_stack[-2]).declaration_type == DeclarationType.FUNCTION:
+            raise SemanticError('Subscription from function is not allowed', parser.scanner)
         parser.program.add_inst(Mnemonic.ADD, parser.semantic_stack.pop(), parser.semantic_stack.pop(), tmp)
         parser.semantic_stack += [indval(tmp)]
 
