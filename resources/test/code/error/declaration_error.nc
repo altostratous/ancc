@@ -1,10 +1,10 @@
 void main(void){
-    int f(void){
-        return 3;
+    int a;
+    int f(int a){
+        return 3 + a;
     }
-    int a[10];
     int b;
-    a[10] = a;
-    while (f() * 2)
-        output(2);
+    a[2] = 1;
+    b = a[2] = 1;
+    f(f);
 }

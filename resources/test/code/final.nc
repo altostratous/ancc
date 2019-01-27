@@ -12,18 +12,18 @@ int function1(int a){
         cd = 0;
         switch(var1){
             case 1:
-                c = 2 * a * d;
+                cd = 2 * a * d;
                 break;
             case 2:
-                c = a - 2;
+                cd = a - 2;
                 break;
             case 3:
-                c = c + 1;
+                cd = c + 1;
                 break;
             default:
-                c = 9;
+                cd = 9;
         }
-        return c;
+        return cd;
     }
     d = 4;
     var1 = 2;

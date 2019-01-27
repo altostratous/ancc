@@ -261,6 +261,8 @@ class AssignArrayAction(Action):
         parser.program.add_inst(Mnemonic.ADD, parser.semantic_stack[-3], parser.semantic_stack[-2], tmp)
         parser.program.add_inst(Mnemonic.ASSIGN, parser.semantic_stack.pop(), indval(tmp))
         parser.semantic_stack.pop()
+        parser.semantic_stack.pop()
+        parser.semantic_stack += [indval(tmp)]
 
 
 class ArrayAccessAction(Action):
@@ -379,6 +381,9 @@ class PushParameterAction(Action):
         if isinstance(top_of_stack, int) and parser.scanner.get_token_by_address(top_of_stack) and parser.scanner.get_token_by_address(top_of_stack).declaration_type == DeclarationType.ARRAY:
             if parser.argument_stack[-1][0].declaration_type == DeclarationType.VARIABLE:
                 raise SemanticError('Cannot convert an array to an integer type', parser.scanner)
+
+        if parser.scanner.get_token_by_address(top_of_stack) and parser.scanner.get_token_by_address(top_of_stack).declaration_type == DeclarationType.FUNCTION:
+            raise SemanticError('Cannot pass a function to a function', parser.scanner)
 
         parser.argument_stack[-1] = parser.argument_stack[-1][1:]
         parser.program.add_push(top_of_stack)
