@@ -5,6 +5,6 @@ void main(void){
     }
     int b;
     a[2] = 1;
-    b = a[2] = 1;
-    f(f);
+    b = f;
+    a[2] = 1;
 }

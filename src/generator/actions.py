@@ -219,8 +219,13 @@ class AssignAction(Action):
     def do(self, parser):
         if parser.scanner.get_token_by_address(parser.semantic_stack[-2]) and parser.scanner.get_token_by_address(parser.semantic_stack[-2]).declaration_type == DeclarationType.ARRAY:
             raise SemanticError('Assignment to array is not allowed', parser.scanner)
+        if parser.scanner.get_token_by_address(parser.semantic_stack[-2]) and parser.scanner.get_token_by_address(parser.semantic_stack[-2]).declaration_type == DeclarationType.FUNCTION:
+            raise SemanticError('Assignment to array is not allowed', parser.scanner)
         if parser.scanner.get_token_by_address(parser.semantic_stack[-1]) and parser.scanner.get_token_by_address(parser.semantic_stack[-1]).declaration_type == DeclarationType.ARRAY:
-            raise SemanticError('Assignment from array is not allowed', parser.scanner)
+            raise SemanticError('Assignment from function is not allowed', parser.scanner)
+        if parser.scanner.get_token_by_address(parser.semantic_stack[-1]) and parser.scanner.get_token_by_address(parser.semantic_stack[-1]).declaration_type == DeclarationType.FUNCTION:
+            raise SemanticError('Assignment to function is not allowed', parser.scanner)
+
         parser.program.add_inst(Mnemonic.ASSIGN, parser.semantic_stack.pop(),
                                 parser.semantic_stack[-1])
 
