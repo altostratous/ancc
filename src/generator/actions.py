@@ -46,6 +46,15 @@ class AddOpAction(Action):
         tmp = parser.get_temp()
         if parser.semantic_stack[-1] == 'None' or parser.semantic_stack[-3] == 'None':
             raise SemanticError('Cannot add/sub a void value', parser.scanner)
+        if parser.scanner.get_token_by_address(parser.semantic_stack[-1]) and parser.scanner.get_token_by_address(parser.semantic_stack[-1]).declaration_type == DeclarationType.FUNCTION:
+            raise SemanticError('Cannot add/sub a function value', parser.scanner)
+        if parser.scanner.get_token_by_address(parser.semantic_stack[-1]) and parser.scanner.get_token_by_address(parser.semantic_stack[-1]).declaration_type == DeclarationType.ARRAY:
+            raise SemanticError('Cannot add/sub an array value', parser.scanner)
+        if parser.scanner.get_token_by_address(parser.semantic_stack[-3]) and parser.scanner.get_token_by_address(parser.semantic_stack[-3]).declaration_type == DeclarationType.FUNCTION:
+            raise SemanticError('Cannot add/sub a function value', parser.scanner)
+        if parser.scanner.get_token_by_address(parser.semantic_stack[-3]) and parser.scanner.get_token_by_address(parser.semantic_stack[-3]).declaration_type == DeclarationType.ARRAY:
+            raise SemanticError('Cannot add/sub an array value', parser.scanner)
+
         if parser.semantic_stack[-2] == '+':
             parser.program.add_inst(Mnemonic.ADD, parser.semantic_stack[-3],
                                     parser.semantic_stack[-1], tmp)
